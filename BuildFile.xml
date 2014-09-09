@@ -1,0 +1,13 @@
+<use   name="FWCore/Framework"/>
+<use   name="FWCore/PluginManager"/>
+<use   name="FWCore/ParameterSet"/>
+<use   name="DataFormats/HcalDigi"/>
+<use   name="DataFormats/HcalRecHit"/>
+<use   name="rootcore"/>
+<use   name="boost"/>
+<use   name="boost_serialization"/>
+<use   name="CLHEP"/>
+<export>
+  <lib   name="1"/>
+</export>
+

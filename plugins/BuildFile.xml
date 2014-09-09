@@ -1,0 +1,15 @@
+<library   file="*.cc" name="HcalTupleMaker_Plugins">
+  <use   name="FWCore/Framework"/>
+  <use   name="FWCore/PluginManager"/>
+  <use   name="FWCore/ParameterSet"/>
+  <use   name="CommonTools/UtilAlgos"/>
+  <use   name="HCALPFG/HcalTupleMaker"/>
+  <use   name="CalibFormats/HcalObjects"/>
+  <use   name="DataFormats/HcalDigi"/>
+  <use   name="DataFormats/HcalRecHit"/>
+  <use   name="DataFormats/FEDRawData"/>
+  <use   name="boost"/>
+  <use   name="rootcore"/>
+  <use   name="CLHEP"/>
+  <flags EDM_PLUGIN="1"/>
+</library>

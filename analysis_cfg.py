@@ -24,7 +24,6 @@ isGlobalRun = not isLocalRun
 
 if isLocalRun: 
     process.source = cms.Source("HcalTBSource",
-       maxEvents = cms.untracked.int32(-1),
        quiet = cms.untracked.bool ( False ),
        streams = cms.untracked.vstring(
            "HCAL_Trigger","HCAL_SlowData","HCAL_QADCTDC",
@@ -34,20 +33,22 @@ if isLocalRun:
            "HCAL_DCC718","HCAL_DCC719","HCAL_DCC720","HCAL_DCC721","HCAL_DCC722","HCAL_DCC723",
            "HCAL_DCC724","HCAL_DCC725","HCAL_DCC726","HCAL_DCC727","HCAL_DCC728","HCAL_DCC729",
            "HCAL_DCC730","HCAL_DCC731"
-       ),
-       fileNames = cms.untracked.vstring(
-           "root://eoscms//eos/cms/store/group/comm_hcal/LS1/USC_224625.root"
        )
     )
-
 
 if isGlobalRun:
-    process.source = cms.Source("PoolSource", 
-       fileNames = cms.untracked.vstring(
-           "root://eoscms//eos/cms/store/data/Commissioning2014/MinimumBias/RAW/v3/000/225/826/00000/DEE3076C-9C33-E411-90F0-02163E00F114.root"
-       )
-    )
+    process.source = cms.Source("PoolSource")
 
+#------------------------------------------------------------------------------------
+# What files should we run over?
+#------------------------------------------------------------------------------------
+
+process.source.fileNames = cms.untracked.vstring(
+    # Example local run:
+    "root://eoscms//eos/cms/store/group/comm_hcal/LS1/USC_224625.root"
+    # Example global run:
+    # "root://eoscms//eos/cms/store/data/Commissioning2014/MinimumBias/RAW/v3/000/225/826/00000/DEE3076C-9C33-E411-90F0-02163E00F114.root"
+)
 
 #------------------------------------------------------------------------------------
 # How many events should we run over?
@@ -102,7 +103,10 @@ process.hcalTupleTree = cms.EDAnalyzer("HcalTupleMaker_Tree",
         'keep *_hcalTupleFEDs_*_*',
         'keep *_hcalTupleHBHEDigis_*_*',
         'keep *_hcalTupleHODigis_*_*',
-        'keep *_hcalTupleHFDigis_*_*'
+        'keep *_hcalTupleHFDigis_*_*',
+        'keep *_hcalTupleHBHERecHits_*_*',
+        'keep *_hcalTupleHORecHits_*_*',
+        'keep *_hcalTupleHFRecHits_*_*'
     )
 )                                        
 

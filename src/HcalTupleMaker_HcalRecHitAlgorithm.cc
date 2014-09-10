@@ -1,3 +1,3 @@
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_RecHitAlgorithm.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalRecHitAlgorithm.h"
 
-HcalTupleMaker_RecHitAlgorithm::HcalTupleMaker_RecHitAlgorithm(){}
+HcalTupleMaker_HcalRecHitAlgorithm::HcalTupleMaker_HcalRecHitAlgorithm(){}

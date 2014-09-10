@@ -7,7 +7,7 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_RecHitAlgorithm.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalRecHitAlgorithm.h"
 
 template <class RecHitCollection> 
 class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
@@ -17,7 +17,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
   const std::string     m_prefix;
   const std::string     m_suffix;
 
-  HcalTupleMaker_RecHitAlgorithm algo;
+  HcalTupleMaker_HcalRecHitAlgorithm algo;
   
   void produce( edm::Event & iEvent, const edm::EventSetup & iSetup) { 
     

@@ -1,6 +1,6 @@
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_DigiAlgorithm.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalDigiAlgorithm.h"
 
-HcalTupleMaker_DigiAlgorithm::HcalTupleMaker_DigiAlgorithm():
+HcalTupleMaker_HcalDigiAlgorithm::HcalTupleMaker_HcalDigiAlgorithm():
   m_doChargeReco(false),
   m_doEnergyReco(false)
 {}

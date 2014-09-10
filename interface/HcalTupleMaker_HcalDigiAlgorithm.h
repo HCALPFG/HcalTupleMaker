@@ -13,11 +13,11 @@
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 
-class HcalTupleMaker_DigiAlgorithm { 
+class HcalTupleMaker_HcalDigiAlgorithm { 
 
  public:
 
-  HcalTupleMaker_DigiAlgorithm();
+  HcalTupleMaker_HcalDigiAlgorithm();
 
   void run ();
   void setDoChargeReco ( bool b ) { m_doChargeReco = b; }

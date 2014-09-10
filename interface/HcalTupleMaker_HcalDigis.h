@@ -8,7 +8,7 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 
 #include "CalibFormats/HcalObjects/interface/HcalDbService.h"
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_DigiAlgorithm.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalDigiAlgorithm.h"
 
 template <class DigiCollection, class RecHitCollection> 
 class HcalTupleMaker_HcalDigis : public edm::EDProducer {
@@ -22,7 +22,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   const bool            m_doChargeReco;
   const bool            m_doEnergyReco;
   
-  HcalTupleMaker_DigiAlgorithm algo;
+  HcalTupleMaker_HcalDigiAlgorithm algo;
   
   void produce( edm::Event & iEvent, const edm::EventSetup & iSetup ) { 
     

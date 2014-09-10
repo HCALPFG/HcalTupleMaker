@@ -7,11 +7,11 @@
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 
 
-class HcalTupleMaker_RecHitAlgorithm { 
+class HcalTupleMaker_HcalRecHitAlgorithm { 
 
  public:
 
-  HcalTupleMaker_RecHitAlgorithm();
+  HcalTupleMaker_HcalRecHitAlgorithm();
 
   void run ();
   

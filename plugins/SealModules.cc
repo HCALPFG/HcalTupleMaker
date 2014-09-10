@@ -4,12 +4,8 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_Tree.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_Event.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_FEDs.h"
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HBHEDigis.h"
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HODigis.h"
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HFDigis.h"
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HBHERecHits.h"
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HORecHits.h"
-#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HFRecHits.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalDigis.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalRecHits.h"
 
 DEFINE_FWK_MODULE(HcalTupleMaker_Tree);
 DEFINE_FWK_MODULE(HcalTupleMaker_Event);

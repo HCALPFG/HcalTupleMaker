@@ -8,3 +8,12 @@ hcalTupleHBHEDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   DoChargeReco = cms.untracked.bool ( True ) ,
   DoEnergyReco = cms.untracked.bool ( True ) 
 )
+
+hcalTupleHBHECosmicsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
+  source  = cms.untracked.InputTag("hcalCosmicDigis"),
+  recHits = cms.untracked.InputTag("hbheprereco"),
+  Prefix  = cms.untracked.string ( "HBHECosmicDigi"),
+  Suffix  = cms.untracked.string ( ""),
+  DoChargeReco = cms.untracked.bool ( True ) ,
+  DoEnergyReco = cms.untracked.bool ( True ) 
+)

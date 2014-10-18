@@ -3,6 +3,7 @@
 <use   name="FWCore/ParameterSet"/>
 <use   name="DataFormats/HcalDigi"/>
 <use   name="DataFormats/HcalRecHit"/>
+<use   name="HLTrigger/HLTcore"/>
 <use   name="rootcore"/>
 <use   name="boost"/>
 <use   name="boost_serialization"/>

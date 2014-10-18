@@ -60,12 +60,15 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     
     edm::ESHandle<HcalDbService> conditions;
     if ( m_doChargeReco ) iSetup.get<HcalDbRecord >().get(conditions);
+
+    edm::ESHandle<CaloGeometry> geometry;
+    iSetup.get<CaloGeometryRecord>().get(geometry);
     
     //-----------------------------------------------------
     // Run the algorithm
     //-----------------------------------------------------
     
-    if ( run_algo ) algo.run ( *conditions, *hcalDigis, *hcalRecos );
+    if ( run_algo ) algo.run ( *conditions, *hcalDigis, *hcalRecos, *geometry );
     
     //-----------------------------------------------------
     // Put things into the event
@@ -87,6 +90,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     
     produces<std::vector<int>   >               ( m_prefix + "IEta"            + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "IPhi"            + m_suffix );
+    produces<std::vector<float> >               ( m_prefix + "Eta"             + m_suffix );
+    produces<std::vector<float> >               ( m_prefix + "Phi"             + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Depth"           + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Presamples"      + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Size"            + m_suffix );
@@ -121,6 +126,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   void loadAlgo(){
     algo.ieta            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.iphi            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.eta             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
+    algo.phi             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
     algo.depth           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.presamples      = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.size            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
@@ -150,6 +157,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
    
    iEvent.put ( algo.ieta            , m_prefix + "IEta"            + m_suffix );
    iEvent.put ( algo.iphi            , m_prefix + "IPhi"            + m_suffix );
+   iEvent.put ( algo.eta             , m_prefix + "Eta"             + m_suffix );
+   iEvent.put ( algo.phi             , m_prefix + "Phi"             + m_suffix );
    iEvent.put ( algo.depth           , m_prefix + "Depth"           + m_suffix );
    iEvent.put ( algo.presamples      , m_prefix + "Presamples"      + m_suffix );
    iEvent.put ( algo.size            , m_prefix + "Size"            + m_suffix );

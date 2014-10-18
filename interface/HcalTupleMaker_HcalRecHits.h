@@ -41,10 +41,17 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     }
     
     //-----------------------------------------------------
+    // edm::ESHandles
+    //-----------------------------------------------------
+    
+    edm::ESHandle<CaloGeometry> geometry;
+    iSetup.get<CaloGeometryRecord>().get(geometry);
+    
+    //-----------------------------------------------------
     // Run the algorithm
     //-----------------------------------------------------
     
-    if ( run_algo ) algo.run ( *hcalRecHits );
+    if ( run_algo ) algo.run ( *hcalRecHits, *geometry );
   
     //-----------------------------------------------------
     // Put things into the event
@@ -62,6 +69,8 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
    m_suffix         (iConfig.getUntrackedParameter<std::string>  ("Suffix")) {
     produces<std::vector<int>   > ( m_prefix + "IEta"   + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "IPhi"   + m_suffix );
+    produces<std::vector<float> > ( m_prefix + "Eta"    + m_suffix );
+    produces<std::vector<float> > ( m_prefix + "Phi"    + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "Depth"  + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "Flags"  + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "Aux"    + m_suffix );
@@ -74,6 +83,8 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
   void loadAlgo(){
     algo.ieta   = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.iphi   = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.eta    = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
+    algo.phi    = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
     algo.depth  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.flags  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.aux    = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
@@ -84,6 +95,8 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
   void dumpAlgo( edm::Event & iEvent ){
     iEvent.put ( algo.ieta   , m_prefix + "IEta"   + m_suffix );
     iEvent.put ( algo.iphi   , m_prefix + "IPhi"   + m_suffix );
+    iEvent.put ( algo.eta    , m_prefix + "Eta"    + m_suffix );
+    iEvent.put ( algo.phi    , m_prefix + "Phi"    + m_suffix );
     iEvent.put ( algo.depth  , m_prefix + "Depth"  + m_suffix );
     iEvent.put ( algo.flags  , m_prefix + "Flags"  + m_suffix );
     iEvent.put ( algo.aux    , m_prefix + "Aux"    + m_suffix );

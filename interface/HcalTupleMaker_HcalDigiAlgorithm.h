@@ -13,6 +13,10 @@
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 
+// Geometry
+#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
+
 class HcalTupleMaker_HcalDigiAlgorithm { 
 
  public:
@@ -25,6 +29,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   
   std::auto_ptr<std::vector<int> > ieta;           
   std::auto_ptr<std::vector<int> > iphi;           
+  std::auto_ptr<std::vector<float> > eta;           
+  std::auto_ptr<std::vector<float> > phi;           
   std::auto_ptr<std::vector<int> > depth;          
   std::auto_ptr<std::vector<int> > presamples;     
   std::auto_ptr<std::vector<int> > size;           
@@ -52,7 +58,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   template <class DigiCollection, class RecoCollection > 
     void run ( const HcalDbService    & conditions,  
 	       const DigiCollection   & digis     , 
-	       const RecoCollection   & recos     ){
+	       const RecoCollection   & recos     ,
+	       const CaloGeometry     & geometry ){
     
     //-----------------------------------------------------
     // Get iterators
@@ -84,6 +91,12 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       hcalDetId = const_cast<HcalDetId*> (& digi -> id());
 
       //-----------------------------------------------------
+      // Get the position
+      //-----------------------------------------------------
+      
+      const GlobalPoint& position = geometry.getPosition(*hcalDetId);
+      
+      //-----------------------------------------------------
       // If desired, get objects to reconstruct charge
       //-----------------------------------------------------
       
@@ -98,7 +111,9 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       //-----------------------------------------------------
       // Get digi-specific values
       //-----------------------------------------------------
-      
+
+      eta             -> push_back ( position  .  eta             () );
+      phi             -> push_back ( position  .  phi             () );
       ieta            -> push_back ( hcalDetId -> ieta            () );
       iphi            -> push_back ( hcalDetId -> iphi            () );
       depth           -> push_back ( hcalDetId -> depth           () );

@@ -6,6 +6,9 @@
 // HCAL objects
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
 
+// Geometry
+#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
 
 class HcalTupleMaker_HcalRecHitAlgorithm { 
 
@@ -17,6 +20,8 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
   
   std::auto_ptr<std::vector<int  > > ieta;           
   std::auto_ptr<std::vector<int  > > iphi;           
+  std::auto_ptr<std::vector<float> > eta;           
+  std::auto_ptr<std::vector<float> > phi;           
   std::auto_ptr<std::vector<int  > > depth;          
   std::auto_ptr<std::vector<float> > energy;    
   std::auto_ptr<std::vector<float> > time;    
@@ -24,7 +29,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
   std::auto_ptr<std::vector<int  > > aux;     
   
   template <class RecoCollection > 
-    void run ( const RecoCollection & recos ){
+    void run ( const RecoCollection & recos, const CaloGeometry & geometry ){
     
     //-----------------------------------------------------
     // Get iterators
@@ -48,9 +53,17 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       hcalDetId = HcalDetId(reco -> detid());
 
       //-----------------------------------------------------
+      // Get the position
+      //-----------------------------------------------------
+      
+      const GlobalPoint& position = geometry.getPosition(hcalDetId);
+      
+      //-----------------------------------------------------
       // Get rechit-specific values
       //-----------------------------------------------------
       
+      eta    -> push_back ( position.eta     () );
+      phi    -> push_back ( position.eta     () );
       ieta   -> push_back ( hcalDetId.ieta   () );
       iphi   -> push_back ( hcalDetId.iphi   () );
       depth  -> push_back ( hcalDetId.depth  () );

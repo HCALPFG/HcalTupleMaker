@@ -8,8 +8,10 @@
   <use   name="DataFormats/HcalDigi"/>
   <use   name="DataFormats/HcalRecHit"/>
   <use   name="DataFormats/FEDRawData"/>
+  <use   name="TrackingTools/TrackAssociator"/>
   <use   name="boost"/>
   <use   name="rootcore"/>
+  <use   name="root"/>
   <use   name="CLHEP"/>
   <flags EDM_PLUGIN="1"/>
 </library>

@@ -10,3 +10,4 @@ from HCALPFG.HcalTupleMaker.HcalTupleMaker_HORecHits_cfi      import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HFRecHits_cfi      import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi        import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_TriggerObjects_cfi import * 
+from HCALPFG.HcalTupleMaker.HcalTupleMaker_RecoTracks_cfi     import * 

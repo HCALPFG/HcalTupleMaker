@@ -43,10 +43,6 @@ void HcalCosmicDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup&
   
   for(; recoTrack != recoTrack_end; ++recoTrack){
 
-    if(fabs(recoTrack->d0())>70 || fabs(recoTrack->dz())>70) continue;
-    if(recoTrack->numberOfValidHits()<20) continue;
-    // if (recoTrack->pt() < 2) continue; // skip low Pt tracks       
-    
     TrackDetMatchInfo info = m_trackAssociator.associate(iEvent, iSetup, *recoTrack, m_trackParameters);
     
     std::vector<DetId> crossedHcalIds       = info.crossedHcalIds;

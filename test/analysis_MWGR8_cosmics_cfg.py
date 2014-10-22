@@ -21,11 +21,10 @@ process.source = cms.Source("PoolSource")
 #------------------------------------------------------------------------------------
 
 process.source.fileNames = cms.untracked.vstring(
-    "/store/data/Commissioning2014/HcalHPDNoise/RAW/v3/000/227/391/00000/18B9D07E-0850-E411-B597-02163E008C18.root"
     #FILENAMES
 )
 
-process.source.skipEvents = cms.untracked.uint32(0
+process.source.skipEvents = cms.untracked.uint32(
     #SKIPEVENTS
 )
 
@@ -34,7 +33,7 @@ process.source.skipEvents = cms.untracked.uint32(0
 #------------------------------------------------------------------------------------
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10
+    input = cms.untracked.int32(
         #PROCESSEVENTS
     )
 )
@@ -49,20 +48,20 @@ process.TFileService = cms.Service("TFileService",
 
 #------------------------------------------------------------------------------------
 # Various python configuration files
-# Used cmsDriver.py reco -s RAW2DIGI,L1Reco,RECO --conditions STARTUP_V4::All --eventcontent RECO 
+# Used cmsDriver.py reco -s RAW2DIGI,L1Reco,RECO --conditions STARTUP_V4::All --eventcontent RECO --magField=0T --scenario=cosmics
 #------------------------------------------------------------------------------------
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.load('Configuration.EventContent.EventContent_cff')
+process.load('Configuration.EventContent.EventContentCosmics_cff')
 process.load('SimGeneral.MixingModule.mixNoPU_cfi')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
-process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load('Configuration.StandardSequences.MagneticField_0T_cff')
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.L1Reco_cff')
-process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
+process.load('Configuration.StandardSequences.ReconstructionCosmics_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
@@ -86,6 +85,7 @@ process.hcalTupleTree = cms.EDAnalyzer("HcalTupleMaker_Tree",
         'keep *_hcalTupleHFRecHits_*_*',
         'keep *_hcalTupleTrigger_*_*',
         'keep *_hcalTupleTriggerObjects_*_*',
+        'keep *_hcalTupleCosmicMuons_*_*'
     )
 )             
 
@@ -96,16 +96,29 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V47::All', '')
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
 process.L1Reco_step = cms.Path(process.L1Reco)
-process.reconstruction_step = cms.Path(process.reconstruction)
+process.reconstruction_step = cms.Path(process.reconstructionCosmics)
 process.hcalCosmicDigis_step = cms.Path(process.hcalCosmicDigis)
 process.tuple_step = cms.Path(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
+    # Make HCAL tuples: FED info
+    process.hcalTupleFEDs*
+    # Make HCAL tuples: digi info
+    process.hcalTupleHBHEDigis*
+    process.hcalTupleHODigis*
+    process.hcalTupleHFDigis*
     # Make HCAL tuples: digi info
     process.hcalTupleHBHECosmicsDigis*
     process.hcalTupleHOCosmicsDigis*
+    # Make HCAL tuples: reco info
+    process.hcalTupleHBHERecHits*
+    process.hcalTupleHORecHits*
+    process.hcalTupleHFRecHits*
     # Trigger info
     process.hcalTupleTrigger*
+    process.hcalTupleTriggerObjects*
+    # Make HCAL tuples: cosmic muon info
+    process.hcalTupleCosmicMuons*
     # Package everything into a tree
     process.hcalTupleTree
 )

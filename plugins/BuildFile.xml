@@ -9,6 +9,7 @@
   <use   name="DataFormats/HcalRecHit"/>
   <use   name="DataFormats/FEDRawData"/>
   <use   name="TrackingTools/TrackAssociator"/>
+  <use   name="Geometry/HcalTowerAlgo"/>
   <use   name="boost"/>
   <use   name="rootcore"/>
   <use   name="root"/>

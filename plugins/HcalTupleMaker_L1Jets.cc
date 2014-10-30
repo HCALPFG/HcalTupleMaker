@@ -1,4 +1,5 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_L1Jets.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalPFGGeometry.h"
 #include "DataFormats/L1Trigger/interface/L1JetParticleFwd.h"
 #include "DataFormats/L1Trigger/interface/L1JetParticle.h"
 #include "DataFormats/L1CaloTrigger/interface/L1CaloRegionDetId.h"
@@ -6,55 +7,6 @@
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/Event.h"
-
-//-----------------------------------------------------------------------------
-// Beware: no official mapping from L1CaloRegions to HcalTrigTowerDetId exists
-// This "roll your own" mapping is based on this pre-upgrade RCT map:
-// https://twiki.cern.ch/twiki/bin/viewauth/CMS/RCTMap
-//-----------------------------------------------------------------------------
-
-void getTriggerTowerIEtas( int gctEta, std::vector<int> & ttIEtas ) {
-  ttIEtas.clear();
-  if       (gctEta <= 3 ) ttIEtas.push_back(gctEta - 32);
-  else if  (gctEta >= 18) ttIEtas.push_back(gctEta + 11);
-  else {
-    int sign, start;
-    if (gctEta <= 10){
-      sign  = -1;
-      start = -1 - (4*(10 - gctEta));
-    }
-    else {
-      sign  = 1;
-      start = 1 + (4*(gctEta - 11));
-    }
-    for (int i = 0; i < 4; ++i) ttIEtas.push_back ( start + (i*sign));
-  }
-}
-
-void getTriggerTowerIPhis( int rctPhi, std::vector<int> & ttIPhis ){
-  ttIPhis.clear();
-  int iphi;
-  int start = (((rctPhi * 4) - 2) % 72) + 1;
-  for (int i = 0; i < 4; ++i){
-    iphi = start + i;
-    if (iphi > 72) iphi -= 72;
-    ttIPhis.push_back( iphi );
-  }
-}
-
-void getTriggerTowerIDs( int gctEta,int rctPhi, std::vector<HcalTrigTowerDetId> & ids ){
-  ids.clear();
-  std::vector<int> ttIEtas, ttIPhis;
-  getTriggerTowerIPhis( rctPhi, ttIPhis );
-  getTriggerTowerIEtas( gctEta, ttIEtas );
-  int nIPhis = ttIPhis.size();
-  int nIEtas = ttIEtas.size();
-  for (int iiphi = 0; iiphi < nIPhis; ++iiphi){
-    for (int iieta = 0; iieta < nIEtas; ++iieta){
-      ids.push_back(HcalTrigTowerDetId(ttIEtas[iieta], ttIPhis[iiphi]));
-    }
-  }
-}
 
 HcalTupleMaker_L1Jets::HcalTupleMaker_L1Jets(const edm::ParameterSet& iConfig):
   inputTag   (iConfig.getUntrackedParameter<edm::InputTag>("source")),
@@ -104,7 +56,7 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
     size_t last_entry = tpIndex -> size();
     
     L1CaloRegionDetId regionId = l1Jet -> gctJetCand() -> regionId();
-    getTriggerTowerIDs(regionId.ieta(), regionId.iphi(), detids);
+    hcalpfg::getTriggerTowerIDs(regionId.ieta(), regionId.iphi(), detids);
 
     int ndetids = detids.size();
     for (int idetid = 0; idetid < ndetids; ++idetid){

@@ -11,9 +11,9 @@ class HcalTupleMaker_L1Jets : public edm::EDProducer {
 
  private:
   void produce( edm::Event &, const edm::EventSetup & );
-  const edm::InputTag   inputTag;
-  const edm::InputTag   tpInputTag;
-  const std::string     prefix,suffix;
+  std::vector<edm::InputTag> inputTags;
+  edm::InputTag   tpInputTag;
+  std::string     prefix,suffix;
 };
 
 #endif

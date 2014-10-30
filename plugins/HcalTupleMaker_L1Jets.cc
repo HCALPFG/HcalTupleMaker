@@ -9,7 +9,7 @@
 #include "FWCore/Framework/interface/Event.h"
 
 HcalTupleMaker_L1Jets::HcalTupleMaker_L1Jets(const edm::ParameterSet& iConfig):
-  inputTag   (iConfig.getUntrackedParameter<edm::InputTag>("source")),
+  inputTags  (iConfig.getUntrackedParameter<std::vector<edm::InputTag> >("source")),
   tpInputTag (iConfig.getUntrackedParameter<edm::InputTag>("hcalTPs")),
   prefix     (iConfig.getUntrackedParameter<std::string>("Prefix")),
   suffix     (iConfig.getUntrackedParameter<std::string>("Suffix"))
@@ -30,12 +30,11 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
   std::auto_ptr<std::vector<int   > >            type    ( new std::vector<int>              ());
   std::auto_ptr<std::vector<int   > >            bx      ( new std::vector<int>              ());
   std::auto_ptr<std::vector<std::vector<int> > > tpIndex ( new std::vector<std::vector<int> >());
-  
-  edm::Handle<l1extra::L1JetParticleCollection> l1Jets;
-  iEvent.getByLabel(inputTag, l1Jets);
 
-  l1extra::L1JetParticleCollection::const_iterator l1Jet     = l1Jets -> begin();
-  l1extra::L1JetParticleCollection::const_iterator l1Jet_end = l1Jets -> end();
+  int nL1JetCollections = inputTags.size();
+  std::vector<edm::Handle<l1extra::L1JetParticleCollection> > l1Jets ( nL1JetCollections );
+
+  std::cout << "N(L1JetCollections) = " << nL1JetCollections << std::endl;
   
   edm::Handle<HcalTrigPrimDigiCollection> tps;
   iEvent.getByLabel(tpInputTag, tps);
@@ -45,29 +44,40 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
   
   std::vector<HcalTrigTowerDetId> detids;
   
-  for(; l1Jet != l1Jet_end; ++l1Jet){
-    pt      -> push_back ( l1Jet -> pt  ());
-    eta     -> push_back ( l1Jet -> eta ());
-    phi     -> push_back ( l1Jet -> phi ());
-    bx      -> push_back ( l1Jet -> bx  ());
-    type    -> push_back ( l1Jet -> type());
-    tpIndex -> push_back ( std::vector<int>() );
-    
-    size_t last_entry = tpIndex -> size();
-    
-    L1CaloRegionDetId regionId = l1Jet -> gctJetCand() -> regionId();
-    hcalpfg::getTriggerTowerIDs(regionId.ieta(), regionId.iphi(), detids);
+  for (int iL1JetCollection = 0; iL1JetCollection < nL1JetCollections; ++iL1JetCollection){
 
-    int ndetids = detids.size();
-    for (int idetid = 0; idetid < ndetids; ++idetid){
-      itp = tps -> find ( detids[idetid] );
-      int index = itp - first_tp;
-      if ( itp != tps -> end()){
-	(*tpIndex)[last_entry].push_back ( index );
+    // Get jet collection from event
+    iEvent.getByLabel(inputTags[iL1JetCollection], l1Jets[iL1JetCollection]);
+    l1extra::L1JetParticleCollection::const_iterator l1Jet     = l1Jets[iL1JetCollection] -> begin();
+    l1extra::L1JetParticleCollection::const_iterator l1Jet_end = l1Jets[iL1JetCollection] -> end();
+
+    std::cout << "tag = " << inputTags[iL1JetCollection] << std::endl;
+    std::cout << "N(jets) = " << l1Jets[iL1JetCollection] -> size() << std::endl;
+
+    for(; l1Jet != l1Jet_end; ++l1Jet){
+      pt      -> push_back ( l1Jet -> pt  ());
+      eta     -> push_back ( l1Jet -> eta ());
+      phi     -> push_back ( l1Jet -> phi ());
+      bx      -> push_back ( l1Jet -> bx  ());
+      type    -> push_back ( l1Jet -> type());
+      tpIndex -> push_back ( std::vector<int>() );
+    
+      size_t last_entry = tpIndex -> size() - 1;
+      
+      L1CaloRegionDetId regionId = l1Jet -> gctJetCand() -> regionId();
+      hcalpfg::getTriggerTowerIDs(regionId.ieta(), regionId.iphi(), detids);
+      
+      int ndetids = detids.size();
+      for (int idetid = 0; idetid < ndetids; ++idetid){
+	itp = tps -> find ( detids[idetid] );
+	int index = itp - first_tp;
+	if ( itp != tps -> end()){
+	  (*tpIndex)[last_entry].push_back ( index );
+	}
       }
     }
   }
-
+  
   iEvent.put(pt     , prefix + "Pt"            + suffix );
   iEvent.put(eta    , prefix + "Eta"           + suffix );
   iEvent.put(phi    , prefix + "Phi"           + suffix );

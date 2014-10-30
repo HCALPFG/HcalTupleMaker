@@ -12,6 +12,7 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_L1Jets.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalTriggerPrimitives.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalCosmicDigisProducer.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalL1JetDigisProducer.h"
 
 DEFINE_FWK_MODULE(HcalTupleMaker_Tree);
 DEFINE_FWK_MODULE(HcalTupleMaker_Event);
@@ -28,3 +29,4 @@ DEFINE_FWK_MODULE(HcalTupleMaker_RecoTracks);
 DEFINE_FWK_MODULE(HcalTupleMaker_L1Jets);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalTriggerPrimitives);
 DEFINE_FWK_MODULE(HcalCosmicDigisProducer);
+DEFINE_FWK_MODULE(HcalL1JetDigisProducer);

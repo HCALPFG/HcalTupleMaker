@@ -32,6 +32,7 @@ void HcalL1JetDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle<HBHEDigiCollection>         hbheInputDigis;
   edm::Handle<HFDigiCollection>           hfInputDigis;
   edm::Handle<HcalTrigPrimDigiCollection> hcalInputTPs;
+  int nL1JetCollections = m_l1JetsTags.size();
   std::vector<edm::Handle<l1extra::L1JetParticleCollection> > l1Jets ( nL1JetCollections );
 
   // Get ESHandles
@@ -57,7 +58,7 @@ void HcalL1JetDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   std::vector<HcalDetId> hcalDetIDs;
 
   // Loop over jet collections
-  int nL1JetCollections = m_l1JetsTags.size();
+
   for (int iL1JetCollection = 0; iL1JetCollection < nL1JetCollections; ++iL1JetCollection){
 
     // Get jet collection from event

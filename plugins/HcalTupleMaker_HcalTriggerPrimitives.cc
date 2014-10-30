@@ -74,12 +74,12 @@ void HcalTupleMaker_HcalTriggerPrimitives::produce(edm::Event& iEvent, const edm
     presamples        -> push_back ( itp -> presamples      () );
     size              -> push_back ( nsamples                  );
                      
-    compressedEt      -> push_back ( std::vector<int> ( nsamples ) );
-    fineGrain         -> push_back ( std::vector<int> ( nsamples ) );
-    hbheDigiIndex     -> push_back ( std::vector<int> ( nsamples ) );
-    hfDigiIndex       -> push_back ( std::vector<int> ( nsamples ) );
+    compressedEt      -> push_back ( std::vector<int> () );
+    fineGrain         -> push_back ( std::vector<int> () );
+    hbheDigiIndex     -> push_back ( std::vector<int> () );
+    hfDigiIndex       -> push_back ( std::vector<int> () );
 
-    size_t last_entry = compressedEt -> size();
+    size_t last_entry = compressedEt -> size() - 1;
     
     for (int i = 0; i < nsamples; ++i){
       HcalTriggerPrimitiveSample sample = itp -> sample (i);
@@ -97,19 +97,19 @@ void HcalTupleMaker_HcalTriggerPrimitives::produce(edm::Event& iEvent, const edm
       HcalSubdetector subdet = hcalId.subdet();
       
       if ( subdet == HcalBarrel || subdet == HcalEndcap ){
-	iHBHE = hbheDigis -> find ( hcalId );
-	if ( iHBHE != hbheDigis -> end() ){
-	  index = iHBHE - first_HBHE;
-	  (*hbheDigiIndex)[last_entry].push_back(index);
-	}
+    	iHBHE = hbheDigis -> find ( hcalId );
+    	if ( iHBHE != hbheDigis -> end() ){
+    	  index = iHBHE - first_HBHE;
+    	  (*hbheDigiIndex)[last_entry].push_back(index);
+    	}
       }
       
       else if ( subdet == HcalForward ) {
-	iHF = hfDigis -> find ( hcalId );
-	if ( iHF != hfDigis -> end() ){
-	  index = iHF - first_HF;
-	  (*hfDigiIndex)[last_entry].push_back(index);
-	}
+    	iHF = hfDigis -> find ( hcalId );
+    	if ( iHF != hfDigis -> end() ){
+    	  index = iHF - first_HF;
+    	  (*hfDigiIndex)[last_entry].push_back(index);
+    	}
       }
     }
   }

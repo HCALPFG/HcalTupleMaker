@@ -20,7 +20,7 @@ class HcalL1JetDigisProducer : public edm::EDProducer {
   virtual void produce(edm::Event&, const edm::EventSetup&) override;
   virtual void endJob() override;
 
-  edm::InputTag m_l1JetsTag;
+  std::vector<edm::InputTag> m_l1JetsTag;
   edm::InputTag m_hbheDigisTag;
   edm::InputTag m_hfDigisTag;
   edm::InputTag m_tpsTag;

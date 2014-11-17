@@ -30,7 +30,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<int> > ieta;           
   std::auto_ptr<std::vector<int> > iphi;           
   std::auto_ptr<std::vector<float> > eta;           
-  std::auto_ptr<std::vector<float> > phi;           
+  std::auto_ptr<std::vector<float> > phi;          
+  std::auto_ptr<std::vector<int> > subdet;          
   std::auto_ptr<std::vector<int> > depth;          
   std::auto_ptr<std::vector<int> > presamples;     
   std::auto_ptr<std::vector<int> > size;           
@@ -60,7 +61,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	       const DigiCollection   & digis     , 
 	       const RecoCollection   & recos     ,
 	       const CaloGeometry     & geometry ){
-    
+
     //-----------------------------------------------------
     // Get iterators
     //-----------------------------------------------------
@@ -69,7 +70,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
     typename RecoCollection::const_iterator reco_end;
     typename DigiCollection::const_iterator digi     = digis.begin();
     typename DigiCollection::const_iterator digi_end = digis.end(); 
-   
+
     if ( m_doEnergyReco ) reco_end = recos.end();
     
     HcalDetId       * hcalDetId    = 0;
@@ -81,7 +82,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
     //-----------------------------------------------------
     // Loop through digis
     //-----------------------------------------------------
-    
+
     for (; digi != digi_end ; ++digi ) {
 
       //-----------------------------------------------------
@@ -99,7 +100,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       //-----------------------------------------------------
       // If desired, get objects to reconstruct charge
       //-----------------------------------------------------
-      
+
       if ( m_doChargeReco ){
 	channelCoder = const_cast<HcalQIECoder    *> (  conditions.getHcalCoder        (*hcalDetId));  
 	calibrations = const_cast<HcalCalibrations*> (& conditions.getHcalCalibrations (*hcalDetId));
@@ -117,6 +118,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       ieta            -> push_back ( hcalDetId -> ieta            () );
       iphi            -> push_back ( hcalDetId -> iphi            () );
       depth           -> push_back ( hcalDetId -> depth           () );
+      subdet          -> push_back ( hcalDetId -> subdet          () );
       presamples      -> push_back ( digi      -> presamples      () );
       size            -> push_back ( digi      -> size            () );
       fiberIdleOffset -> push_back ( digi      -> fiberIdleOffset () );
@@ -129,7 +131,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       fiber           -> push_back ( std::vector<int  >() ) ;    
       fiberChan       -> push_back ( std::vector<int  >() ) ;
       capid           -> push_back ( std::vector<int  >() ) ;    
-		      
+
       allFC           -> push_back ( std::vector<float>() ) ;    
       pedFC           -> push_back ( std::vector<float>() ) ;    
       gain            -> push_back ( std::vector<float>() ) ;    
@@ -167,7 +169,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	(*fiber    )[last_entry].push_back (       qieSample -> fiber()      );
 	(*fiberChan)[last_entry].push_back (       qieSample -> fiberChan()  );
 	(*capid    )[last_entry].push_back (       tmp_capid                 );
-	
+
 	//-----------------------------------------------------
 	// Charge reconstruction values
 	//-----------------------------------------------------
@@ -192,8 +194,9 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       //-----------------------------------------------------
       // For each digi, try to find a rechit
       //-----------------------------------------------------
-      
+
       if ( m_doEnergyReco ){
+
       	reco = recos.find ( * hcalDetId ) ;
       	
       	float reco_energy = -999.;

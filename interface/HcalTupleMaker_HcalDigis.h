@@ -92,6 +92,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<int>   >               ( m_prefix + "IPhi"            + m_suffix );
     produces<std::vector<float> >               ( m_prefix + "Eta"             + m_suffix );
     produces<std::vector<float> >               ( m_prefix + "Phi"             + m_suffix );
+    produces<std::vector<int>   >               ( m_prefix + "Subdet"          + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Depth"           + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Presamples"      + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Size"            + m_suffix );
@@ -129,6 +130,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     algo.eta             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
     algo.phi             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
     algo.depth           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.subdet          = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.presamples      = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.size            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.fiberIdleOffset = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
@@ -160,6 +162,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
    iEvent.put ( algo.eta             , m_prefix + "Eta"             + m_suffix );
    iEvent.put ( algo.phi             , m_prefix + "Phi"             + m_suffix );
    iEvent.put ( algo.depth           , m_prefix + "Depth"           + m_suffix );
+   iEvent.put ( algo.subdet          , m_prefix + "Subdet"          + m_suffix );
    iEvent.put ( algo.presamples      , m_prefix + "Presamples"      + m_suffix );
    iEvent.put ( algo.size            , m_prefix + "Size"            + m_suffix );
    iEvent.put ( algo.fiberIdleOffset , m_prefix + "FiberIdleOffset" + m_suffix );

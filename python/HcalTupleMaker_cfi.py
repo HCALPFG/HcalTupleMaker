@@ -14,3 +14,6 @@ from HCALPFG.HcalTupleMaker.HcalTupleMaker_TriggerObjects_cfi        import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_RecoTracks_cfi            import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalTriggerPrimitives_cfi import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_L1Jets_cfi                import *
+from HCALPFG.HcalTupleMaker.HcalTupleMaker_L1GCTJets_cfi             import *
+from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalUnpackerReport_cfi    import *
+                                    

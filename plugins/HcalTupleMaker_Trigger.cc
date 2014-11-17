@@ -144,7 +144,7 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
     const edm::TriggerNames& names = iEvent.triggerNames(*triggerResults);
 
-    for (int i = 0; i < (int) triggerResults->size() ; ++i) { 
+    for (int i = 0; i < (int) triggerResults->size() ; ++i) {
       if (dataSource.empty() || std::find(dataSource.begin(), dataSource.end(), names.triggerName(i)) != dataSource.end()) {
 	v_hlt_insideDataset_names->push_back ( names.triggerName(i) );
 	v_hlt_insideDataset_prescales->push_back ( hltConfig.prescaleValue(iEvent,iSetup,names.triggerName(i)));

@@ -34,8 +34,6 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
   int nL1JetCollections = inputTags.size();
   std::vector<edm::Handle<l1extra::L1JetParticleCollection> > l1Jets ( nL1JetCollections );
 
-  std::cout << "N(L1JetCollections) = " << nL1JetCollections << std::endl;
-  
   edm::Handle<HcalTrigPrimDigiCollection> tps;
   iEvent.getByLabel(tpInputTag, tps);
 
@@ -50,9 +48,6 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
     iEvent.getByLabel(inputTags[iL1JetCollection], l1Jets[iL1JetCollection]);
     l1extra::L1JetParticleCollection::const_iterator l1Jet     = l1Jets[iL1JetCollection] -> begin();
     l1extra::L1JetParticleCollection::const_iterator l1Jet_end = l1Jets[iL1JetCollection] -> end();
-
-    std::cout << "tag = " << inputTags[iL1JetCollection] << std::endl;
-    std::cout << "N(jets) = " << l1Jets[iL1JetCollection] -> size() << std::endl;
 
     for(; l1Jet != l1Jet_end; ++l1Jet){
       pt      -> push_back ( l1Jet -> pt  ());
@@ -77,7 +72,7 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
       }
     }
   }
-  
+
   iEvent.put(pt     , prefix + "Pt"            + suffix );
   iEvent.put(eta    , prefix + "Eta"           + suffix );
   iEvent.put(phi    , prefix + "Phi"           + suffix );

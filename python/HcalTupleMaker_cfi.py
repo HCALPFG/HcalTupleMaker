@@ -6,6 +6,7 @@ from HCALPFG.HcalTupleMaker.HcalTupleMaker_FEDs_cfi                  import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi             import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HODigis_cfi               import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HFDigis_cfi               import * 
+from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalLaserDigis_cfi        import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi           import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HORecHits_cfi             import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HFRecHits_cfi             import * 
@@ -16,4 +17,3 @@ from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalTriggerPrimitives_cfi import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_L1Jets_cfi                import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_L1GCTJets_cfi             import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalUnpackerReport_cfi    import *
-                                    

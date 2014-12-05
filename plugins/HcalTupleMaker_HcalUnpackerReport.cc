@@ -69,6 +69,10 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     std::vector<DetId>::const_iterator bad_detid     = report -> bad_quality_begin();
     std::vector<DetId>::const_iterator bad_detid_end = report -> bad_quality_end  ();
     for(; bad_detid != bad_detid_end; ++bad_detid ){
+      
+      if ( bad_detid -> subdetId() == HcalOther ||
+	   bad_detid -> subdetId() == HcalTriggerTower ) continue;
+
       HcalDetId id (*bad_detid);
       badDigiIEta   -> push_back ( id.ieta ()  );
       badDigiIPhi   -> push_back ( id.iphi ()  );

@@ -3,6 +3,44 @@
 #------------------------------------------------------------------------------------
 
 import FWCore.ParameterSet.Config as cms
+import FWCore.ParameterSet.VarParsing as VarParsing
+
+#------------------------------------------------------------------------------------
+# Options
+#------------------------------------------------------------------------------------
+
+options = VarParsing.VarParsing()
+
+options.register('skipEvents',
+                 0, #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.int,
+                 "Number of events to skip")
+
+options.register('processEvents',
+                 0, #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.int,
+                 "Number of events to process")
+
+options.register('inputFiles',
+                 "file:inputFile.root", #default value
+                 VarParsing.VarParsing.multiplicity.list,
+                 VarParsing.VarParsing.varType.string,
+                 "Input files")
+
+options.register('outputFile',
+                 "file:outputFile.root", #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.string,
+                 "Output file")
+
+options.parseArguments()
+
+print "Skip events =", options.skipEvents
+print "Process events =", options.processEvents
+print "inputFiles =", options.inputFiles
+print "outputFile =", options.outputFile
 
 #------------------------------------------------------------------------------------
 # Declare the process
@@ -20,12 +58,13 @@ process.source = cms.Source("PoolSource")
 # What files should we run over?
 #------------------------------------------------------------------------------------
 
-process.source.fileNames = cms.untracked.vstring(
-    #FILENAMES
-)
-
-process.source.skipEvents = cms.untracked.uint32(
-    #SKIPEVENTS
+process.source = cms.Source("PoolSource", 
+   fileNames = cms.untracked.vstring(
+       options.inputFiles
+   ),
+   skipEvents = cms.untracked.uint32(
+       options.skipEvents
+   )
 )
 
 #------------------------------------------------------------------------------------
@@ -33,9 +72,9 @@ process.source.skipEvents = cms.untracked.uint32(
 #------------------------------------------------------------------------------------
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(
-        #PROCESSEVENTS
-    )
+   input = cms.untracked.int32(
+       options.processEvents
+   )
 )
 
 #------------------------------------------------------------------------------------
@@ -43,7 +82,7 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string( 'OUTPUTFILENAME.root' )
+                                   fileName = cms.string( options.outputFile )
 )
 
 #------------------------------------------------------------------------------------

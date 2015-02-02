@@ -23,6 +23,7 @@ DEFINE_FWK_MODULE(HcalTupleMaker_FEDs);
 DEFINE_FWK_MODULE(HcalTupleMaker_HBHEDigis);
 DEFINE_FWK_MODULE(HcalTupleMaker_HODigis);
 DEFINE_FWK_MODULE(HcalTupleMaker_HFDigis);
+DEFINE_FWK_MODULE(HcalTupleMaker_CalibDigis);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalLaserDigis);
 DEFINE_FWK_MODULE(HcalTupleMaker_HBHERecHits);
 DEFINE_FWK_MODULE(HcalTupleMaker_HORecHits);

@@ -6,6 +6,7 @@ from HCALPFG.HcalTupleMaker.HcalTupleMaker_FEDs_cfi                  import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi             import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HODigis_cfi               import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HFDigis_cfi               import * 
+from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalCalibDigis_cfi        import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalLaserDigis_cfi        import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi           import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HORecHits_cfi             import * 

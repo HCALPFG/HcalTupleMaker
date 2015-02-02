@@ -10,7 +10,7 @@
 #include "CalibFormats/HcalObjects/interface/HcalDbService.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalDigiAlgorithm.h"
 
-template <class DigiCollection, class RecHitCollection> 
+template <class DigiCollection, class RecHitCollection, class DetIdClass, class DetIdClassWrapper> 
 class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   
  protected:
@@ -68,7 +68,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     // Run the algorithm
     //-----------------------------------------------------
     
-    if ( run_algo ) algo.run ( *conditions, *hcalDigis, *hcalRecos, *geometry );
+    if ( run_algo ) algo.run<DigiCollection, RecHitCollection, DetIdClass, DetIdClassWrapper > ( *conditions, *hcalDigis, *hcalRecos, *geometry );
     
     //-----------------------------------------------------
     // Put things into the event
@@ -189,10 +189,14 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
  }
 };
 
+class HcalCalibDetIdWrapper : public HcalCalibDetId { 
+ public:
+  int depth() { return -1; }
+};
 
-typedef HcalTupleMaker_HcalDigis<HBHEDigiCollection, HBHERecHitCollection> HcalTupleMaker_HBHEDigis;
-typedef HcalTupleMaker_HcalDigis<HODigiCollection  , HORecHitCollection  > HcalTupleMaker_HODigis;
-typedef HcalTupleMaker_HcalDigis<HFDigiCollection  , HFRecHitCollection  > HcalTupleMaker_HFDigis;
-
+typedef HcalTupleMaker_HcalDigis<HBHEDigiCollection     , HBHERecHitCollection, HcalDetId     , HcalDetId            > HcalTupleMaker_HBHEDigis;
+typedef HcalTupleMaker_HcalDigis<HODigiCollection       , HORecHitCollection  , HcalDetId     , HcalDetId            > HcalTupleMaker_HODigis;
+typedef HcalTupleMaker_HcalDigis<HFDigiCollection       , HFRecHitCollection  , HcalDetId     , HcalDetId            > HcalTupleMaker_HFDigis;
+typedef HcalTupleMaker_HcalDigis<HcalCalibDigiCollection, HBHERecHitCollection, HcalCalibDetId, HcalCalibDetIdWrapper> HcalTupleMaker_CalibDigis;
 
 #endif

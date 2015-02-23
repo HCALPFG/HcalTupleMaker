@@ -85,11 +85,11 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
 
   edm::Handle<HBHERecHitCollection> hRecHits;
   iEvent.getByLabel(recoInputTag, hRecHits);
-  std::cout<<"(int)hRecHits->size(): "<<(int)hRecHits->size()<<std::endl;
+  //std::cout<<"(int)hRecHits->size(): "<<(int)hRecHits->size()<<std::endl;
 
   edm::Handle<HBHEDigiCollection> hHBHEDigis;
   iEvent.getByLabel("hcalDigis", hHBHEDigis);
-  std::cout<<"(int)hHBHEDigis->size(): "<<(int)hHBHEDigis->size()<<std::endl;
+  //std::cout<<"(int)hHBHEDigis->size(): "<<(int)hHBHEDigis->size()<<std::endl;
 
   edm::ESHandle<HcalDbService> hConditions;
   iSetup.get<HcalDbRecord>().get(hConditions);

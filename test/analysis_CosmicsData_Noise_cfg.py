@@ -48,7 +48,8 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string( 'root://eoscms//eos/cms/store/user/hsaka/HcalNoise/HCALPFGRootNtuple/HcalPFGTree_Commissioning2015_MinimumBias_Run233238_Method0and2_V3F1_02163E01054C.root')
+    fileName = cms.string( 'file:/tmp/hsaka/test.root')
+#root://eoscms//eos/cms/store/user/hsaka/HcalNoise/HCALPFGRootNtuple/HcalPFGTree_Commissioning2015_MinimumBias_Run233238_Method0and2_V3F1_02163E01054C.root')
 )
 
 #------------------------------------------------------------------------------------
@@ -83,9 +84,9 @@ process.load('SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff')
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
-hcalTupleHBHEDigis.recHits        = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
-hcalTupleHBHECosmicsDigis.recHits = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
-hcalTupleHBHEL1JetsDigis.recHits  = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
+process.hcalTupleHBHEDigis.recHits        = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
+process.hcalTupleHBHECosmicsDigis.recHits = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
+process.hcalTupleHBHEL1JetsDigis.recHits  = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_CosmicsData_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 

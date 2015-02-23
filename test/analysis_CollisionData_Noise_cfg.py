@@ -51,8 +51,8 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string( 'root://eoscms//eos/cms/store/user/hsaka/HcalNoise/HCALPFGRootNtuple/HcalPFGTree_Run2012D_MET_Run208487_Method0vs2_F1_001D09F25479.root')
-    #fileName = cms.string( '/tmp/hsaka/HcalPFGTree_Run2012D_MET_Run208487_02185AD3-F03D-E211-BF08-001D09F25479_Method0vs2_V4.root')
+    fileName = cms.string('file:/tmp/hsaka/test.root')
+    #root://eoscms//eos/cms/store/user/hsaka/HcalNoise/HCALPFGRootNtuple/HcalPFGTree_Run2012D_MET_Run208487_Method0vs2_F1_001D09F25479.root')
 )
 
 #------------------------------------------------------------------------------------

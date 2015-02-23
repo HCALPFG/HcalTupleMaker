@@ -79,7 +79,12 @@ process.load('SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff')
 
 # Set up our analyzer
 #process.load('RecoLocalCalo.Configuration.hcalLocalReco_cff') # replaces ReconstructionCosmics_cff above
-process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
+#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_CosmicsData_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 
 # Set up noise filters: Method 2 (default) and Method 0
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalNoiseFilters_cfi")

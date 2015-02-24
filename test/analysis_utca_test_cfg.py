@@ -107,11 +107,39 @@ process.load("Geometry.HcalEventSetup.HcalTopology_cfi")
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
 
-#------------------------------------------------------------------------------------
-# Setup utcaDigis
-#------------------------------------------------------------------------------------
-
+# Set up utcaDigis unpacker
 process.utcaDigis = process.hcalDigis.clone()
 process.utcaDigis.FEDs = cms.untracked.vint32(1118)
 
-process.p = cms.Path(process.utcaDigis)
+# Need the geometry to get digi and rechit positions
+process.load("Geometry.CaloEventSetup.CaloGeometry_cfi")
+process.load("Geometry.CMSCommonData.cmsIdealGeometryXML_cfi")
+
+# Set up our analyzer
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
+
+# Modify hfdigis tuple maker for this specific test
+process.hcalTupleHFDigis.source = cms.untracked.InputTag("utcaDigis")
+process.hcalTupleHFDigis.DoEnergyReco = cms.untracked.bool ( False ) 
+
+# Modify unpacker report tuple maker for this specific test
+process.hcalTupleUnpackReport.source = cms.untracked.InputTag("utcaDigis")
+
+
+# Make a path 
+process.p = cms.Path(
+    process.utcaDigis*
+    process.hcalTupleEvent*
+    process.hcalTupleHFDigis*
+    process.hcalTupleUnpackReport*
+    process.hcalTupleTree
+)
+
+# Make an endpath
+process.output = cms.OutputModule("PoolOutputModule",
+     fileName = cms.untracked.string('dump.root'),
+                                  outputCommands = cms.untracked.vstring("keep *", "drop *_hcalTuple*_*_*" )
+)
+process.outputPath = cms.EndPath(process.output)
+
+

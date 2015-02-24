@@ -104,6 +104,9 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V49', '')
 # Need the topology to unpack
 process.load("Geometry.HcalEventSetup.HcalTopology_cfi")
 
+# Make trigger tower geometry
+process.HcalTrigTowerGeometryESProducer = cms.ESProducer("HcalTrigTowerGeometryESProducer")
+
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
 
@@ -112,7 +115,7 @@ process.es_ascii = cms.ESSource('HcalTextCalibrations',
     input = cms.VPSet(
         cms.PSet(
             object = cms.string('ElectronicsMap'),
-            file = cms.FileInPath('version_G_emap.txt')
+            file = cms.FileInPath('version_E_emap_both_jm_12nov-2.txt')
             ),
         )
     )

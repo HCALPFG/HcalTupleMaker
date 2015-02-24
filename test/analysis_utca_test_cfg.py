@@ -107,7 +107,7 @@ process.load("Geometry.HcalEventSetup.HcalTopology_cfi")
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
 
-# Use the emap
+# Use an emap that has the uTCA
 process.es_ascii = cms.ESSource('HcalTextCalibrations',
     input = cms.VPSet(
         cms.PSet(
@@ -134,6 +134,11 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 process.hcalTupleHFDigis.source = cms.untracked.InputTag("utcaDigis")
 process.hcalTupleHFDigis.DoEnergyReco = cms.untracked.bool ( False ) 
 
+# Modify TP tuple maker for this specific test
+process.hcalTupleTriggerPrimitives.source = cms.untracked.InputTag("utcaDigis")
+process.hcalTupleTriggerPrimitives.hfDigis = cms.untracked.InputTag("utcaDigis")
+process.hcalTupleTriggerPrimitives.hbheDigis = cms.untracked.InputTag("utcaDigis")
+
 # Modify unpacker report tuple maker for this specific test
 process.hcalTupleUnpackReport.source = cms.untracked.InputTag("utcaDigis")
 
@@ -143,6 +148,7 @@ process.p = cms.Path(
     process.utcaDigis*
     process.hcalTupleEvent*
     process.hcalTupleHFDigis*
+    process.hcalTupleTriggerPrimitives*
     process.hcalTupleUnpackReport*
     process.hcalTupleTree
 )

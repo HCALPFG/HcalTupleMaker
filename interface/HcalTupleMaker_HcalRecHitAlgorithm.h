@@ -63,7 +63,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       //-----------------------------------------------------
       
       eta    -> push_back ( position.eta     () );
-      phi    -> push_back ( position.eta     () );
+      phi    -> push_back ( position.phi     () );
       ieta   -> push_back ( hcalDetId.ieta   () );
       iphi   -> push_back ( hcalDetId.iphi   () );
       depth  -> push_back ( hcalDetId.depth  () );

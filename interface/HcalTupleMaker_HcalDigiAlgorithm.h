@@ -56,7 +56,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<float> > rec_energy;    
   std::auto_ptr<std::vector<float> > rec_time;    
   
-  template <class DigiCollection, class RecoCollection > 
+  template <class DigiCollection, class RecoCollection, class DetIdClass, class DetIdClassWrapper > 
     void run ( const HcalDbService    & conditions,  
 	       const DigiCollection   & digis     , 
 	       const RecoCollection   & recos     ,
@@ -73,7 +73,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 
     if ( m_doEnergyReco ) reco_end = recos.end();
     
-    HcalDetId       * hcalDetId    = 0;
+    DetIdClass        * hcalDetId    = 0;
+    DetIdClassWrapper * hcalDetIdW   = 0;
     HcalQIECoder    * channelCoder = 0;
     HcalCalibrations* calibrations = 0;
     HcalQIEShape    * shape        = 0;
@@ -89,7 +90,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       // Save the detector id, no matter what
       //-----------------------------------------------------
       
-      hcalDetId = const_cast<HcalDetId*> (& digi -> id());
+      hcalDetId  = const_cast <DetIdClass*>        (& digi -> id());
+      hcalDetIdW = static_cast<DetIdClassWrapper*> (hcalDetId);
 
       //-----------------------------------------------------
       // Get the position
@@ -115,10 +117,10 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 
       eta             -> push_back ( position  .  eta             () );
       phi             -> push_back ( position  .  phi             () );
-      ieta            -> push_back ( hcalDetId -> ieta            () );
-      iphi            -> push_back ( hcalDetId -> iphi            () );
-      depth           -> push_back ( hcalDetId -> depth           () );
-      subdet          -> push_back ( hcalDetId -> subdet          () );
+      ieta            -> push_back ( hcalDetIdW -> ieta            () );
+      iphi            -> push_back ( hcalDetIdW -> iphi            () );
+      depth           -> push_back ( hcalDetIdW -> depth           () );
+      subdet          -> push_back ( hcalDetIdW -> subdet          () );
       presamples      -> push_back ( digi      -> presamples      () );
       size            -> push_back ( digi      -> size            () );
       fiberIdleOffset -> push_back ( digi      -> fiberIdleOffset () );

@@ -38,8 +38,8 @@ HcalTupleMaker_Trigger::HcalTupleMaker_Trigger(const edm::ParameterSet& iConfig)
   produces <std::vector<int> >         ("HLTInsideDatasetTriggerPrescales"  );
   produces <std::vector<int> >         ("HLTOutsideDatasetTriggerPrescales" );
 
-  produces <std::vector<int> > ( "L1PhysBits" );
-  produces <std::vector<int> > ( "L1TechBits" );
+  produces <std::vector<std::vector<int> > > ( "L1PhysBits" );
+  produces <std::vector<std::vector<int> > > ( "L1TechBits" );
   produces <std::vector<int> > ( "HLTBits" );
 }
 
@@ -97,9 +97,9 @@ beginRun(edm::Run& iRun, const edm::EventSetup& iSetup) {
 void HcalTupleMaker_Trigger::
 produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
-  std::auto_ptr<std::vector<int> >  l1physbits   ( new std::vector<int>() );
-  std::auto_ptr<std::vector<int> >  l1techbits   ( new std::vector<int>() );
-  std::auto_ptr<std::vector<int> >  hltbits      ( new std::vector<int>() );
+  std::auto_ptr<std::vector<std::vector<int> > > l1physbits   ( new std::vector<std::vector<int> >(5) );
+  std::auto_ptr<std::vector<std::vector<int> > > l1techbits   ( new std::vector<std::vector<int> >(3) );
+  std::auto_ptr<std::vector<int> >               hltbits      ( new std::vector<int>() );
 
   std::auto_ptr<std::vector < std::string > > v_hlt_insideDataset_names             (new std::vector<std::string>  ());
   std::auto_ptr<std::vector < std::string > > v_hlt_outsideDataset_names            (new std::vector<std::string>  ());
@@ -125,11 +125,16 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     unsigned int NmaxL1AlgoBit = l1GtReadoutRecord->decisionWord().size();
     unsigned int NmaxL1TechBit = l1GtReadoutRecord->technicalTriggerWord().size();
 
-    for (unsigned int i = 0; i < NmaxL1AlgoBit; ++i) {
-      l1physbits->push_back( l1GtReadoutRecord->decisionWord()[i] ? 1 : 0 );
+    for (unsigned int bx = 0; bx < 5; ++bx){
+      for (unsigned int i = 0; i < NmaxL1AlgoBit; ++i) {
+	l1physbits->at(bx).push_back( l1GtReadoutRecord->decisionWord(bx-2)[i] ? 1 : 0 );
+      }
     }
-    for (unsigned int i = 0; i < NmaxL1TechBit; ++i) {
-      l1techbits->push_back( l1GtReadoutRecord->technicalTriggerWord()[i] ? 1 : 0 );
+    
+    for (unsigned int bx = 0; bx < 3; ++bx){
+      for (unsigned int i = 0; i < NmaxL1TechBit; ++i) {
+	l1techbits->at(bx).push_back( l1GtReadoutRecord->technicalTriggerWord(bx-1)[i] ? 1 : 0 );
+      }
     }
   } else {
     edm::LogError("HcalTupleMaker_TriggerError") << "Error! Can't get the product " << l1InputTag;

@@ -11,6 +11,8 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_TriggerObjects.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_RecoTracks.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_L1Jets.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalNoiseFilters.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_CaloJetMet.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_L1GCTJets.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalTriggerPrimitives.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalUnpackerReport.h"
@@ -23,6 +25,7 @@ DEFINE_FWK_MODULE(HcalTupleMaker_FEDs);
 DEFINE_FWK_MODULE(HcalTupleMaker_HBHEDigis);
 DEFINE_FWK_MODULE(HcalTupleMaker_HODigis);
 DEFINE_FWK_MODULE(HcalTupleMaker_HFDigis);
+DEFINE_FWK_MODULE(HcalTupleMaker_CalibDigis);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalLaserDigis);
 DEFINE_FWK_MODULE(HcalTupleMaker_HBHERecHits);
 DEFINE_FWK_MODULE(HcalTupleMaker_HORecHits);
@@ -31,6 +34,8 @@ DEFINE_FWK_MODULE(HcalTupleMaker_Trigger);
 DEFINE_FWK_MODULE(HcalTupleMaker_TriggerObjects);
 DEFINE_FWK_MODULE(HcalTupleMaker_RecoTracks);
 DEFINE_FWK_MODULE(HcalTupleMaker_L1Jets);
+DEFINE_FWK_MODULE(HcalTupleMaker_HcalNoiseFilters);
+DEFINE_FWK_MODULE(HcalTupleMaker_CaloJetMet);
 DEFINE_FWK_MODULE(HcalTupleMaker_L1GCTJets);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalTriggerPrimitives);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalUnpackerReport);

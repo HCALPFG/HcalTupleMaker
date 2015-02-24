@@ -121,7 +121,13 @@ process.es_prefer = cms.ESPrefer('HcalTextCalibrations','es_ascii')
 
 # Set up utcaDigis unpacker
 process.utcaDigis = process.hcalDigis.clone()
-process.utcaDigis.FEDs = cms.untracked.vint32(1118, 1120, 1122)
+process.utcaDigis.FEDs = cms.untracked.vint32( 1118, 1120, 1122 ) 
+
+# for FED in range ( 718, 724 ):
+#     process.utcaDigis.FEDs.append ( FED ) 
+
+
+print process.utcaDigis.FEDs
 
 # Need the geometry to get digi and rechit positions
 process.load("Geometry.CaloEventSetup.CaloGeometry_cfi")
@@ -131,8 +137,13 @@ process.load("Geometry.CMSCommonData.cmsIdealGeometryXML_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 
 # Modify hfdigis tuple maker for this specific test
-process.hcalTupleHFDigis.source = cms.untracked.InputTag("utcaDigis")
+process.hcalTupleHFUTCADigis = process.hcalTupleHFDigis.clone()
+process.hcalTupleHFUTCADigis.Prefix =  cms.untracked.string("HFUTCA")
+process.hcalTupleHFUTCADigis.source = cms.untracked.InputTag("utcaDigis")
+process.hcalTupleHFUTCADigis.DoEnergyReco = cms.untracked.bool ( False ) 
+
 process.hcalTupleHFDigis.DoEnergyReco = cms.untracked.bool ( False ) 
+
 
 # Modify TP tuple maker for this specific test
 process.hcalTupleTriggerPrimitives.source = cms.untracked.InputTag("utcaDigis")
@@ -146,8 +157,10 @@ process.hcalTupleUnpackReport.source = cms.untracked.InputTag("utcaDigis")
 # Make a path 
 process.p = cms.Path(
     process.utcaDigis*
+    process.hcalDigis*
     process.hcalTupleEvent*
     process.hcalTupleHFDigis*
+    process.hcalTupleHFUTCADigis*
     process.hcalTupleTriggerPrimitives*
     process.hcalTupleUnpackReport*
     process.hcalTupleTree
@@ -156,7 +169,7 @@ process.p = cms.Path(
 # Make an endpath
 process.output = cms.OutputModule("PoolOutputModule",
      fileName = cms.untracked.string('dump.root'),
-                                  outputCommands = cms.untracked.vstring("keep *", "drop *_hcalTuple*_*_*" )
+     outputCommands = cms.untracked.vstring("keep *", "drop *_hcalTuple*_*_*" )
 )
 process.outputPath = cms.EndPath(process.output)
 

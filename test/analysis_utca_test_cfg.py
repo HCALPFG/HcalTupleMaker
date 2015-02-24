@@ -115,7 +115,7 @@ process.es_ascii = cms.ESSource('HcalTextCalibrations',
     input = cms.VPSet(
         cms.PSet(
             object = cms.string('ElectronicsMap'),
-            file = cms.FileInPath('version_E_emap_both_jm_12nov-2.txt')
+            file = cms.FileInPath('version_E_emap_rctonly_jm_12nov.txt')
             ),
         )
     )

@@ -107,9 +107,21 @@ process.load("Geometry.HcalEventSetup.HcalTopology_cfi")
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
 
+# Use the emap
+process.es_ascii = cms.ESSource('HcalTextCalibrations',
+    input = cms.VPSet(
+        cms.PSet(
+            object = cms.string('ElectronicsMap'),
+            file = cms.FileInPath('version_G_emap.txt')
+            ),
+        )
+    )
+process.es_prefer = cms.ESPrefer('HcalTextCalibrations','es_ascii')
+
+
 # Set up utcaDigis unpacker
 process.utcaDigis = process.hcalDigis.clone()
-process.utcaDigis.FEDs = cms.untracked.vint32(1118)
+process.utcaDigis.FEDs = cms.untracked.vint32(1118, 1120, 1122)
 
 # Need the geometry to get digi and rechit positions
 process.load("Geometry.CaloEventSetup.CaloGeometry_cfi")

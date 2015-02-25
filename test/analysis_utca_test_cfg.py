@@ -122,15 +122,21 @@ process.es_ascii = cms.ESSource('HcalTextCalibrations',
 process.es_prefer = cms.ESPrefer('HcalTextCalibrations','es_ascii')
 
 
-# Set up utcaDigis unpacker
-process.utcaDigis = process.hcalDigis.clone()
-process.utcaDigis.FEDs = cms.untracked.vint32( 1118, 1120, 1122 ) 
+# Set up hcalDigis unpacker
+process.hcalDigis.FEDs = cms.untracked.vint32()
 
-# for FED in range ( 718, 724 ):
-#     process.utcaDigis.FEDs.append ( FED ) 
+# VME HBHE
+for FED in range ( 700, 718 ):
+    process.hcalDigis.FEDs.append ( FED ) 
 
+# uTCA HF
+process.hcalDigis.FEDs.append ( 1118 ) 
+process.hcalDigis.FEDs.append ( 1120 ) 
+process.hcalDigis.FEDs.append ( 1122 ) 
 
-print process.utcaDigis.FEDs
+# VME HO 
+for FED in range ( 724, 732 ):
+    process.hcalDigis.FEDs.append ( FED ) 
 
 # Need the geometry to get digi and rechit positions
 process.load("Geometry.CaloEventSetup.CaloGeometry_cfi")
@@ -140,40 +146,28 @@ process.load("Geometry.CMSCommonData.cmsIdealGeometryXML_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 
 # Modify hfdigis tuple maker for this specific test
-process.hcalTupleHFUTCADigis = process.hcalTupleHFDigis.clone()
-process.hcalTupleHFUTCADigis.Prefix =  cms.untracked.string("HFUTCA")
-process.hcalTupleHFUTCADigis.source = cms.untracked.InputTag("utcaDigis")
-process.hcalTupleHFUTCADigis.DoEnergyReco = cms.untracked.bool ( False ) 
-
 process.hcalTupleHFDigis.DoEnergyReco = cms.untracked.bool ( False ) 
-
-
-# Modify TP tuple maker for this specific test
-process.hcalTupleTriggerPrimitives.source = cms.untracked.InputTag("utcaDigis")
-process.hcalTupleTriggerPrimitives.hfDigis = cms.untracked.InputTag("utcaDigis")
-process.hcalTupleTriggerPrimitives.hbheDigis = cms.untracked.InputTag("utcaDigis")
-
-# Modify unpacker report tuple maker for this specific test
-process.hcalTupleUnpackReport.source = cms.untracked.InputTag("utcaDigis")
+process.hcalTupleHBHEDigis.DoEnergyReco = cms.untracked.bool ( False ) 
+process.hcalTupleHODigis.DoEnergyReco = cms.untracked.bool ( False ) 
 
 
 # Make a path 
 process.p = cms.Path(
-    process.utcaDigis*
     process.hcalDigis*
     process.hcalTupleEvent*
     process.hcalTupleHFDigis*
-    process.hcalTupleHFUTCADigis*
+    process.hcalTupleHODigis*
+    process.hcalTupleHBHEDigis*
     process.hcalTupleTriggerPrimitives*
     process.hcalTupleUnpackReport*
     process.hcalTupleTree
 )
 
 # Make an endpath
-process.output = cms.OutputModule("PoolOutputModule",
-     fileName = cms.untracked.string('dump.root'),
-     outputCommands = cms.untracked.vstring("keep *", "drop *_hcalTuple*_*_*" )
-)
-process.outputPath = cms.EndPath(process.output)
+# process.output = cms.OutputModule("PoolOutputModule",
+#      fileName = cms.untracked.string('dump.root'),
+#      outputCommands = cms.untracked.vstring("keep *", "drop *_hcalTuple*_*_*" )
+# )
+# process.outputPath = cms.EndPath(process.output)
 
 

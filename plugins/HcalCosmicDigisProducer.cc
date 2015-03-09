@@ -12,8 +12,7 @@ HcalCosmicDigisProducer::HcalCosmicDigisProducer(const edm::ParameterSet& iConfi
   produces<HBHEDigiCollection>();
   produces<HODigiCollection>  ();
   produces<HFDigiCollection>  ();
-  edm::ConsumesCollector iC = consumesCollector();
-  m_trackParameters.loadParameters( m_trackParameterSet, iC );
+  m_trackParameters.loadParameters( m_trackParameterSet );
   m_trackAssociator.useDefaultPropagator();
 }
 

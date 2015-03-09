@@ -6,8 +6,6 @@
 #include "DataFormats/L1CaloTrigger/interface/L1CaloRegionDetId.h"
 #include "DataFormats/HcalDetId/interface/HcalTrigTowerDetId.h"
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
-#include "Geometry/HcalTowerAlgo/interface/HcalTrigTowerGeometry.h"
-#include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 
 HcalL1JetDigisProducer::HcalL1JetDigisProducer(const edm::ParameterSet& iConfig):
@@ -25,18 +23,12 @@ HcalL1JetDigisProducer::~HcalL1JetDigisProducer(){}
 
 void HcalL1JetDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
-  // Declare ESHandles
-  edm::ESHandle<HcalTrigTowerGeometry> geometry;
-
   // Declare Handles
   edm::Handle<HBHEDigiCollection>         hbheInputDigis;
   edm::Handle<HFDigiCollection>           hfInputDigis;
   edm::Handle<HcalTrigPrimDigiCollection> hcalInputTPs;
   int nL1JetCollections = m_l1JetsTags.size();
   std::vector<edm::Handle<l1extra::L1JetParticleCollection> > l1Jets ( nL1JetCollections );
-
-  // Get ESHandles
-  iSetup.get<CaloGeometryRecord>().get(geometry);
 
   // Get Handles
   iEvent.getByLabel(m_hbheDigisTag, hbheInputDigis);
@@ -91,7 +83,7 @@ void HcalL1JetDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
 
 	// Loop over HCAL det ids
 	hcalDetIDs.clear();
-	hcalDetIDs = geometry -> detIds( tpDetIDs[itpDetID] );
+	hcalDetIDs = m_hcal_trig_tower_geometry.detIds( tpDetIDs[itpDetID] );
 	int nHcalDetIDs = hcalDetIDs.size();
 	
 	for (int iHcalDetID = 0; iHcalDetID < nHcalDetIDs; ++iHcalDetID){

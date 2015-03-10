@@ -36,6 +36,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<int> > presamples;     
   std::auto_ptr<std::vector<int> > size;           
   std::auto_ptr<std::vector<int> > fiberIdleOffset;
+  std::auto_ptr<std::vector<int> > electronicsId;
+  std::auto_ptr<std::vector<int> > rawId;
   
   std::auto_ptr<std::vector<std::vector<int  > > > dv;	     	
   std::auto_ptr<std::vector<std::vector<int  > > > er;	     	
@@ -124,6 +126,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       presamples      -> push_back ( digi      -> presamples      () );
       size            -> push_back ( digi      -> size            () );
       fiberIdleOffset -> push_back ( digi      -> fiberIdleOffset () );
+      electronicsId   -> push_back ( digi -> elecId().rawId() );
+      rawId           -> push_back ( hcalDetIdW -> rawId() );
 
       dv              -> push_back ( std::vector<int  >() ) ;	     
       er              -> push_back ( std::vector<int  >() ) ;	     

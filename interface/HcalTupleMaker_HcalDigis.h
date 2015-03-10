@@ -49,8 +49,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     if ( m_doEnergyReco ){
       bool gotHCALRecos = iEvent.getByLabel(m_hcalRecHitsTag, hcalRecos);
       if (!gotHCALRecos ) {
-	std::cout << "Could not find HCAL RecHits with tag " << m_hcalRecHitsTag << std::endl;
-	run_algo = false;
+    	std::cout << "Could not find HCAL RecHits with tag " << m_hcalRecHitsTag << std::endl;
+    	run_algo = false;
       }
     }
     
@@ -97,6 +97,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<int>   >               ( m_prefix + "Presamples"      + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Size"            + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "FiberIdleOffset" + m_suffix );
+    produces<std::vector<int>   >               ( m_prefix + "ElectronicsID"   + m_suffix );
+    produces<std::vector<int>   >               ( m_prefix + "RawID"           + m_suffix );
     
     produces<std::vector<std::vector<int>   > > ( m_prefix + "DV"              + m_suffix );	     	
     produces<std::vector<std::vector<int>   > > ( m_prefix + "ER"              + m_suffix );	     	
@@ -134,6 +136,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     algo.presamples      = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.size            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.fiberIdleOffset = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.electronicsId   = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.rawId           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.rec_energy      = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());  
     algo.rec_time        = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());  
     
@@ -166,6 +170,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
    iEvent.put ( algo.presamples      , m_prefix + "Presamples"      + m_suffix );
    iEvent.put ( algo.size            , m_prefix + "Size"            + m_suffix );
    iEvent.put ( algo.fiberIdleOffset , m_prefix + "FiberIdleOffset" + m_suffix );
+   iEvent.put ( algo.electronicsId   , m_prefix + "ElectronicsID"   + m_suffix );
+   iEvent.put ( algo.rawId           , m_prefix + "RawID"           + m_suffix );
    
    iEvent.put ( algo.dv              , m_prefix + "DV"              + m_suffix );	     	
    iEvent.put ( algo.er              , m_prefix + "ER"              + m_suffix );	     	

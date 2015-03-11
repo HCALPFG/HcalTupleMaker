@@ -110,17 +110,18 @@ process.HcalTrigTowerGeometryESProducer = cms.ESProducer("HcalTrigTowerGeometryE
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
 
-# Use an emap that has the uTCA
-process.es_ascii = cms.ESSource('HcalTextCalibrations',
-    input = cms.VPSet(
-        cms.PSet(
-            object = cms.string('ElectronicsMap'),
-            file = cms.FileInPath('version_E_emap_rctonly_jm_12nov.txt')
-            ),
-        )
-    )
-process.es_prefer = cms.ESPrefer('HcalTextCalibrations','es_ascii')
+# Use an emap that has the uTCA (now from the database)
 
+from CalibCalorimetry.HcalPlugins.Hcal_FrontierConditions_cff import es_pool
+
+process.my_es_pool = es_pool
+process.my_es_pool.connect = cms.string("frontier://FrontierPrep/CMS_COND_HCAL")
+process.my_es_pool.toGet = cms.VPSet(
+    cms.PSet(record = cms.string("HcalElectronicsMapRcd"),
+             tag = cms.string("HcalElectronicsMap_v7.06_hlt_test")
+    )
+)
+process.my_es_prefer = cms.ESPrefer('PoolDBESSource','my_es_pool')
 
 # Set up utcaDigis unpacker
 process.hcalDigis.FilterDataQuality = cms.bool(False)
@@ -129,7 +130,6 @@ process.utcaDigis.FEDs = cms.untracked.vint32( 1118, 1120, 1122 )
 
 # for FED in range ( 718, 724 ):
 #     process.utcaDigis.FEDs.append ( FED ) 
-
 
 print process.utcaDigis.FEDs
 

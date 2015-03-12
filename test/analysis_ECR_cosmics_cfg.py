@@ -127,6 +127,21 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V49', '')
 
+# New HO emap
+process.es_pool = cms.ESSource("PoolDBESSource",
+    process.CondDBSetup,
+    timetype = cms.string('runnumber'),
+    toGet = cms.VPSet(
+        cms.PSet(
+            record = cms.string("HcalElectronicsMapRcd"),
+            tag = cms.string("HcalElectronicsMap_v7.00_offline_newtest")
+        )
+    ),
+    connect = cms.string('frontier://FrontierPrep/CMS_COND_HCAL'),
+    authenticationMethod = cms.untracked.uint32(0)
+)
+process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
+
 #------------------------------------------------------------------------------------
 # Set up trigger requirement
 #------------------------------------------------------------------------------------

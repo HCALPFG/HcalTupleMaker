@@ -8,6 +8,14 @@ hcalTupleTriggerPrimitives = cms.EDProducer("HcalTupleMaker_HcalTriggerPrimitive
   Suffix    = cms.untracked.string  ("")
 )
 
+hcalTupleEmulatorTriggerPrimitives = cms.EDProducer("HcalTupleMaker_HcalTriggerPrimitives",
+  source    = cms.untracked.InputTag("emulDigis"),
+  hbheDigis = cms.untracked.InputTag("hcalDigis"),
+  hfDigis   = cms.untracked.InputTag("hcalDigis"),
+  Prefix    = cms.untracked.string  ("HcalEmulatorTriggerPrimitive"),
+  Suffix    = cms.untracked.string  ("")
+)
+
 hcalTupleL1JetTriggerPrimitives = cms.EDProducer("HcalTupleMaker_HcalTriggerPrimitives",
   source    = cms.untracked.InputTag("hcalL1JetDigis"),
   hbheDigis = cms.untracked.InputTag("hcalL1JetDigis"),

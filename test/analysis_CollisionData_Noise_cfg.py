@@ -162,6 +162,8 @@ process.preparation = cms.Path(
     #process.horeco *
     #process.hfreco *
     #
+    process.hbheprerecoMethod0 *
+    process.hbheprerecoMethod2 *
     process.hbherecoMethod0 *
     process.hbherecoMethod2 *
     #

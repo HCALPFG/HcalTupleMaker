@@ -12,12 +12,18 @@ import FWCore.ParameterSet.Config as cms
 # This produces hbhereco from hbheprereco (also applying HBHEIsolatedNoiseReflagger).
 # So we should use hbhereco instead.
 #
+from Configuration.StandardSequences.Reconstruction_Data_cff import hbheprereco
 from Configuration.StandardSequences.Reconstruction_Data_cff import hbhereco
 #
+hbheprerecoMethod2 = hbheprereco.clone()
+hbheprerecoMethod2.puCorrMethod = cms.int32(2)
+hbheprerecoMethod0 = hbheprereco.clone()
+hbheprerecoMethod0.puCorrMethod = cms.int32(0)
+
 hbherecoMethod2 = hbhereco.clone()
-hbherecoMethod2.puCorrMethod = cms.int32(2)
+hbherecoMethod2.hbheInput = cms.InputTag('hbheprerecoMethod2')
 hbherecoMethod0 = hbhereco.clone()
-hbherecoMethod0.puCorrMethod = cms.int32(0)
+hbherecoMethod0.hbheInput = cms.InputTag('hbheprerecoMethod0')
 
 hcalTupleHBHERecHits = cms.EDProducer("HcalTupleMaker_HBHERecHits",
                                       source = cms.untracked.InputTag("hbherecoMethod2"),

@@ -6,3 +6,5 @@ dump.txt
 __*
 *.pyc
 \#*
+*.sh
+*.log

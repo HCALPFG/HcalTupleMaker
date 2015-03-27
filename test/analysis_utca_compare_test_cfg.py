@@ -109,15 +109,12 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 
 # Need to set up the global tag
 # Which to use?  https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
-process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff")
-from Configuration.AlCa.autoCond_condDBv2 import autoCond
-process.GlobalTag.globaltag = autoCond['run2_data']
+process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
+from Configuration.AlCa.autoCond import autoCond
+process.GlobalTag.globaltag = autoCond['com10']
 
 # Need the topology to unpack
 process.load("Geometry.HcalEventSetup.HcalTopology_cfi")
-
-# Make trigger tower geometry
-process.HcalTrigTowerGeometryESProducer = cms.ESProducer("HcalTrigTowerGeometryESProducer")
 
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
@@ -149,7 +146,8 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 # Don't look at GeV values for Digis
 process.hcalTupleHFDigis.DoEnergyReco = cms.untracked.bool ( False ) 
 
-# Don't ignore "bad" digis
+# Don't ignore "bad" digis and read from different source
+process.hcalDigis.InputLabel = cms.InputTag("rawDataCollector")
 process.hcalDigis.FilterDataQuality = cms.bool(False)
 
 # Make a path 

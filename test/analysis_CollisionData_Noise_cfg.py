@@ -67,7 +67,7 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
 # Set up cosmic digis
 #process.load("HCALPFG.HcalTupleMaker.HcalCosmicDigisProducer_cfi")
@@ -94,9 +94,8 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi")
 
 
 # Other statements
-from Configuration.AlCa.GlobalTag import GlobalTag
-from Configuration.AlCa.autoCond import autoCond
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_73_V1A::All', '')
+from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
+from Configuration.AlCa.autoCond_condDBv2 import autoCond
 process.GlobalTag.globaltag = autoCond['run1_data']
 
 #process.my_hlt = cms.EDFilter("HLTHighLevel",

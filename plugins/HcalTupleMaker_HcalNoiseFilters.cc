@@ -72,7 +72,12 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.getByLabel(noiseSummaryInputTag, hSummary);
 
   // HCAL summary objects
-  //std::cout<<"hSummary->maxHPDHits(): "<<hSummary->maxHPDHits()<<std::endl;
+  std::cout<<suffix<<"  hSummary->maxHPDHits()              : "<<hSummary->maxHPDHits()<<std::endl;
+  std::cout<<suffix<<"  hSummary->maxHPDNoOtherHits()       : "<<hSummary->maxHPDNoOtherHits()<<std::endl;
+  std::cout<<suffix<<"  hSummary->maxZeros()                : "<<hSummary->maxZeros()<<std::endl;
+  std::cout<<suffix<<"  hSummary->HasBadRBXTS4TS5()         : "<<hSummary->HasBadRBXTS4TS5()<<std::endl;
+  std::cout<<suffix<<"  hSummary->HasBadRBXRechitR45Loose() : "<<hSummary->HasBadRBXRechitR45Loose()<<std::endl;
+  std::cout<<suffix<<"  hSummary->HasBadRBXRechitR45Tight() : "<<hSummary->HasBadRBXRechitR45Tight()<<std::endl;
   hpdhits                 -> push_back ( hSummary->maxHPDHits() );
   hpdnootherhits          -> push_back ( hSummary->maxHPDNoOtherHits() );
   maxzeros                -> push_back ( hSummary->maxZeros() );

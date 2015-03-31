@@ -22,7 +22,8 @@ process.source = cms.Source("PoolSource")
 
 process.source.fileNames = cms.untracked.vstring(
     #FILENAMES
-    "root://eoscms//eos/cms/store/data/Run2012D/MET/RAW/v1/000/208/487/02185AD3-F03D-E211-BF08-001D09F25479.root"
+    'root://xrootd.unl.edu//store/data/Run2012D/MET/RAW/v1/000/208/913/2007AEB7-7244-E211-B95E-001D09F2983F.root'
+    #"root://eoscms//eos/cms/store/data/Run2012D/MET/RAW/v1/000/208/487/02185AD3-F03D-E211-BF08-001D09F25479.root"
     #-rw-r--r--   2 phedex   zh         3967684833 Feb 13 03:06 02185AD3-F03D-E211-BF08-001D09F25479.root
     #-rw-r--r--   2 phedex   zh         3950736096 Feb 13 03:08 04C9E4B2-E73D-E211-8845-003048F11112.root
     #-rw-r--r--   2 phedex   zh         3886995990 Feb 13 03:06 0854F16B-DE3D-E211-BBCF-0025901D631E.root
@@ -41,7 +42,7 @@ process.source.skipEvents = cms.untracked.uint32(0
 #------------------------------------------------------------------------------------
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(5000
+    input = cms.untracked.int32(100
         #PROCESSEVENTS
     )
 )
@@ -51,8 +52,7 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('file:/tmp/hsaka/test.root')
-    #root://eoscms//eos/cms/store/user/hsaka/HcalNoise/HCALPFGRootNtuple/HcalPFGTree_Run2012D_MET_Run208487_Method0vs2_F1_001D09F25479.root')
+    fileName = cms.string('file:/tmp/hsaka/Test.root')
 )
 
 #------------------------------------------------------------------------------------
@@ -80,9 +80,10 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
-process.hcalTupleHBHEDigis.recHits        = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
-process.hcalTupleHBHECosmicsDigis.recHits = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
-process.hcalTupleHBHEL1JetsDigis.recHits  = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
+process.hcalTupleHBHEDigis.recHits          = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
+process.hcalTupleHBHECosmicsDigis.recHits   = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
+process.hcalTupleHBHEL1JetsDigis.recHits    = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
+process.hcalTupleHBHEDigis.TotalFCthreshold = cms.untracked.double(-9999)# per channel charge threshold to store corresponding digis
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_CollisionData_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 
@@ -106,7 +107,6 @@ process.GlobalTag.globaltag = autoCond['run1_data']
 #     throw = cms.bool(False)    # throw exception on unknown path names
 #)
 
-    
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
@@ -136,7 +136,8 @@ process.tuple_step = cms.Sequence(
     #    process.hcalTupleHORecHits*
     #    process.hcalTupleHFRecHits*
     #    # Trigger info
-    process.hcalTupleTrigger*
+    #process.hcalTupleTrigger*
+    
     #    process.hcalTupleTriggerObjects*
     #    # L1 jet info
     #    process.hcalTupleL1Jets*

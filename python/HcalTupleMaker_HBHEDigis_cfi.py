@@ -6,7 +6,8 @@ hcalTupleHBHEDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   Prefix  = cms.untracked.string ( "HBHEDigi"),
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
-  DoEnergyReco = cms.untracked.bool ( True ) 
+  DoEnergyReco = cms.untracked.bool ( True ) ,
+  TotalFCthreshold = cms.untracked.double ( -9999 ) 
 )
 
 hcalTupleHBHECosmicsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
@@ -15,7 +16,8 @@ hcalTupleHBHECosmicsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   Prefix  = cms.untracked.string ( "HBHECosmicDigi"),
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
-  DoEnergyReco = cms.untracked.bool ( True ) 
+  DoEnergyReco = cms.untracked.bool ( True ) , 
+  TotalFCthreshold = cms.untracked.double ( -9999 ) 
 )
 
 hcalTupleHBHEL1JetsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
@@ -24,5 +26,6 @@ hcalTupleHBHEL1JetsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   Prefix  = cms.untracked.string ( "HBHEL1JetDigi"),
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
-  DoEnergyReco = cms.untracked.bool ( True ) 
+  DoEnergyReco = cms.untracked.bool ( True ) ,
+  TotalFCthreshold = cms.untracked.double ( -9999 ) 
 )

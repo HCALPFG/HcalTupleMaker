@@ -21,6 +21,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   const std::string     m_suffix;
   const bool            m_doChargeReco;
   const bool            m_doEnergyReco;
+  const double          m_totalFCthreshold;
   
   HcalTupleMaker_HcalDigiAlgorithm algo;
   
@@ -86,7 +87,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   m_prefix            (iConfig.getUntrackedParameter<std::string>  ("Prefix")),
   m_suffix            (iConfig.getUntrackedParameter<std::string>  ("Suffix")),
   m_doChargeReco      (iConfig.getUntrackedParameter<bool>         ("DoChargeReco")),
-  m_doEnergyReco      (iConfig.getUntrackedParameter<bool>         ("DoEnergyReco")){
+  m_doEnergyReco      (iConfig.getUntrackedParameter<bool>         ("DoEnergyReco")),
+  m_totalFCthreshold  (iConfig.getUntrackedParameter<double>       ("TotalFCthreshold")){
     
     produces<std::vector<int>   >               ( m_prefix + "IEta"            + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "IPhi"            + m_suffix );
@@ -118,7 +120,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     
     produces<std::vector<float> >               ( m_prefix + "RecEnergy"       + m_suffix );    	
     produces<std::vector<float> >               ( m_prefix + "RecTime"         + m_suffix );      
-    
+
+    algo.setTotalFCthreshold ( m_totalFCthreshold );    
     algo.setDoChargeReco ( m_doChargeReco );
     algo.setDoEnergyReco ( m_doEnergyReco );
     
@@ -160,7 +163,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   }
 
  void dumpAlgo ( edm::Event & iEvent ){
-   
+
    iEvent.put ( algo.ieta            , m_prefix + "IEta"            + m_suffix );
    iEvent.put ( algo.iphi            , m_prefix + "IPhi"            + m_suffix );
    iEvent.put ( algo.eta             , m_prefix + "Eta"             + m_suffix );

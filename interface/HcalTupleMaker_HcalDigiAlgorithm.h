@@ -24,6 +24,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   HcalTupleMaker_HcalDigiAlgorithm();
 
   void run ();
+  void setTotalFCthreshold ( double totFCcut ) { m_totalFCthreshold = totFCcut; }
   void setDoChargeReco ( bool b ) { m_doChargeReco = b; }
   void setDoEnergyReco ( bool b ) { m_doEnergyReco = b; }
   
@@ -38,7 +39,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<int> > fiberIdleOffset;
   std::auto_ptr<std::vector<int> > electronicsId;
   std::auto_ptr<std::vector<int> > rawId;
-  
+
   std::auto_ptr<std::vector<std::vector<int  > > > dv;	     	
   std::auto_ptr<std::vector<std::vector<int  > > > er;	     	
   std::auto_ptr<std::vector<std::vector<int  > > > raw;	     	
@@ -81,7 +82,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
     HcalCalibrations* calibrations = 0;
     HcalQIEShape    * shape        = 0;
     CaloSamples tool;
-
+    
     //-----------------------------------------------------
     // Loop through digis
     //-----------------------------------------------------
@@ -104,7 +105,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       //-----------------------------------------------------
       // If desired, get objects to reconstruct charge
       //-----------------------------------------------------
-
+      
       if ( m_doChargeReco ){
 	channelCoder = const_cast<HcalQIECoder    *> (  conditions.getHcalCoder        (*hcalDetId));  
 	calibrations = const_cast<HcalCalibrations*> (& conditions.getHcalCalibrations (*hcalDetId));
@@ -112,6 +113,24 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	HcalCoderDb coder (*channelCoder, *shape); 
 	coder.adc2fC ( * digi, tool );
       }
+
+      //-----------------------------------------------------
+      // Skip digis with totalFC less than m_totalFCthreshold
+      //-----------------------------------------------------
+
+      int  digi_nTS = digi -> size();
+      float totalFC = 0;
+
+      for ( int iTS = 0; iTS < digi_nTS ; ++iTS ) {
+        const HcalQIESample * qieSample = & digi -> sample (iTS);
+	int   tmp_capid = qieSample -> capid();
+	float tmp_allFC = tool[iTS];
+	float tmp_pedFC = calibrations -> pedestal     ( tmp_capid );
+	float tmp_FC    = tmp_allFC - tmp_pedFC;
+	totalFC+=tmp_FC;
+      }
+
+      if( totalFC < m_totalFCthreshold ) continue;
 
       //-----------------------------------------------------
       // Get digi-specific values
@@ -151,7 +170,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       // Loop through digi time slices
       //-----------------------------------------------------
       
-      int digi_nTS = digi -> size();
+      //int digi_nTS = digi -> size();
 
       for ( int iTS = 0; iTS < digi_nTS ; ++iTS ) {
 
@@ -222,8 +241,9 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   
  private:
   
-  bool m_doChargeReco;
-  bool m_doEnergyReco;
+  bool   m_doChargeReco;
+  bool   m_doEnergyReco;
+  double m_totalFCthreshold;
 
 };
 

@@ -6,5 +6,6 @@ hcalTupleCalibDigis = cms.EDProducer("HcalTupleMaker_CalibDigis",
   Prefix  = cms.untracked.string ("HcalCalibDigi"),
   Suffix  = cms.untracked.string (""),
   DoChargeReco = cms.untracked.bool ( False ) ,
-  DoEnergyReco = cms.untracked.bool ( False ) 
+  DoEnergyReco = cms.untracked.bool ( False ) ,
+  TotalFCthreshold = cms.untracked.double ( -9999 )
 )

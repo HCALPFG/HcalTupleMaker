@@ -142,6 +142,8 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 process.load('SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff')
 process.emulDigis = process.simHcalTriggerPrimitiveDigis.clone()
 process.emulDigis.inputLabel = cms.VInputTag('hcalDigis', 'hcalDigis')
+# process.emulDigis.numberOfPresamples = 1
+# process.emulDigis.numberOfSamples = 2
 
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number

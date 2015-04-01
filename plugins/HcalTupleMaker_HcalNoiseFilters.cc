@@ -134,7 +134,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     // First convert ADC to deposited charge
     const HcalCalibrations &Calibrations = hConditions->getHcalCalibrations(id);
     const HcalQIECoder *ChannelCoder = hConditions->getHcalCoder(id);
-    const HcalQIEShape *Shape = hConditions->getHcalShape();
+    const HcalQIEShape *Shape = hConditions->getHcalShape(id);
     HcalCoderDb Coder(*ChannelCoder, *Shape);
     CaloSamples Tool;
     Coder.adc2fC(*iter, Tool);

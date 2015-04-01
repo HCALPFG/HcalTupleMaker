@@ -26,5 +26,4 @@ class HcalL1JetDigisProducer : public edm::EDProducer {
   edm::InputTag m_hfDigisTag;
   edm::InputTag m_tpsTag;
 
-  HcalTrigTowerGeometry m_hcal_trig_tower_geometry;
 };

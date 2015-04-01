@@ -1,4 +1,6 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalTriggerPrimitives.h"
+#include "Geometry/HcalTowerAlgo/interface/HcalTrigTowerGeometry.h"
+#include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "DataFormats/HcalDetId/interface/HcalTrigTowerDetId.h"
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 #include "DataFormats/Common/interface/Handle.h"
@@ -36,6 +38,9 @@ void HcalTupleMaker_HcalTriggerPrimitives::produce(edm::Event& iEvent, const edm
   std::auto_ptr<std::vector<std::vector<int> > > fineGrain         ( new std::vector<std::vector<int> >());
   std::auto_ptr<std::vector<std::vector<int> > > hbheDigiIndex     ( new std::vector<std::vector<int> >());
   std::auto_ptr<std::vector<std::vector<int> > > hfDigiIndex       ( new std::vector<std::vector<int> >());
+
+  edm::ESHandle<HcalTrigTowerGeometry> geometry;
+  iSetup.get<CaloGeometryRecord>().get(geometry);
 
   edm::Handle<HBHEDigiCollection> hbheDigis;
   iEvent.getByLabel(hbheInputTag, hbheDigis);
@@ -83,7 +88,7 @@ void HcalTupleMaker_HcalTriggerPrimitives::produce(edm::Event& iEvent, const edm
     }
 
     detids.clear();
-    detids = m_hcal_trig_tower_geometry.detIds( id );
+    detids = geometry -> detIds( id );
     int ndetids = detids.size();
     
     for (int i = 0; i < ndetids; ++i){

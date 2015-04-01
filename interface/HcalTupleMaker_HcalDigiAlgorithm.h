@@ -129,7 +129,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       if ( m_doChargeReco ){
 	channelCoder = const_cast<HcalQIECoder    *> (  conditions.getHcalCoder        (*hcalDetId));  
 	calibrations = const_cast<HcalCalibrations*> (& conditions.getHcalCalibrations (*hcalDetId));
-	shape        = const_cast<HcalQIEShape    *> (  conditions.getHcalShape        ());
+	shape        = const_cast<HcalQIEShape    *> (  conditions.getHcalShape        (*hcalDetId));
 	HcalCoderDb coder (*channelCoder, *shape); 
 	coder.adc2fC ( * digi, tool );
       }

@@ -17,7 +17,6 @@ class HcalTupleMaker_HcalTriggerPrimitives : public edm::EDProducer {
   const edm::InputTag   hfInputTag;
   const std::string     prefix,suffix;
 
-  HcalTrigTowerGeometry m_hcal_trig_tower_geometry;
 };
 
 #endif

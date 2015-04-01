@@ -7,6 +7,7 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
+#include "Geometry/HcalTowerAlgo/interface/HcalTrigTowerGeometry.h"
 
 class HcalL1JetDigisProducer : public edm::EDProducer {
  public:
@@ -24,4 +25,6 @@ class HcalL1JetDigisProducer : public edm::EDProducer {
   edm::InputTag m_hbheDigisTag;
   edm::InputTag m_hfDigisTag;
   edm::InputTag m_tpsTag;
+
+  HcalTrigTowerGeometry m_hcal_trig_tower_geometry;
 };

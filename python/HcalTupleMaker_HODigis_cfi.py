@@ -1,5 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
+from SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff import *
+
 hcalTupleHODigis = cms.EDProducer("HcalTupleMaker_HODigis",
   source  = cms.untracked.InputTag("hcalDigis"),
   recHits = cms.untracked.InputTag("horeco"),

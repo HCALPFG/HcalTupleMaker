@@ -4,6 +4,7 @@
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/InputTag.h"
+#include "Geometry/HcalTowerAlgo/interface/HcalTrigTowerGeometry.h"
 
 class HcalTupleMaker_HcalTriggerPrimitives : public edm::EDProducer {
  public:
@@ -15,6 +16,8 @@ class HcalTupleMaker_HcalTriggerPrimitives : public edm::EDProducer {
   const edm::InputTag   hbheInputTag;
   const edm::InputTag   hfInputTag;
   const std::string     prefix,suffix;
+
+  HcalTrigTowerGeometry m_hcal_trig_tower_geometry;
 };
 
 #endif

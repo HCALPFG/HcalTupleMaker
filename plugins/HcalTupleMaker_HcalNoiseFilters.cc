@@ -79,8 +79,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   mine2e10                -> push_back ( hSummary->minE2Over10TS() );
   maxe2e10                -> push_back ( hSummary->maxE2Over10TS() );
   hasbadrbxr45            -> push_back ( hSummary->HasBadRBXTS4TS5() );
-  hasbadrbxrechitr45loose -> push_back ( hSummary->HasBadRBXRechitR45Loose() );
-  hasbadrbxrechitr45tight -> push_back ( hSummary->HasBadRBXRechitR45Tight() );
+  hasbadrbxrechitr45loose -> push_back ( 0 );
+  hasbadrbxrechitr45tight -> push_back ( 0 );
 
 
   edm::Handle<HBHERecHitCollection> hRecHits;
@@ -129,7 +129,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     // First convert ADC to deposited charge
     const HcalCalibrations &Calibrations = hConditions->getHcalCalibrations(id);
     const HcalQIECoder *ChannelCoder = hConditions->getHcalCoder(id);
-    const HcalQIEShape *Shape = hConditions->getHcalShape(ChannelCoder);
+    const HcalQIEShape *Shape = hConditions->getHcalShape();
     HcalCoderDb Coder(*ChannelCoder, *Shape);
     CaloSamples Tool;
     Coder.adc2fC(*iter, Tool);

@@ -8,6 +8,9 @@
 #include "CalibFormats/HcalObjects/interface/HcalDbService.h"
 #include "CalibFormats/HcalObjects/interface/HcalCoderDb.h"
 #include "CalibFormats/HcalObjects/interface/HcalCalibrations.h"
+#include "CalibFormats/HcalObjects/interface/HcalTPGCoder.h"
+#include "CalibFormats/HcalObjects/interface/HcalTPGRecord.h"
+#include "CalibCalorimetry/HcalTPGAlgos/interface/HcaluLUTTPGCoder.h"
 
 // HCAL objects
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
@@ -44,7 +47,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<std::vector<float> > > nomFC;    	
   std::auto_ptr<std::vector<std::vector<int  > > > fiber;    	
   std::auto_ptr<std::vector<std::vector<int  > > > fiberChan;	
-  std::auto_ptr<std::vector<std::vector<int  > > > capid;    	
+  std::auto_ptr<std::vector<std::vector<int  > > > capid;   
+  std::auto_ptr<std::vector<std::vector<int  > > > ladc;   
 						                
   std::auto_ptr<std::vector<std::vector<float> > > allFC;    	
   std::auto_ptr<std::vector<std::vector<float> > > pedFC;    	
@@ -60,7 +64,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
     void run ( const HcalDbService    & conditions,  
 	       const DigiCollection   & digis     , 
 	       const RecoCollection   & recos     ,
-	       const CaloGeometry     & geometry ){
+	       const CaloGeometry     & geometry  ,
+	       const HcalTPGCoder     * inCoder   ){
 
     //-----------------------------------------------------
     // Get iterators
@@ -71,15 +76,24 @@ class HcalTupleMaker_HcalDigiAlgorithm {
     typename DigiCollection::const_iterator digi     = digis.begin();
     typename DigiCollection::const_iterator digi_end = digis.end(); 
 
+    //-----------------------------------------------------
+    // Setup input coder for linear ADC calculation
+    //-----------------------------------------------------
+    
+    m_inputCoder = dynamic_cast<const HcaluLUTTPGCoder *>(inCoder);
+    
     if ( m_doEnergyReco ) reco_end = recos.end();
     
     DetIdClass        * hcalDetId    = 0;
     DetIdClassWrapper * hcalDetIdW   = 0;
-    HcalQIECoder    * channelCoder = 0;
-    HcalCalibrations* calibrations = 0;
-    HcalQIEShape    * shape        = 0;
+    HcalQIECoder      * channelCoder = 0;
+    HcalCalibrations  * calibrations = 0;
+    HcalQIEShape      * shape        = 0;
+    
+    
     CaloSamples tool;
-
+    IntegerCaloSamples itool;
+    
     //-----------------------------------------------------
     // Loop through digis
     //-----------------------------------------------------
@@ -92,7 +106,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       
       hcalDetId  = const_cast <DetIdClass*>        (& digi -> id());
       hcalDetIdW = static_cast<DetIdClassWrapper*> (hcalDetId);
-
+      
       //-----------------------------------------------------
       // Get the position
       //-----------------------------------------------------
@@ -100,13 +114,19 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       const GlobalPoint& position = geometry.getPosition(*hcalDetId);
       
       //-----------------------------------------------------
+      // Get linear ADC
+      //-----------------------------------------------------
+      
+      adc2Linear(*digi, itool);
+
+      //-----------------------------------------------------
       // If desired, get objects to reconstruct charge
       //-----------------------------------------------------
 
       if ( m_doChargeReco ){
 	channelCoder = const_cast<HcalQIECoder    *> (  conditions.getHcalCoder        (*hcalDetId));  
 	calibrations = const_cast<HcalCalibrations*> (& conditions.getHcalCalibrations (*hcalDetId));
-	shape        = const_cast<HcalQIEShape    *> (  conditions.getHcalShape        (*hcalDetId));
+	shape        = const_cast<HcalQIEShape    *> (  conditions.getHcalShape        ());
 	HcalCoderDb coder (*channelCoder, *shape); 
 	coder.adc2fC ( * digi, tool );
       }
@@ -117,10 +137,10 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 
       eta             -> push_back ( position  .  eta             () );
       phi             -> push_back ( position  .  phi             () );
-      ieta            -> push_back ( hcalDetIdW -> ieta            () );
-      iphi            -> push_back ( hcalDetIdW -> iphi            () );
-      depth           -> push_back ( hcalDetIdW -> depth           () );
-      subdet          -> push_back ( hcalDetIdW -> subdet          () );
+      ieta            -> push_back ( hcalDetIdW -> ieta           () );
+      iphi            -> push_back ( hcalDetIdW -> iphi           () );
+      depth           -> push_back ( hcalDetIdW -> depth          () );
+      subdet          -> push_back ( hcalDetIdW -> subdet         () );
       presamples      -> push_back ( digi      -> presamples      () );
       size            -> push_back ( digi      -> size            () );
       fiberIdleOffset -> push_back ( digi      -> fiberIdleOffset () );
@@ -133,6 +153,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       fiber           -> push_back ( std::vector<int  >() ) ;    
       fiberChan       -> push_back ( std::vector<int  >() ) ;
       capid           -> push_back ( std::vector<int  >() ) ;    
+      ladc            -> push_back ( std::vector<int  >() ) ;    
 
       allFC           -> push_back ( std::vector<float>() ) ;    
       pedFC           -> push_back ( std::vector<float>() ) ;    
@@ -171,6 +192,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	(*fiber    )[last_entry].push_back (       qieSample -> fiber()      );
 	(*fiberChan)[last_entry].push_back (       qieSample -> fiberChan()  );
 	(*capid    )[last_entry].push_back (       tmp_capid                 );
+	(*ladc     )[last_entry].push_back (       itool[iTS]                );
 
 	//-----------------------------------------------------
 	// Charge reconstruction values
@@ -189,6 +211,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	  (*FC    )[last_entry].push_back (tmp_FC);
 	  (*energy)[last_entry].push_back (tmp_FC * tmp_gain);
 	  (*gain  )[last_entry].push_back (calibrations -> rawgain ( tmp_capid ));
+	  
 
 	}
       }
@@ -215,11 +238,18 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       }
     } // end of loop over digis
   }
+
+  void adc2Linear ( const HBHEDataFrame      & frame, IntegerCaloSamples & tool ){ m_inputCoder -> adc2Linear ( frame, tool ); }
+  void adc2Linear ( const HFDataFrame        & frame, IntegerCaloSamples & tool ){ m_inputCoder -> adc2Linear ( frame, tool ); }
+  void adc2Linear ( const HODataFrame        & frame, IntegerCaloSamples & tool ){ return; }
+  void adc2Linear ( const HcalCalibDataFrame & frame, IntegerCaloSamples & tool ){ return; }
+  
   
  private:
   
   bool m_doChargeReco;
   bool m_doEnergyReco;
+  const HcaluLUTTPGCoder * m_inputCoder;
 
 };
 

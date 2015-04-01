@@ -63,12 +63,15 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
 
     edm::ESHandle<CaloGeometry> geometry;
     iSetup.get<CaloGeometryRecord>().get(geometry);
+
+    edm::ESHandle<HcalTPGCoder> inputCoder;
+    iSetup.get<HcalTPGRecord>().get(inputCoder);
     
     //-----------------------------------------------------
     // Run the algorithm
     //-----------------------------------------------------
     
-    if ( run_algo ) algo.run<DigiCollection, RecHitCollection, DetIdClass, DetIdClassWrapper > ( *conditions, *hcalDigis, *hcalRecos, *geometry );
+    if ( run_algo ) algo.run<DigiCollection, RecHitCollection, DetIdClass, DetIdClassWrapper > ( *conditions, *hcalDigis, *hcalRecos, *geometry, inputCoder.product() );
     
     //-----------------------------------------------------
     // Put things into the event
@@ -106,6 +109,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<std::vector<int>   > > ( m_prefix + "Fiber"           + m_suffix );    	
     produces<std::vector<std::vector<int>   > > ( m_prefix + "FiberChan"       + m_suffix );	
     produces<std::vector<std::vector<int>   > > ( m_prefix + "CapID"           + m_suffix );    	
+    produces<std::vector<std::vector<int>   > > ( m_prefix + "LADC"            + m_suffix );	     	
     
     produces<std::vector<std::vector<float> > > ( m_prefix + "AllFC"           + m_suffix );    	
     produces<std::vector<std::vector<float> > > ( m_prefix + "PedFC"           + m_suffix );    	
@@ -145,6 +149,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     algo.fiber           = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
     algo.fiberChan       = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
     algo.capid           = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.ladc            = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
     
     algo.allFC           = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
     algo.pedFC           = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
@@ -175,6 +180,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
    iEvent.put ( algo.fiber           , m_prefix + "Fiber"           + m_suffix );    	
    iEvent.put ( algo.fiberChan       , m_prefix + "FiberChan"       + m_suffix );	
    iEvent.put ( algo.capid           , m_prefix + "CapID"           + m_suffix );    	
+   iEvent.put ( algo.ladc   	     , m_prefix + "LADC"            + m_suffix );	     	
    
    iEvent.put ( algo.allFC           , m_prefix + "AllFC"           + m_suffix );    	
    iEvent.put ( algo.pedFC           , m_prefix + "PedFC"           + m_suffix );    	

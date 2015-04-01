@@ -8,7 +8,8 @@ hcalTupleHODigis = cms.EDProducer("HcalTupleMaker_HODigis",
   Prefix  = cms.untracked.string ( "HODigi"),
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
-  DoEnergyReco = cms.untracked.bool ( True ) 
+  DoEnergyReco = cms.untracked.bool ( True ) ,
+  TotalFCthreshold = cms.untracked.double ( -9999 )
 )
 
 hcalTupleHOCosmicsDigis = cms.EDProducer("HcalTupleMaker_HODigis",
@@ -17,5 +18,6 @@ hcalTupleHOCosmicsDigis = cms.EDProducer("HcalTupleMaker_HODigis",
   Prefix  = cms.untracked.string ( "HOCosmicDigi"),
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
-  DoEnergyReco = cms.untracked.bool ( True ) 
+  DoEnergyReco = cms.untracked.bool ( True ) ,
+  TotalFCthreshold = cms.untracked.double ( -9999 )
 )

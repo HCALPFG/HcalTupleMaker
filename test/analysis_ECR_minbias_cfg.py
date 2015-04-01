@@ -127,36 +127,6 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V49', '')
 
-# New HO emap
-process.es_pool = cms.ESSource("PoolDBESSource",
-    process.CondDBSetup,
-    timetype = cms.string('runnumber'),
-    toGet = cms.VPSet(
-        cms.PSet(
-            record = cms.string("HcalElectronicsMapRcd"),
-            tag = cms.string("HcalElectronicsMap_v7.00_offline_newtest")
-        )
-    ),
-    connect = cms.string('frontier://FrontierPrep/CMS_COND_HCAL'),
-    authenticationMethod = cms.untracked.uint32(0)
-)
-process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
-
-#------------------------------------------------------------------------------------
-# Set up trigger requirement
-#------------------------------------------------------------------------------------
-
-process.my_hlt = cms.EDFilter("HLTHighLevel",
-     TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),
-     HLTPaths = cms.vstring(              # provide list of HLT paths (or patterns) you want
-         "HLT_L1SingleMuOpen*",           # L1 muon trigger in /Cosmics/
-         "HLT_L1Tech_HBHEHO_totalOR_*"    # HO trigger in /HcalHPDNoise/
-     ), 
-     eventSetupPathsKey = cms.string(''), # not empty => use read paths from AlCaRecoTriggerBitsRcd via this key
-     andOr = cms.bool(True),              # how to deal with multiple triggers: True (OR) accept if ANY is true, False (AND) accept if ALL are true
-     throw = cms.bool(False)              # throw exception on unknown path names
-)
-
 #------------------------------------------------------------------------------------
 # Define the tuple-making sequence
 #------------------------------------------------------------------------------------
@@ -172,9 +142,6 @@ process.tuple_step = cms.Sequence(
     process.hcalTupleHFDigis*
     process.hcalTupleTriggerPrimitives*
     # Make HCAL tuples: digi info
-    process.hcalTupleHBHECosmicsDigis*
-    process.hcalTupleHOCosmicsDigis*
-    # Make HCAL tuples: digi info
     process.hcalTupleHBHEL1JetsDigis*
     process.hcalTupleHFL1JetsDigis*
     process.hcalTupleL1JetTriggerPrimitives*
@@ -188,8 +155,6 @@ process.tuple_step = cms.Sequence(
     # L1 jet info
     process.hcalTupleL1Jets*
     process.hcalTupleL1GCTJets*
-    # Make HCAL tuples: cosmic muon info
-    process.hcalTupleCosmicMuons*
     # Package everything into a tree
     process.hcalTupleTree
 )
@@ -200,7 +165,6 @@ process.tuple_step = cms.Sequence(
 
 # Path and EndPath definitions
 process.preparation = cms.Path(
-    process.my_hlt *
     process.RawToDigi *
     process.L1Reco *
     process.reconstructionCosmics *

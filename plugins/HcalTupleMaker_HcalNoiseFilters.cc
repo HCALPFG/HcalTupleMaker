@@ -84,8 +84,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   mine2e10                -> push_back ( hSummary->minE2Over10TS() );
   maxe2e10                -> push_back ( hSummary->maxE2Over10TS() );
   hasbadrbxr45            -> push_back ( hSummary->HasBadRBXTS4TS5() );
-  hasbadrbxrechitr45loose -> push_back ( 0 );
-  hasbadrbxrechitr45tight -> push_back ( 0 );
+  hasbadrbxrechitr45loose -> push_back ( hSummary->HasBadRBXRechitR45Loose() );
+  hasbadrbxrechitr45tight -> push_back ( hSummary->HasBadRBXRechitR45Tight() );
 
 
   edm::Handle<HBHERecHitCollection> hRecHits;

@@ -99,7 +99,7 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi")
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V49::All', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V53::All', '')
 
 #process.my_hlt = cms.EDFilter("HLTHighLevel",
 #     TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),

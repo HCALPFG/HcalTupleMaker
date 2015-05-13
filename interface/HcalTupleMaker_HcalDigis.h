@@ -92,6 +92,10 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<int>   >               ( m_prefix + "IPhi"            + m_suffix );
     produces<std::vector<float> >               ( m_prefix + "Eta"             + m_suffix );
     produces<std::vector<float> >               ( m_prefix + "Phi"             + m_suffix );
+    produces<std::vector<float> >               ( m_prefix + "X"               + m_suffix );
+    produces<std::vector<float> >               ( m_prefix + "Y"               + m_suffix );
+    produces<std::vector<float> >               ( m_prefix + "Z"               + m_suffix );
+    produces<std::vector<float> >               ( m_prefix + "R"               + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Subdet"          + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Depth"           + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Presamples"      + m_suffix );
@@ -131,6 +135,10 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     algo.iphi            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.eta             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
     algo.phi             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
+    algo.x               = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
+    algo.y               = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
+    algo.z               = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
+    algo.r               = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
     algo.depth           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.subdet          = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.presamples      = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
@@ -165,6 +173,10 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
    iEvent.put ( algo.iphi            , m_prefix + "IPhi"            + m_suffix );
    iEvent.put ( algo.eta             , m_prefix + "Eta"             + m_suffix );
    iEvent.put ( algo.phi             , m_prefix + "Phi"             + m_suffix );
+   iEvent.put ( algo.x               , m_prefix + "X"               + m_suffix );
+   iEvent.put ( algo.y               , m_prefix + "Y"               + m_suffix );
+   iEvent.put ( algo.z               , m_prefix + "Z"               + m_suffix );
+   iEvent.put ( algo.r               , m_prefix + "R"               + m_suffix );
    iEvent.put ( algo.depth           , m_prefix + "Depth"           + m_suffix );
    iEvent.put ( algo.subdet          , m_prefix + "Subdet"          + m_suffix );
    iEvent.put ( algo.presamples      , m_prefix + "Presamples"      + m_suffix );

@@ -30,7 +30,11 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<int> > ieta;           
   std::auto_ptr<std::vector<int> > iphi;           
   std::auto_ptr<std::vector<float> > eta;           
-  std::auto_ptr<std::vector<float> > phi;          
+  std::auto_ptr<std::vector<float> > phi;
+  std::auto_ptr<std::vector<float> > x;
+  std::auto_ptr<std::vector<float> > y;
+  std::auto_ptr<std::vector<float> > z;
+  std::auto_ptr<std::vector<float> > r;          
   std::auto_ptr<std::vector<int> > subdet;          
   std::auto_ptr<std::vector<int> > depth;          
   std::auto_ptr<std::vector<int> > presamples;     
@@ -117,8 +121,15 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       // Get digi-specific values
       //-----------------------------------------------------
 
+      double tmp_r = std::sqrt ( position.x() * position.x() +
+				 position.y() * position.y() );
+      
       eta             -> push_back ( position  .  eta             () );
       phi             -> push_back ( position  .  phi             () );
+      x               -> push_back ( position  .  x               () );
+      y               -> push_back ( position  .  y               () );
+      z               -> push_back ( position  .  z               () );
+      r               -> push_back ( tmp_r );
       ieta            -> push_back ( hcalDetIdW -> ieta            () );
       iphi            -> push_back ( hcalDetIdW -> iphi            () );
       depth           -> push_back ( hcalDetIdW -> depth           () );

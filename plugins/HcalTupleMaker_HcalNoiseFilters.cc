@@ -33,6 +33,9 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   produces <std::vector<int> >                  (prefix + "HasBadRBXR45"             + suffix );
   produces <std::vector<int> >                  (prefix + "HasBadRBXRechitR45Loose"  + suffix );
   produces <std::vector<int> >                  (prefix + "HasBadRBXRechitR45Tight"  + suffix );
+  produces <std::vector<int> >                  (prefix + "NumIsolatedNoiseChannels" + suffix );
+  produces <std::vector<double> >               (prefix + "IsolatedNoiseSumE"        + suffix );
+  produces <std::vector<double> >               (prefix + "IsolatedNoiseSumEt"       + suffix );
   produces <std::vector<unsigned int> >         (prefix + "FlagWord"                 + suffix );
   produces <std::vector<unsigned int> >         (prefix + "AuxWord"                  + suffix );
   //
@@ -54,6 +57,9 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   std::auto_ptr<std::vector<int> >                  hasbadrbxr45               ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  hasbadrbxrechitr45loose    ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  hasbadrbxrechitr45tight    ( new std::vector<int>                  ());
+  std::auto_ptr<std::vector<int> >                  numisolatednoisechannels   ( new std::vector<int>                  ());
+  std::auto_ptr<std::vector<double> >               isolatednoisesume          ( new std::vector<double>               ());
+  std::auto_ptr<std::vector<double> >               isolatednoisesumet         ( new std::vector<double>               ());
   std::auto_ptr<std::vector<unsigned int> >         flagword                   ( new std::vector<unsigned int>         ());
   std::auto_ptr<std::vector<unsigned int> >         auxword                    ( new std::vector<unsigned int>         ());
   std::auto_ptr<std::vector<std::vector<double> > > rbxcharge                  ( new std::vector<std::vector<double> > ());
@@ -72,29 +78,34 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.getByLabel(noiseSummaryInputTag, hSummary);
 
   // HCAL summary objects
-  std::cout<<suffix<<"  hSummary->maxHPDHits()              : "<<hSummary->maxHPDHits()<<std::endl;
-  std::cout<<suffix<<"  hSummary->maxHPDNoOtherHits()       : "<<hSummary->maxHPDNoOtherHits()<<std::endl;
-  std::cout<<suffix<<"  hSummary->maxZeros()                : "<<hSummary->maxZeros()<<std::endl;
-  std::cout<<suffix<<"  hSummary->HasBadRBXTS4TS5()         : "<<hSummary->HasBadRBXTS4TS5()<<std::endl;
-  std::cout<<suffix<<"  hSummary->HasBadRBXRechitR45Loose() : "<<hSummary->HasBadRBXRechitR45Loose()<<std::endl;
-  std::cout<<suffix<<"  hSummary->HasBadRBXRechitR45Tight() : "<<hSummary->HasBadRBXRechitR45Tight()<<std::endl;
-  hpdhits                 -> push_back ( hSummary->maxHPDHits() );
-  hpdnootherhits          -> push_back ( hSummary->maxHPDNoOtherHits() );
-  maxzeros                -> push_back ( hSummary->maxZeros() );
-  mine2e10                -> push_back ( hSummary->minE2Over10TS() );
-  maxe2e10                -> push_back ( hSummary->maxE2Over10TS() );
-  hasbadrbxr45            -> push_back ( hSummary->HasBadRBXTS4TS5() );
-  hasbadrbxrechitr45loose -> push_back ( hSummary->HasBadRBXRechitR45Loose() );
-  hasbadrbxrechitr45tight -> push_back ( hSummary->HasBadRBXRechitR45Tight() );
-
+  //debugging
+  //std::cout<<suffix<<"  hSummary->maxHPDHits()              : "<<hSummary->maxHPDHits()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->maxHPDNoOtherHits()       : "<<hSummary->maxHPDNoOtherHits()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->maxZeros()                : "<<hSummary->maxZeros()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->HasBadRBXTS4TS5()         : "<<hSummary->HasBadRBXTS4TS5()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->HasBadRBXRechitR45Loose() : "<<hSummary->HasBadRBXRechitR45Loose()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->HasBadRBXRechitR45Tight() : "<<hSummary->HasBadRBXRechitR45Tight()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->numIsolatedNoiseChannels(): "<<hSummary->numIsolatedNoiseChannels()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->isolatedNoiseSumE()       : "<<hSummary->isolatedNoiseSumE()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->isolatedNoiseSumEt()      : "<<hSummary->isolatedNoiseSumEt()<<std::endl;
+  //
+  hpdhits                  -> push_back ( hSummary->maxHPDHits() );
+  hpdnootherhits           -> push_back ( hSummary->maxHPDNoOtherHits() );
+  maxzeros                 -> push_back ( hSummary->maxZeros() );
+  mine2e10                 -> push_back ( hSummary->minE2Over10TS() );
+  maxe2e10                 -> push_back ( hSummary->maxE2Over10TS() );
+  hasbadrbxr45             -> push_back ( hSummary->HasBadRBXTS4TS5() );
+  hasbadrbxrechitr45loose  -> push_back ( hSummary->HasBadRBXRechitR45Loose() );
+  hasbadrbxrechitr45tight  -> push_back ( hSummary->HasBadRBXRechitR45Tight() );
+  numisolatednoisechannels -> push_back ( hSummary->numIsolatedNoiseChannels() );
+  isolatednoisesume        -> push_back ( hSummary->isolatedNoiseSumE() );
+  isolatednoisesumet       -> push_back ( hSummary->isolatedNoiseSumEt() );
 
   edm::Handle<HBHERecHitCollection> hRecHits;
   iEvent.getByLabel(recoInputTag, hRecHits);
-  //std::cout<<"(int)hRecHits->size(): "<<(int)hRecHits->size()<<std::endl;
 
   edm::Handle<HBHEDigiCollection> hHBHEDigis;
   iEvent.getByLabel("hcalDigis", hHBHEDigis);
-  //std::cout<<"(int)hHBHEDigis->size(): "<<(int)hHBHEDigis->size()<<std::endl;
 
   edm::ESHandle<HcalDbService> hConditions;
   iSetup.get<HcalDbRecord>().get(hConditions);
@@ -130,6 +141,12 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     flagword -> push_back ( (*hRecHits)[RecHitIndex[id]].flags() );
     auxword  -> push_back ( (*hRecHits)[RecHitIndex[id]].aux()   );
     //
+    //debugging
+    //if( (*hRecHits)[RecHitIndex[id]].energy()>50 ){
+    //std::cout<<suffix<<"  RechitEnergy/iEta/iPhi/iDepth: "<< (*hRecHits)[RecHitIndex[id]].energy() <<" / "<<id.ieta()<<" / "<< id.iphi()<<" / "<< id.depth();
+    //std::cout<<suffix<<"                          Bit11: "<< (( (*hRecHits)[RecHitIndex[id]].flags() >> 11 ) & 1) <<std::endl;
+    //std::cout<< <<std::endl;
+    //}
 
     // First convert ADC to deposited charge
     const HcalCalibrations &Calibrations = hConditions->getHcalCalibrations(id);
@@ -172,6 +189,9 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.put( hasbadrbxr45             , prefix + "HasBadRBXR45"             + suffix );
   iEvent.put( hasbadrbxrechitr45loose  , prefix + "HasBadRBXRechitR45Loose"  + suffix );
   iEvent.put( hasbadrbxrechitr45tight  , prefix + "HasBadRBXRechitR45Tight"  + suffix );
+  iEvent.put( numisolatednoisechannels , prefix + "NumIsolatedNoiseChannels" + suffix );
+  iEvent.put( isolatednoisesume        , prefix + "IsolatedNoiseSumE"        + suffix );
+  iEvent.put( isolatednoisesumet       , prefix + "IsolatedNoiseSumEt"       + suffix );
   iEvent.put( flagword                 , prefix + "FlagWord"                 + suffix );
   iEvent.put( auxword                  , prefix + "AuxWord"                  + suffix );
   iEvent.put( rbxcharge                , prefix + "RBXCharge"                + suffix );

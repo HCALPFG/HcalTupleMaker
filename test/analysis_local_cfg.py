@@ -54,15 +54,16 @@ process = cms.Process("ANA")
 
 process.source = cms.Source("HcalTBSource",
    quiet = cms.untracked.bool ( False ),
-   streams = cms.untracked.vstring(
-       "HCAL_Trigger","HCAL_SlowData","HCAL_QADCTDC",
-       "HCAL_DCC700","HCAL_DCC701","HCAL_DCC702","HCAL_DCC703","HCAL_DCC704","HCAL_DCC705",
-       "HCAL_DCC706","HCAL_DCC707","HCAL_DCC708","HCAL_DCC709","HCAL_DCC710","HCAL_DCC711",
-       "HCAL_DCC712","HCAL_DCC713","HCAL_DCC714","HCAL_DCC715","HCAL_DCC716","HCAL_DCC717",
-       "HCAL_DCC718","HCAL_DCC719","HCAL_DCC720","HCAL_DCC721","HCAL_DCC722","HCAL_DCC723",
-       "HCAL_DCC724","HCAL_DCC725","HCAL_DCC726","HCAL_DCC727","HCAL_DCC728","HCAL_DCC729",
-       "HCAL_DCC730","HCAL_DCC731"
-   )
+# Jae fixed
+#   streams = cms.untracked.vstring(
+#       "HCAL_Trigger","HCAL_SlowData","HCAL_QADCTDC",
+#       "HCAL_DCC700","HCAL_DCC701","HCAL_DCC702","HCAL_DCC703","HCAL_DCC704","HCAL_DCC705",
+#       "HCAL_DCC706","HCAL_DCC707","HCAL_DCC708","HCAL_DCC709","HCAL_DCC710","HCAL_DCC711",
+#       "HCAL_DCC712","HCAL_DCC713","HCAL_DCC714","HCAL_DCC715","HCAL_DCC716","HCAL_DCC717",
+#       "HCAL_DCC718","HCAL_DCC719","HCAL_DCC720","HCAL_DCC721","HCAL_DCC722","HCAL_DCC723",
+#       "HCAL_DCC724","HCAL_DCC725","HCAL_DCC726","HCAL_DCC727","HCAL_DCC728","HCAL_DCC729",
+#       "HCAL_DCC730","HCAL_DCC731"
+#   )
 )
 
 #------------------------------------------------------------------------------------
@@ -179,7 +180,7 @@ process.p = cms.Path(
     # Unpack digis from RAW
     process.hcalDigis*
     # Unpack the HCAL laser digis
-    process.hcalLaserReco*
+    #process.hcalLaserReco* # FIXME 
     # Do energy reconstruction
     process.hbhereco* 
     process.horeco* 

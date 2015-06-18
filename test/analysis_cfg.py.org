@@ -15,7 +15,7 @@ process = cms.Process("ANA")
 # Is this a local run? Or a global run?
 #------------------------------------------------------------------------------------
 
-isLocalRun = False
+isLocalRun = True
 isGlobalRun = not isLocalRun 
 
 #------------------------------------------------------------------------------------
@@ -45,22 +45,17 @@ if isGlobalRun:
 
 process.source.fileNames = cms.untracked.vstring(
     # Example local run:
-    #"root://eoscms//eos/cms/store/group/comm_hcal/LS1/USC_224625.root"
+    "root://eoscms//eos/cms/store/group/comm_hcal/LS1/USC_224625.root"
     # Example global run:
     # "root://eoscms//eos/cms/store/data/Commissioning2014/MinimumBias/RAW/v3/000/225/826/00000/DEE3076C-9C33-E411-90F0-02163E00F114.root"
-     #"root://eoscms.cern.ch//eos/cms/store/data/Run2015A/Commissioning/RECO/PromptReco-v1/000/246/958/00000/06C51CFB-240C-E511-A0BE-02163E01184D.root"
-     "root://eoscms//eos/cms/store/data/Run2015A/Commissioning/RAW/v1/000/246/958/00000/02D49C1A-B80A-E511-8CD0-02163E011E07.root"
 )
-
-#process.source.skipEvents = cms.untracked.uint32(0)
 
 #------------------------------------------------------------------------------------
 # How many events should we run over?
 #------------------------------------------------------------------------------------
 
 process.maxEvents = cms.untracked.PSet(
-#    input = cms.untracked.int32(-1)
-    input = cms.untracked.int32(10)
+    input = cms.untracked.int32(-1)
 )
 
 #------------------------------------------------------------------------------------
@@ -68,8 +63,7 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-#    fileName = cms.string( 'HCAL_output.root' )
-    fileName = cms.string( 'test_output.root' )
+    fileName = cms.string( 'HCAL_output.root' )
 )
 
 #------------------------------------------------------------------------------------
@@ -84,9 +78,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 # Which to use?  https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V46::All')
-#process.GlobalTag.globaltag = 'GR_P_V50::All'
-process.GlobalTag.globaltag = 'GR_P_V56::All'
+process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V46::All')
 
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
@@ -135,20 +127,20 @@ process.p = cms.Path(
     process.hcalDigis*
     # Do energy reconstruction
     process.hbheprereco*
-#    process.horeco* 
-#    process.hfreco* 
+    process.horeco* 
+    process.hfreco* 
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     # Make HCAL tuples: FED info
     process.hcalTupleFEDs*
     # Make HCAL tuples: digi info
     process.hcalTupleHBHEDigis*
-#    process.hcalTupleHODigis*
-#    process.hcalTupleHFDigis*
+    process.hcalTupleHODigis*
+    process.hcalTupleHFDigis*
     # Make HCAL tuples: reco info
     process.hcalTupleHBHERecHits*
-#    process.hcalTupleHORecHits*
-#    process.hcalTupleHFRecHits*
+    process.hcalTupleHORecHits*
+    process.hcalTupleHFRecHits*
     # Package everything into a tree
     process.hcalTupleTree
 )

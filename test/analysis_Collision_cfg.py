@@ -18,7 +18,7 @@ options.register('skipEvents',
                  "Number of events to skip")
 
 options.register('processEvents',
-                 0, #default value
+                 -1, #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Number of events to process")
@@ -114,6 +114,8 @@ process.load('RecoMET.METProducers.hcalnoiseinfoproducer_cfi')
 process.load("CommonTools.RecoAlgos.HBHENoiseFilter_cfi")
 process.load("CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi")
 
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
+
 #------------------------------------------------------------------------------------------------------------------------------------
 # Global tag
 #------------------------------------------------------------------------------------------------------------------------------------
@@ -156,7 +158,7 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 # New HO emap
 process.es_pool = cms.ESSource("PoolDBESSource",
     process.CondDBSetup,
-    timetype = cms.string('runnumber'),
+    htimetype = cms.string('runnumber'),
     toGet = cms.VPSet(
         cms.PSet(
             record = cms.string("HcalElectronicsMapRcd"),
@@ -181,14 +183,14 @@ process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     # Make HCAL tuples: FED info
-    process.hcalTupleFEDs*
+    #process.hcalTupleFEDs*
     # Make HCAL tuples: digi info
     process.hcalTupleHBHEDigis*
-    process.hcalTupleHODigis*
-    process.hcalTupleHFDigis*
+    #process.hcalTupleHODigis*
+    #process.hcalTupleHFDigis*
     # process.hcalTupleTriggerPrimitives*
     # Trigger info
-    process.hcalTupleTrigger*
+    #process.hcalTupleTrigger*
     # process.hcalTupleTriggerObjects*
     # Package everything into a tree
     process.hcalTupleTree

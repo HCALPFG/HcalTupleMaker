@@ -35,19 +35,12 @@ options.register('outputFile',
                  VarParsing.VarParsing.varType.string,
                  "Output file")
 
-options.register('globalTag',
-		'GR_H_V58C',
-		VarParsing.VarParsing.multiplicity.singleton,
-		VarParsing.VarParsing.varType.string,
-		"Global Tag")
-
 options.parseArguments()
 
 print "Skip events =", options.skipEvents
 print "Process events =", options.processEvents
 print "inputFiles =", options.inputFiles
 print "outputFile =", options.outputFile
-print "Global Tag =", options.globalTag
 
 #------------------------------------------------------------------------------------
 # Declare the process
@@ -125,7 +118,7 @@ process.load("CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi")
 # Global tag
 #------------------------------------------------------------------------------------------------------------------------------------
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, options.globalTag, '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V54', '')
 
 
 #------------------------------------------------------------------------------------------------------------------------------------

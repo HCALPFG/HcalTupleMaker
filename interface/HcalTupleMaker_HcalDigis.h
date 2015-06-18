@@ -104,7 +104,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<int>   >               ( m_prefix + "FiberIdleOffset" + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "ElectronicsID"   + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "RawID"           + m_suffix );
-    
+/*    
     produces<std::vector<std::vector<int>   > > ( m_prefix + "DV"              + m_suffix );	     	
     produces<std::vector<std::vector<int>   > > ( m_prefix + "ER"              + m_suffix );	     	
     produces<std::vector<std::vector<int>   > > ( m_prefix + "Raw"             + m_suffix );	     	
@@ -121,7 +121,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<std::vector<float> > > ( m_prefix + "RCGain"          + m_suffix );    	
     produces<std::vector<std::vector<float> > > ( m_prefix + "FC"              + m_suffix );		
     produces<std::vector<std::vector<float> > > ( m_prefix + "Energy"          + m_suffix );    	
-    
+*/   
     produces<std::vector<float> >               ( m_prefix + "RecEnergy"       + m_suffix );    	
     produces<std::vector<float> >               ( m_prefix + "RecTime"         + m_suffix );      
 
@@ -147,7 +147,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     algo.rawId           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.rec_energy      = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());  
     algo.rec_time        = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());  
-    
+/*  
     algo.dv 	         = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
     algo.er 	         = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
     algo.raw 	         = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
@@ -164,7 +164,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     algo.rcgain          = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
     algo.FC 	         = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
     algo.energy          = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
-    
+*/    
   }
 
  void dumpAlgo ( edm::Event & iEvent ){
@@ -180,7 +180,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
    iEvent.put ( algo.fiberIdleOffset , m_prefix + "FiberIdleOffset" + m_suffix );
    iEvent.put ( algo.electronicsId   , m_prefix + "ElectronicsID"   + m_suffix );
    iEvent.put ( algo.rawId           , m_prefix + "RawID"           + m_suffix );
-   
+/*   
    iEvent.put ( algo.dv              , m_prefix + "DV"              + m_suffix );	     	
    iEvent.put ( algo.er              , m_prefix + "ER"              + m_suffix );	     	
    iEvent.put ( algo.raw  	     , m_prefix + "Raw"             + m_suffix );	     	
@@ -197,7 +197,7 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
    iEvent.put ( algo.rcgain          , m_prefix + "RCGain"          + m_suffix );    	
    iEvent.put ( algo.FC 	     , m_prefix + "FC"              + m_suffix );		
    iEvent.put ( algo.energy          , m_prefix + "Energy"          + m_suffix );    	
-   
+*/   
    iEvent.put ( algo.rec_energy      , m_prefix + "RecEnergy"       + m_suffix );    	
    iEvent.put ( algo.rec_time        , m_prefix + "RecTime"         + m_suffix );      
    

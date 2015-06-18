@@ -42,7 +42,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<int> > fiberIdleOffset;
   std::auto_ptr<std::vector<int> > electronicsId;
   std::auto_ptr<std::vector<int> > rawId;
-
+/*
   std::auto_ptr<std::vector<std::vector<int  > > > dv;	     	
   std::auto_ptr<std::vector<std::vector<int  > > > er;	     	
   std::auto_ptr<std::vector<std::vector<int  > > > raw;	     	
@@ -59,7 +59,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<std::vector<float> > > rcgain;    	
   std::auto_ptr<std::vector<std::vector<float> > > FC;		
   std::auto_ptr<std::vector<std::vector<float> > > energy;    	
-						                
+*/						                
   std::auto_ptr<std::vector<float> > rec_energy;    
   std::auto_ptr<std::vector<float> > rec_time;    
   
@@ -142,12 +142,12 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       float totalFC = 0;
 
       for ( int iTS = 0; iTS < digi_nTS ; ++iTS ) {
-        const HcalQIESample * qieSample = & digi -> sample (iTS);
-	int   tmp_capid = qieSample -> capid();
-	float tmp_allFC = tool[iTS];
-	float tmp_pedFC = calibrations -> pedestal     ( tmp_capid );
-	float tmp_FC    = tmp_allFC - tmp_pedFC;
-	totalFC+=tmp_FC;
+          const HcalQIESample * qieSample = & digi -> sample (iTS);
+          int   tmp_capid = qieSample -> capid();
+          float tmp_allFC = tool[iTS];
+          float tmp_pedFC = calibrations -> pedestal     ( tmp_capid );
+          float tmp_FC    = tmp_allFC - tmp_pedFC;
+          totalFC+=tmp_FC;
       }
 
       if( totalFC < m_totalFCthreshold ) continue;
@@ -167,7 +167,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       fiberIdleOffset -> push_back ( digi      -> fiberIdleOffset () );
       electronicsId   -> push_back ( digi -> elecId().rawId() );
       rawId           -> push_back ( hcalDetIdW -> rawId() );
-
+/*
       dv              -> push_back ( std::vector<int  >() ) ;	     
       er              -> push_back ( std::vector<int  >() ) ;	     
       raw             -> push_back ( std::vector<int  >() ) ;	     
@@ -186,59 +186,59 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       energy          -> push_back ( std::vector<float>() ) ;    
 
       size_t last_entry = energy -> size() - 1;
-      
+*/      
       //-----------------------------------------------------
       // Loop through digi time slices
       //-----------------------------------------------------
       
       //int digi_nTS = digi -> size();
-
+/*
       for ( int iTS = 0; iTS < digi_nTS ; ++iTS ) {
 
-	//-----------------------------------------------------
-	// Get slice-specific cc objects
-	//-----------------------------------------------------
-	
-	const HcalQIESample * qieSample = & digi -> sample (iTS);
+          //-----------------------------------------------------
+          // Get slice-specific cc objects
+          //-----------------------------------------------------
 
-	//-----------------------------------------------------
-	// Standard stuff without charge reconstruction
-	//-----------------------------------------------------
+          const HcalQIESample * qieSample = & digi -> sample (iTS);
 
-	int tmp_capid = qieSample -> capid();
+          //-----------------------------------------------------
+          // Standard stuff without charge reconstruction
+          //-----------------------------------------------------
 
-	(*dv       )[last_entry].push_back ( (int) qieSample -> dv()         );
-	(*er       )[last_entry].push_back ( (int) qieSample -> er()         );
-	(*raw      )[last_entry].push_back (       qieSample -> raw()        );
-	(*adc      )[last_entry].push_back (       qieSample -> adc()        );
-	(*nomFC    )[last_entry].push_back (       qieSample -> nominal_fC() );
-	(*fiber    )[last_entry].push_back (       qieSample -> fiber()      );
-	(*fiberChan)[last_entry].push_back (       qieSample -> fiberChan()  );
-	(*capid    )[last_entry].push_back (       tmp_capid                 );
-	(*ladc     )[last_entry].push_back (       itool[iTS]                );
+          int tmp_capid = qieSample -> capid();
 
-	//-----------------------------------------------------
-	// Charge reconstruction values
-	//-----------------------------------------------------
-	
-	if ( m_doChargeReco ){
+          (*dv       )[last_entry].push_back ( (int) qieSample -> dv()         );
+          (*er       )[last_entry].push_back ( (int) qieSample -> er()         );
+          (*raw      )[last_entry].push_back (       qieSample -> raw()        );
+          (*adc      )[last_entry].push_back (       qieSample -> adc()        );
+          (*nomFC    )[last_entry].push_back (       qieSample -> nominal_fC() );
+          (*fiber    )[last_entry].push_back (       qieSample -> fiber()      );
+          (*fiberChan)[last_entry].push_back (       qieSample -> fiberChan()  );
+          (*capid    )[last_entry].push_back (       tmp_capid                 );
+          (*ladc     )[last_entry].push_back (       itool[iTS]                );
 
-	  float tmp_allFC = tool[iTS];
-	  float tmp_pedFC = calibrations -> pedestal     ( tmp_capid );
-	  float tmp_gain  = calibrations -> respcorrgain ( tmp_capid );
-	  float tmp_FC    = tmp_allFC - tmp_pedFC;
+          //-----------------------------------------------------
+          // Charge reconstruction values
+          //-----------------------------------------------------
 
-	  (*allFC )[last_entry].push_back (tmp_allFC);
-	  (*pedFC )[last_entry].push_back (tmp_pedFC);
-	  (*rcgain)[last_entry].push_back (tmp_gain);
-	  (*FC    )[last_entry].push_back (tmp_FC);
-	  (*energy)[last_entry].push_back (tmp_FC * tmp_gain);
-	  (*gain  )[last_entry].push_back (calibrations -> rawgain ( tmp_capid ));
-	  
+          if ( m_doChargeReco ){
 
-	}
+              float tmp_allFC = tool[iTS];
+              float tmp_pedFC = calibrations -> pedestal     ( tmp_capid );
+              float tmp_gain  = calibrations -> respcorrgain ( tmp_capid );
+              float tmp_FC    = tmp_allFC - tmp_pedFC;
+
+              (*allFC )[last_entry].push_back (tmp_allFC);
+              (*pedFC )[last_entry].push_back (tmp_pedFC);
+              (*rcgain)[last_entry].push_back (tmp_gain);
+              (*FC    )[last_entry].push_back (tmp_FC);
+              (*energy)[last_entry].push_back (tmp_FC * tmp_gain);
+              (*gain  )[last_entry].push_back (calibrations -> rawgain ( tmp_capid ));
+
+
+          }
       }
-      
+ */     
       //-----------------------------------------------------
       // For each digi, try to find a rechit
       //-----------------------------------------------------

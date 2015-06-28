@@ -38,10 +38,12 @@ HBHENoiseFilterResultProducerMethod0.noiselabel = cms.InputTag("hcalnoiseMethod0
 HBHENoiseFilterResultProducerMethod2 = HBHENoiseFilterResultProducer.clone()
 HBHENoiseFilterResultProducerMethod2.noiselabel = cms.InputTag("hcalnoiseMethod2")
 
+
 hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilters",
          noiseSummaryInputTag = cms.untracked.InputTag("hcalnoiseMethod2"),
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducerMethod2"),
          recoInputTag         = cms.untracked.string("hbherecoMethod2"),
+         isRAW  = cms.untracked.bool(True),
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )
@@ -50,6 +52,7 @@ hcalTupleHcalNoiseFiltersMethod0 = cms.EDProducer("HcalTupleMaker_HcalNoiseFilte
          noiseSummaryInputTag = cms.untracked.InputTag("hcalnoiseMethod0"),
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducerMethod0"),
          recoInputTag         = cms.untracked.string("hbherecoMethod0"),
+         isRAW  = cms.untracked.bool(True),
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("Method0")
 )

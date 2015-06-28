@@ -8,7 +8,6 @@ import FWCore.ParameterSet.Config as cms
 # Declare the process
 #------------------------------------------------------------------------------------
 
-#process = cms.Process('RECO')
 process = cms.Process('NOISE')
 
 #------------------------------------------------------------------------------------
@@ -62,43 +61,32 @@ process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
-# Set up cosmic digis
-#process.load("HCALPFG.HcalTupleMaker.HcalCosmicDigisProducer_cfi")
 
-# Set up L1 Jet digis
+# Set up L1 Jet digis #Disabled 
 #process.load("HCALPFG.HcalTupleMaker.HcalL1JetDigisProducer_cfi")
 
 # Set up our analyzer
-#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
+#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi") # Dont want to use this, load modules individually
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
-#process.hcalTupleHBHEDigis.recHits          = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
-#process.hcalTupleHBHECosmicsDigis.recHits   = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
-#process.hcalTupleHBHEL1JetsDigis.recHits    = cms.untracked.InputTag("hbherecoMethod2")#this is used to store rechit time and energy in digi analysis
-#process.hcalTupleHBHEDigis.TotalFCthreshold = cms.untracked.double(-9999)# per channel charge threshold to store corresponding digis
-#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_CollisionData_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
 #process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 
-# Set up noise filters: Method 2 (default) and Method 0
-process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalNoiseFilters_cfi")
+# Set up noise filters
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalNoiseFilters_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
 
-
-#from RecoMET.METProducers.hcalnoiseinfoproducer_cfi import *
-#from CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi import *
-
-# Set up noise filters: Method 2 (default) and Method 0
-process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi")
+# Set up CaloJetMet quantities 
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
 
 
 # Other statements
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '') # This GT includes NEF DB, but is not useful for RECO anyway.. 
 #from Configuration.AlCa.autoCond_condDBv2 import autoCond
 #process.GlobalTag.globaltag = autoCond['run2_data']
 
-
+# Disabled since we dont deal with HLT
 #process.my_hlt = cms.EDFilter("HLTHighLevel",
 #     TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),
 #     HLTPaths = cms.vstring("HLT_L1SingleJet16*"), # provide list of HLT paths (or patterns) you want
@@ -106,6 +94,21 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '')
 #     andOr = cms.bool(True),             # how to deal with multiple triggers: True (OR) accept if ANY is true, False (AND) accept if ALL are true
 #     throw = cms.bool(False)    # throw exception on unknown path names
 #)
+
+#Remove Method 0, Rename Method 2 as "default" where necessary:
+process.hcalTupleCaloJetMet = cms.EDProducer("HcalTupleMaker_CaloJetMet",
+         recoInputTag         = cms.untracked.string("hbhereco"),
+         Prefix = cms.untracked.string(""),
+         Suffix = cms.untracked.string("")
+)
+process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilters",
+         noiseSummaryInputTag = cms.untracked.InputTag("hcalnoise"),
+         noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
+         recoInputTag         = cms.untracked.string("hbhereco"),
+         isRAW  = cms.untracked.bool(False), # new Flag necessary for HcalNoiseFilters to run on RECO data
+         Prefix = cms.untracked.string(""),
+         Suffix = cms.untracked.string("")
+)
 
 
 process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
@@ -116,13 +119,13 @@ process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
     reverseDecision = cms.bool(False)
 )
 
-#raw#process.hbheprereco.setNegativeFlags          = cms.bool(True)
+# This enabled NEF, but needs reconstruction of RAW data 
+#process.hbheprereco.setNegativeFlags          = cms.bool(True)
 
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     # Make HCAL tuples: FED info
-    #
     #    process.hcalTupleFEDs*
     #    # Make HCAL tuples: digi info
     #raw# process.hcalTupleHBHEDigis*

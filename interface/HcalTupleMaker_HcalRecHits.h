@@ -72,6 +72,8 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     produces<std::vector<float> > ( m_prefix + "Eta"    + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Phi"    + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "Depth"  + m_suffix );
+    produces<std::vector<int>   > ( m_prefix + "RBXid"  + m_suffix );
+    produces<std::vector<int>   > ( m_prefix + "HPDid"  + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "Flags"  + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "Aux"    + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Energy" + m_suffix );
@@ -86,6 +88,8 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     algo.eta    = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
     algo.phi    = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
     algo.depth  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.rbxid  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.hpdid  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.flags  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.aux    = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.energy = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
@@ -98,6 +102,8 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     iEvent.put ( algo.eta    , m_prefix + "Eta"    + m_suffix );
     iEvent.put ( algo.phi    , m_prefix + "Phi"    + m_suffix );
     iEvent.put ( algo.depth  , m_prefix + "Depth"  + m_suffix );
+    iEvent.put ( algo.rbxid  , m_prefix + "RBXid"  + m_suffix );
+    iEvent.put ( algo.hpdid  , m_prefix + "HPDid"  + m_suffix );
     iEvent.put ( algo.flags  , m_prefix + "Flags"  + m_suffix );
     iEvent.put ( algo.aux    , m_prefix + "Aux"    + m_suffix );
     iEvent.put ( algo.energy , m_prefix + "Energy" + m_suffix );

@@ -10,6 +10,9 @@
 #include "Geometry/CaloGeometry/interface/CaloGeometry.h"
 #include "Geometry/Records/interface/CaloGeometryRecord.h"
 
+// HcalHPDRBXMap
+#include "RecoMET/METAlgorithms/interface/HcalHPDRBXMap.h"
+
 class HcalTupleMaker_HcalRecHitAlgorithm { 
 
  public:
@@ -23,6 +26,8 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
   std::auto_ptr<std::vector<float> > eta;           
   std::auto_ptr<std::vector<float> > phi;           
   std::auto_ptr<std::vector<int  > > depth;          
+  std::auto_ptr<std::vector<int  > > rbxid;
+  std::auto_ptr<std::vector<int  > > hpdid;
   std::auto_ptr<std::vector<float> > energy;    
   std::auto_ptr<std::vector<float> > time;    
   std::auto_ptr<std::vector<int  > > flags;           
@@ -51,6 +56,25 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       //-----------------------------------------------------
       
       hcalDetId = HcalDetId(reco -> detid());
+
+      //-----------------------------------------------------
+      // Get HPD and RBX IDs
+      //-----------------------------------------------------
+      //   http://cmslxr.fnal.gov/lxr/source/RecoMET/METAlgorithms/interface/HcalHPDRBXMap.h
+      //   description: Algorithm which isomorphically maps HPD/RBX locations to
+      //                integers ranging from 0 to NUM_HPDS-1/NUM_RBXS-1.  The HPDs/RBXs
+      //                are ordered from lowest to highest: HB+, HB-, HE+, HE-.
+      // "magic numbers"
+      // total number of HPDs in the HB and HE: 288
+      // total number of HPDs per subdetector (HB+, HB-, HE+, HE-): 72
+      // number of HPDs per RBX: 4
+      // total number of RBXs in the HB and HE: 72
+      // total number of RBXs per subdetector (e.g. HB+, HB-, HE+, HE-): 18
+
+      int RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
+      int HPDIndex = HcalHPDRBXMap::indexHPD(hcalDetId);
+      rbxid -> push_back ( RBXIndex );
+      hpdid -> push_back ( HPDIndex );
 
       //-----------------------------------------------------
       // Get the position

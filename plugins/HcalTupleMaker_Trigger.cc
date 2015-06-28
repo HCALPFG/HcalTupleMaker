@@ -6,12 +6,14 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
+#include "FWCore/Framework/interface/ConsumesCollector.h"
 
 HcalTupleMaker_Trigger::HcalTupleMaker_Trigger(const edm::ParameterSet& iConfig) :
   l1InputTag(iConfig.getParameter<edm::InputTag>("L1InputTag")),
   hltInputTag(iConfig.getParameter<edm::InputTag>("HLTInputTag")),
   sourceName(iConfig.getParameter<std::string>  ("SourceName")),
-  sourceType(NOT_APPLICABLE)
+  sourceType(NOT_APPLICABLE),
+  hltPrescaleProvider(iConfig, consumesCollector(), *this) 
 {
   // Source is either a stream or a dataset (mutually exclusive)
   if (sourceName.length() > 0) {
@@ -80,8 +82,18 @@ getDataSource() {
 void HcalTupleMaker_Trigger::
 beginRun(edm::Run& iRun, const edm::EventSetup& iSetup) {
 
+  //
+  // The access prescales, i.e. hltConfig.prescaleValue(...), seems to have changed going from 750_pre3 to 750_pre5.
+  // See: 
+  //      http://cmslxr.fnal.gov/lxr/source/HLTrigger/HLTcore/interface/HLTConfigProvider.h?v=CMSSW_7_5_0_pre3#0226
+  //      http://cmslxr.fnal.gov/lxr/source/HLTrigger/HLTcore/interface/HLTConfigProvider.h?v=CMSSW_7_5_0_pre5#0222
+  // The code now succesfully compiles in 750_pre5, but these values are untested. 
+  // Detailed feedback is required.
+  // 
+
   bool changed = true;
-  if (hltConfig.init(iRun, iSetup, hltInputTag.process(), changed)) {
+  if ( hltConfig.init(iRun, iSetup, hltInputTag.process(), changed) && hltPrescaleProvider.init(iRun, iSetup, hltInputTag.process(), changed)  ) {
+    //if (hltConfig.init(iRun, iSetup, hltInputTag.process(), changed)) {
     // if init returns TRUE, initialisation has succeeded!
     edm::LogInfo("HcalTupleMaker_TriggerInfo") << "HLT config with process name " << hltInputTag.process() << " successfully extracted";
   } else {
@@ -152,11 +164,13 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     for (int i = 0; i < (int) triggerResults->size() ; ++i) {
       if (dataSource.empty() || std::find(dataSource.begin(), dataSource.end(), names.triggerName(i)) != dataSource.end()) {
 	v_hlt_insideDataset_names->push_back ( names.triggerName(i) );
-	v_hlt_insideDataset_prescales->push_back ( hltConfig.prescaleValue(iEvent,iSetup,names.triggerName(i)));
+	//v_hlt_insideDataset_prescales->push_back ( hltConfig.prescaleValue(iEvent,iSetup,names.triggerName(i)));
+	v_hlt_insideDataset_prescales->push_back ( hltConfig.prescaleValue(hltPrescaleProvider.prescaleSet(iEvent,iSetup),names.triggerName(i)) );
 	v_hlt_insideDataset_decisions->push_back ( triggerResults->accept(i) );
       } else {
 	v_hlt_outsideDataset_names->push_back ( names.triggerName(i) );
-	v_hlt_outsideDataset_prescales->push_back ( hltConfig.prescaleValue(iEvent,iSetup,names.triggerName(i)));
+	//v_hlt_outsideDataset_prescales->push_back ( hltConfig.prescaleValue(iEvent,iSetup,names.triggerName(i)));
+	v_hlt_outsideDataset_prescales->push_back (  hltConfig.prescaleValue(hltPrescaleProvider.prescaleSet(iEvent,iSetup),names.triggerName(i)) );
 	v_hlt_outsideDataset_decisions->push_back ( triggerResults->accept(i) );
       }      
     }

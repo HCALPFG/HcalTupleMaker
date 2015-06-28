@@ -83,7 +83,7 @@ void HcalTupleMaker_Trigger::
 beginRun(edm::Run& iRun, const edm::EventSetup& iSetup) {
 
   //
-  // The access prescales, i.e. hltConfig.prescaleValue(...), seems to have changed going from 750_pre3 to 750_pre5.
+  // The access to prescales, i.e. hltConfig.prescaleValue(...), seems to have changed going from 750_pre3 to 750_pre5.
   // See: 
   //      http://cmslxr.fnal.gov/lxr/source/HLTrigger/HLTcore/interface/HLTConfigProvider.h?v=CMSSW_7_5_0_pre3#0226
   //      http://cmslxr.fnal.gov/lxr/source/HLTrigger/HLTcore/interface/HLTConfigProvider.h?v=CMSSW_7_5_0_pre5#0222

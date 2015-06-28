@@ -21,6 +21,7 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   noiseSummaryInputTag (iConfig.getUntrackedParameter<edm::InputTag>("noiseSummaryInputTag")),
   noiseResultInputTag  (iConfig.getUntrackedParameter<std::string>("noiseResultInputTag")), 
   recoInputTag         (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
+  isRAW                (iConfig.getUntrackedParameter<bool>("isRAW")),
   prefix               (iConfig.getUntrackedParameter<std::string>("Prefix")),
   suffix               (iConfig.getUntrackedParameter<std::string>("Suffix"))
 {
@@ -105,7 +106,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.getByLabel(recoInputTag, hRecHits);
 
   edm::Handle<HBHEDigiCollection> hHBHEDigis;
-  iEvent.getByLabel("hcalDigis", hHBHEDigis);
+  if( isRAW ) iEvent.getByLabel("hcalDigis", hHBHEDigis);
 
   edm::ESHandle<HcalDbService> hConditions;
   iSetup.get<HcalDbRecord>().get(hConditions);
@@ -131,54 +132,56 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     RBXEnergy15[i] = 0;
   }
 
-  // loop over digis
-  for(HBHEDigiCollection::const_iterator iter = hHBHEDigis->begin(); iter != hHBHEDigis->end(); iter++){
-    //
-    HcalDetId id = iter->id();
-    int RBXIndex = HcalHPDRBXMap::indexRBX(id);
-    //
-    // HCAL rechit flagword, auxword
-    flagword -> push_back ( (*hRecHits)[RecHitIndex[id]].flags() );
-    auxword  -> push_back ( (*hRecHits)[RecHitIndex[id]].aux()   );
-    //
-    //debugging
-    //if( (*hRecHits)[RecHitIndex[id]].energy()>50 ){
-    //std::cout<<suffix<<"  RechitEnergy/iEta/iPhi/iDepth: "<< (*hRecHits)[RecHitIndex[id]].energy() <<" / "<<id.ieta()<<" / "<< id.iphi()<<" / "<< id.depth();
-    //std::cout<<suffix<<"                          Bit11: "<< (( (*hRecHits)[RecHitIndex[id]].flags() >> 11 ) & 1) <<std::endl;
-    //std::cout<< <<std::endl;
-    //}
-
-    // First convert ADC to deposited charge
-    const HcalCalibrations &Calibrations = hConditions->getHcalCalibrations(id);
-    const HcalQIECoder *ChannelCoder = hConditions->getHcalCoder(id);
-    const HcalQIEShape *Shape = hConditions->getHcalShape(id);
-    HcalCoderDb Coder(*ChannelCoder, *Shape);
-    CaloSamples Tool;
-    Coder.adc2fC(*iter, Tool);
-
-    // Calculate RBX total charge, total energy
-    for(int i = 0; i < (int)iter->size(); i++){// loop over TS's
-      const HcalQIESample &QIE = iter->sample(i);
-      RBXCharge[RBXIndex][i] = RBXCharge[RBXIndex][i] + Tool[i] - Calibrations.pedestal(QIE.capid());
+  if( isRAW ){
+    // loop over digis
+    for(HBHEDigiCollection::const_iterator iter = hHBHEDigis->begin(); iter != hHBHEDigis->end(); iter++){
+      //
+      HcalDetId id = iter->id();
+      int RBXIndex = HcalHPDRBXMap::indexRBX(id);
+      //
+      // HCAL rechit flagword, auxword
+      flagword -> push_back ( (*hRecHits)[RecHitIndex[id]].flags() );
+      auxword  -> push_back ( (*hRecHits)[RecHitIndex[id]].aux()   );
+      //
+      //debugging
+      //if( (*hRecHits)[RecHitIndex[id]].energy()>50 ){
+      //std::cout<<suffix<<"  RechitEnergy/iEta/iPhi/iDepth: "<< (*hRecHits)[RecHitIndex[id]].energy() <<" / "<<id.ieta()<<" / "<< id.iphi()<<" / "<< id.depth();
+      //std::cout<<suffix<<"                          Bit11: "<< (( (*hRecHits)[RecHitIndex[id]].flags() >> 11 ) & 1) <<std::endl;
+      //std::cout<< <<std::endl;
+      //}
+      
+      // First convert ADC to deposited charge
+      const HcalCalibrations &Calibrations = hConditions->getHcalCalibrations(id);
+      const HcalQIECoder *ChannelCoder = hConditions->getHcalCoder(id);
+      const HcalQIEShape *Shape = hConditions->getHcalShape(id);
+      HcalCoderDb Coder(*ChannelCoder, *Shape);
+      CaloSamples Tool;
+      Coder.adc2fC(*iter, Tool);
+      
+      // Calculate RBX total charge, total energy
+      for(int i = 0; i < (int)iter->size(); i++){// loop over TS's
+	const HcalQIESample &QIE = iter->sample(i);
+	RBXCharge[RBXIndex][i] = RBXCharge[RBXIndex][i] + Tool[i] - Calibrations.pedestal(QIE.capid());
+	if((*hRecHits)[RecHitIndex[id]].energy() > 1.5)
+	  RBXCharge15[RBXIndex][i] = RBXCharge15[RBXIndex][i] + Tool[i] - Calibrations.pedestal(QIE.capid());
+      }
+      RBXEnergy[RBXIndex] = RBXEnergy[RBXIndex] + (*hRecHits)[RecHitIndex[id]].energy();
       if((*hRecHits)[RecHitIndex[id]].energy() > 1.5)
-	RBXCharge15[RBXIndex][i] = RBXCharge15[RBXIndex][i] + Tool[i] - Calibrations.pedestal(QIE.capid());
+	RBXEnergy15[RBXIndex] = RBXEnergy15[RBXIndex] + (*hRecHits)[RecHitIndex[id]].energy();
     }
-    RBXEnergy[RBXIndex] = RBXEnergy[RBXIndex] + (*hRecHits)[RecHitIndex[id]].energy();
-    if((*hRecHits)[RecHitIndex[id]].energy() > 1.5)
-      RBXEnergy15[RBXIndex] = RBXEnergy15[RBXIndex] + (*hRecHits)[RecHitIndex[id]].energy();
+    
+    // RBX charge and energy vectors are filled in
+    for(int irbx = 0; irbx < 72; irbx++){
+      std::vector<double> RBXChargevector(   std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
+      std::vector<double> RBXCharge15vector( std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
+      //rbxcharge   -> push_back( RBXCharge[irbx]   );
+      //rbxcharge15 -> push_back( RBXCharge15[irbx] );
+      rbxcharge   -> push_back( RBXChargevector   );
+      rbxcharge15 -> push_back( RBXCharge15vector );
+      rbxenergy   -> push_back( RBXEnergy[irbx]   );
+      rbxenergy15 -> push_back( RBXEnergy15[irbx] );
+    }  
   }
-
-  // RBX charge and energy vectors are filled in
-  for(int irbx = 0; irbx < 72; irbx++){
-    std::vector<double> RBXChargevector(   std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
-    std::vector<double> RBXCharge15vector( std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
-    //rbxcharge   -> push_back( RBXCharge[irbx]   );
-    //rbxcharge15 -> push_back( RBXCharge15[irbx] );
-    rbxcharge   -> push_back( RBXChargevector   );
-    rbxcharge15 -> push_back( RBXCharge15vector );
-    rbxenergy   -> push_back( RBXEnergy[irbx]   );
-    rbxenergy15 -> push_back( RBXEnergy15[irbx] );
-  }  
 
   iEvent.put( officialdecision         , prefix + "OfficialDecision"         + suffix );
   iEvent.put( hpdhits                  , prefix + "HPDHits"                  + suffix );

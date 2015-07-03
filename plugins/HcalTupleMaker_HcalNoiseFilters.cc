@@ -37,6 +37,12 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   produces <std::vector<int> >                  (prefix + "NumIsolatedNoiseChannels" + suffix );
   produces <std::vector<double> >               (prefix + "IsolatedNoiseSumE"        + suffix );
   produces <std::vector<double> >               (prefix + "IsolatedNoiseSumEt"       + suffix );
+  produces <std::vector<int> >                  (prefix + "NumNegativeNoiseChannels" + suffix );
+  produces <std::vector<double> >               (prefix + "NegativeNoiseSumE"        + suffix );
+  produces <std::vector<double> >               (prefix + "NegativeNoiseSumEt"       + suffix );
+  produces <std::vector<int> >                  (prefix + "NumSpikeNoiseChannels"    + suffix );
+  produces <std::vector<double> >               (prefix + "SpikeNoiseSumE"           + suffix );
+  produces <std::vector<double> >               (prefix + "SpikeNoiseSumEt"          + suffix );
   produces <std::vector<unsigned int> >         (prefix + "FlagWord"                 + suffix );
   produces <std::vector<unsigned int> >         (prefix + "AuxWord"                  + suffix );
   //
@@ -61,6 +67,12 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   std::auto_ptr<std::vector<int> >                  numisolatednoisechannels   ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<double> >               isolatednoisesume          ( new std::vector<double>               ());
   std::auto_ptr<std::vector<double> >               isolatednoisesumet         ( new std::vector<double>               ());
+  std::auto_ptr<std::vector<int> >                  numnegativenoisechannels   ( new std::vector<int>                  ());
+  std::auto_ptr<std::vector<double> >               negativenoisesume          ( new std::vector<double>               ());
+  std::auto_ptr<std::vector<double> >               negativenoisesumet         ( new std::vector<double>               ());
+  std::auto_ptr<std::vector<int> >                  numspikenoisechannels      ( new std::vector<int>                  ());
+  std::auto_ptr<std::vector<double> >               spikenoisesume             ( new std::vector<double>               ());
+  std::auto_ptr<std::vector<double> >               spikenoisesumet            ( new std::vector<double>               ());
   std::auto_ptr<std::vector<unsigned int> >         flagword                   ( new std::vector<unsigned int>         ());
   std::auto_ptr<std::vector<unsigned int> >         auxword                    ( new std::vector<unsigned int>         ());
   std::auto_ptr<std::vector<std::vector<double> > > rbxcharge                  ( new std::vector<std::vector<double> > ());
@@ -89,6 +101,9 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   //std::cout<<suffix<<"  hSummary->numIsolatedNoiseChannels(): "<<hSummary->numIsolatedNoiseChannels()<<std::endl;
   //std::cout<<suffix<<"  hSummary->isolatedNoiseSumE()       : "<<hSummary->isolatedNoiseSumE()<<std::endl;
   //std::cout<<suffix<<"  hSummary->isolatedNoiseSumEt()      : "<<hSummary->isolatedNoiseSumEt()<<std::endl;
+  //std::cout<<suffix<<"               hSummary->numSpikeNoiseChannels() : "<<hSummary->numSpikeNoiseChannels()<<std::endl;
+  //std::cout<<suffix<<"          hSummary->numIsolatedNoiseChannels()   : "<<hSummary->numIsolatedNoiseChannels()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->numNegativeNoiseChannels()           : "<<hSummary->numNegativeNoiseChannels()<<std::endl;
   //
   hpdhits                  -> push_back ( hSummary->maxHPDHits() );
   hpdnootherhits           -> push_back ( hSummary->maxHPDNoOtherHits() );
@@ -101,6 +116,12 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   numisolatednoisechannels -> push_back ( hSummary->numIsolatedNoiseChannels() );
   isolatednoisesume        -> push_back ( hSummary->isolatedNoiseSumE() );
   isolatednoisesumet       -> push_back ( hSummary->isolatedNoiseSumEt() );
+  numnegativenoisechannels -> push_back ( hSummary->numNegativeNoiseChannels() );
+  negativenoisesume        -> push_back ( hSummary->NegativeNoiseSumE() );
+  negativenoisesumet       -> push_back ( hSummary->NegativeNoiseSumEt() );
+  numspikenoisechannels    -> push_back ( hSummary->numSpikeNoiseChannels() );
+  spikenoisesume           -> push_back ( hSummary->spikeNoiseSumE() );
+  spikenoisesumet          -> push_back ( hSummary->spikeNoiseSumEt() );
 
   edm::Handle<HBHERecHitCollection> hRecHits;
   iEvent.getByLabel(recoInputTag, hRecHits);
@@ -195,6 +216,12 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.put( numisolatednoisechannels , prefix + "NumIsolatedNoiseChannels" + suffix );
   iEvent.put( isolatednoisesume        , prefix + "IsolatedNoiseSumE"        + suffix );
   iEvent.put( isolatednoisesumet       , prefix + "IsolatedNoiseSumEt"       + suffix );
+  iEvent.put( numnegativenoisechannels , prefix + "NumNegativeNoiseChannels" + suffix );
+  iEvent.put( negativenoisesume        , prefix + "NegativeNoiseSumE"        + suffix );
+  iEvent.put( negativenoisesumet       , prefix + "NegativeNoiseSumEt"       + suffix );
+  iEvent.put( numspikenoisechannels    , prefix + "NumSpikeNoiseChannels"    + suffix );
+  iEvent.put( spikenoisesume           , prefix + "SpikeNoiseSumE"           + suffix );
+  iEvent.put( spikenoisesumet          , prefix + "SpikeNoiseSumEt"          + suffix );
   iEvent.put( flagword                 , prefix + "FlagWord"                 + suffix );
   iEvent.put( auxword                  , prefix + "AuxWord"                  + suffix );
   iEvent.put( rbxcharge                , prefix + "RBXCharge"                + suffix );

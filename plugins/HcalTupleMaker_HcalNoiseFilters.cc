@@ -194,7 +194,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     // RBX charge and energy vectors are filled in
     for(int irbx = 0; irbx < 72; irbx++){
       std::vector<double> RBXChargevector(   std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
-      std::vector<double> RBXCharge15vector( std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
+      std::vector<double> RBXCharge15vector( std::begin(RBXCharge15[irbx]), std::end(RBXCharge15[irbx]) );
       //rbxcharge   -> push_back( RBXCharge[irbx]   );
       //rbxcharge15 -> push_back( RBXCharge15[irbx] );
       rbxcharge   -> push_back( RBXChargevector   );

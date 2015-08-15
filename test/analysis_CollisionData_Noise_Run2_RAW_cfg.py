@@ -3,12 +3,14 @@
 #------------------------------------------------------------------------------------
 
 import FWCore.ParameterSet.Config as cms
+from Configuration.StandardSequences.Eras import eras
 
 #------------------------------------------------------------------------------------
 # Declare the process
 #------------------------------------------------------------------------------------
 
-process = cms.Process('RECO')
+process = cms.Process('RECO',eras.Run2_50ns)
+#process = cms.Process('RECO',eras.Run2_25ns)
 
 #------------------------------------------------------------------------------------
 # Set up the input source

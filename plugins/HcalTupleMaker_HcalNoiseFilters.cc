@@ -26,6 +26,9 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   suffix               (iConfig.getUntrackedParameter<std::string>("Suffix"))
 {
   produces <std::vector<int> >                  (prefix + "OfficialDecision"         + suffix );
+  produces <std::vector<int> >                  (prefix + "OfficialDecisionRun1"     + suffix );
+  produces <std::vector<int> >                  (prefix + "OfficialDecisionRun2L"    + suffix );
+  produces <std::vector<int> >                  (prefix + "OfficialDecisionRun2T"    + suffix );
   produces <std::vector<int> >                  (prefix + "HPDHits"                  + suffix );
   produces <std::vector<int> >                  (prefix + "HPDNoOtherHits"           + suffix );
   produces <std::vector<int> >                  (prefix + "MaxZeros"                 + suffix );
@@ -43,10 +46,10 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   produces <std::vector<int> >                  (prefix + "NumSpikeNoiseChannels"    + suffix );
   produces <std::vector<double> >               (prefix + "SpikeNoiseSumE"           + suffix );
   produces <std::vector<double> >               (prefix + "SpikeNoiseSumEt"          + suffix );
-  produces <std::vector<unsigned int> >         (prefix + "FlagWord"                 + suffix );
-  produces <std::vector<unsigned int> >         (prefix + "AuxWord"                  + suffix );
   //
   // Perhaps these should be migrated to HcalTupleMaker_HcalRecHits and HcalTupleMaker_HcalDigis
+  //produces <std::vector<unsigned int> >         (prefix + "FlagWord"                 + suffix );
+  //produces <std::vector<unsigned int> >         (prefix + "AuxWord"                  + suffix );
   produces <std::vector<std::vector<double> > > (prefix + "RBXCharge"                + suffix );
   produces <std::vector<std::vector<double> > > (prefix + "RBXCharge15"              + suffix );
   produces <std::vector<double> >               (prefix + "RBXEnergy"                + suffix );
@@ -56,6 +59,9 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
 void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   
   std::auto_ptr<std::vector<int> >                  officialdecision           ( new std::vector<int>                  ());
+  std::auto_ptr<std::vector<int> >                  officialdecisionrun1       ( new std::vector<int>                  ());
+  std::auto_ptr<std::vector<int> >                  officialdecisionrun2l      ( new std::vector<int>                  ());
+  std::auto_ptr<std::vector<int> >                  officialdecisionrun2t      ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  hpdhits                    ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  hpdnootherhits             ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  maxzeros                   ( new std::vector<int>                  ());
@@ -73,8 +79,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   std::auto_ptr<std::vector<int> >                  numspikenoisechannels      ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<double> >               spikenoisesume             ( new std::vector<double>               ());
   std::auto_ptr<std::vector<double> >               spikenoisesumet            ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<unsigned int> >         flagword                   ( new std::vector<unsigned int>         ());
-  std::auto_ptr<std::vector<unsigned int> >         auxword                    ( new std::vector<unsigned int>         ());
+  //std::auto_ptr<std::vector<unsigned int> >         flagword                   ( new std::vector<unsigned int>         ());
+  //std::auto_ptr<std::vector<unsigned int> >         auxword                    ( new std::vector<unsigned int>         ());
   std::auto_ptr<std::vector<std::vector<double> > > rbxcharge                  ( new std::vector<std::vector<double> > ());
   std::auto_ptr<std::vector<std::vector<double> > > rbxcharge15                ( new std::vector<std::vector<double> > ());
   std::auto_ptr<std::vector<double> >               rbxenergy                  ( new std::vector<double>               ());
@@ -82,9 +88,19 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
 
   edm::Handle<bool> hNoiseResult;
   iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResult", hNoiseResult);
+  edm::Handle<bool> hNoiseResult_Run1;
+  iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun1", hNoiseResult_Run1);
+  edm::Handle<bool> hNoiseResult_Run2Loose;
+  iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Loose", hNoiseResult_Run2Loose);
+  edm::Handle<bool> hNoiseResult_Run2Tight;
+  iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Tight", hNoiseResult_Run2Tight);
+
 
   // HCAL Filter Decision
   officialdecision        -> push_back( *hNoiseResult );
+  officialdecisionrun1    -> push_back( *hNoiseResult_Run1 );
+  officialdecisionrun2l   -> push_back( *hNoiseResult_Run2Loose );
+  officialdecisionrun2t   -> push_back( *hNoiseResult_Run2Tight );
 
 
   edm::Handle<HcalNoiseSummary> hSummary;
@@ -161,8 +177,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
       int RBXIndex = HcalHPDRBXMap::indexRBX(id);
       //
       // HCAL rechit flagword, auxword
-      flagword -> push_back ( (*hRecHits)[RecHitIndex[id]].flags() );
-      auxword  -> push_back ( (*hRecHits)[RecHitIndex[id]].aux()   );
+      //flagword -> push_back ( (*hRecHits)[RecHitIndex[id]].flags() );
+      //auxword  -> push_back ( (*hRecHits)[RecHitIndex[id]].aux()   );
       //
       //debugging
       //if( (*hRecHits)[RecHitIndex[id]].energy()>50 ){
@@ -205,6 +221,9 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   }
 
   iEvent.put( officialdecision         , prefix + "OfficialDecision"         + suffix );
+  iEvent.put( officialdecisionrun1     , prefix + "OfficialDecisionRun1"     + suffix );
+  iEvent.put( officialdecisionrun2l    , prefix + "OfficialDecisionRun2L"    + suffix );
+  iEvent.put( officialdecisionrun2t    , prefix + "OfficialDecisionRun2T"    + suffix );
   iEvent.put( hpdhits                  , prefix + "HPDHits"                  + suffix );
   iEvent.put( hpdnootherhits           , prefix + "HPDNoOtherHits"           + suffix );
   iEvent.put( maxzeros                 , prefix + "MaxZeros"                 + suffix );
@@ -222,8 +241,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.put( numspikenoisechannels    , prefix + "NumSpikeNoiseChannels"    + suffix );
   iEvent.put( spikenoisesume           , prefix + "SpikeNoiseSumE"           + suffix );
   iEvent.put( spikenoisesumet          , prefix + "SpikeNoiseSumEt"          + suffix );
-  iEvent.put( flagword                 , prefix + "FlagWord"                 + suffix );
-  iEvent.put( auxword                  , prefix + "AuxWord"                  + suffix );
+  //iEvent.put( flagword                 , prefix + "FlagWord"                 + suffix );
+  //iEvent.put( auxword                  , prefix + "AuxWord"                  + suffix );
   iEvent.put( rbxcharge                , prefix + "RBXCharge"                + suffix );
   iEvent.put( rbxcharge15              , prefix + "RBXCharge15"              + suffix );
   iEvent.put( rbxenergy                , prefix + "RBXEnergy"                + suffix );

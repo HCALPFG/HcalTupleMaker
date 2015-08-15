@@ -17,6 +17,14 @@ process = cms.Process('RECO',eras.Run2_50ns)
 #------------------------------------------------------------------------------------
 
 process.source = cms.Source("PoolSource")
+#
+# To be used if a specific set of events is to be analyzed: Feedback for MET scanners etc.
+#
+#process.source = cms.Source("PoolSource",
+##################template# eventsToProcess = cms.untracked.VEventRange('RUN:EVENT-RUN:EVENT')
+#                           eventsToProcess = cms.untracked.VEventRange('251561:65988922-251561:65988922')
+#                           )
+
 
 #------------------------------------------------------------------------------------
 # What files should we run over?

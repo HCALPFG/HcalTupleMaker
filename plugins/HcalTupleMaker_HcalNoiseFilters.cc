@@ -48,12 +48,13 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   produces <std::vector<double> >               (prefix + "SpikeNoiseSumEt"          + suffix );
   //
   // Perhaps these should be migrated to HcalTupleMaker_HcalRecHits and HcalTupleMaker_HcalDigis
-  //produces <std::vector<unsigned int> >         (prefix + "FlagWord"                 + suffix );
-  //produces <std::vector<unsigned int> >         (prefix + "AuxWord"                  + suffix );
   produces <std::vector<std::vector<double> > > (prefix + "RBXCharge"                + suffix );
   produces <std::vector<std::vector<double> > > (prefix + "RBXCharge15"              + suffix );
   produces <std::vector<double> >               (prefix + "RBXEnergy"                + suffix );
   produces <std::vector<double> >               (prefix + "RBXEnergy15"              + suffix );
+  //
+  // Method-0 rechit collection accessed via eraw()
+  produces <std::vector<double> >               (prefix + "HBHERechitEnergyMethod0"  + suffix );
 }
 
 void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -79,12 +80,13 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   std::auto_ptr<std::vector<int> >                  numspikenoisechannels      ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<double> >               spikenoisesume             ( new std::vector<double>               ());
   std::auto_ptr<std::vector<double> >               spikenoisesumet            ( new std::vector<double>               ());
-  //std::auto_ptr<std::vector<unsigned int> >         flagword                   ( new std::vector<unsigned int>         ());
-  //std::auto_ptr<std::vector<unsigned int> >         auxword                    ( new std::vector<unsigned int>         ());
+  //
   std::auto_ptr<std::vector<std::vector<double> > > rbxcharge                  ( new std::vector<std::vector<double> > ());
   std::auto_ptr<std::vector<std::vector<double> > > rbxcharge15                ( new std::vector<std::vector<double> > ());
   std::auto_ptr<std::vector<double> >               rbxenergy                  ( new std::vector<double>               ());
   std::auto_ptr<std::vector<double> >               rbxenergy15                ( new std::vector<double>               ());
+  //
+  std::auto_ptr<std::vector<double> >               hbherechitenergymethod0    ( new std::vector<double>               ());
 
   edm::Handle<bool> hNoiseResult;
   iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResult", hNoiseResult);
@@ -117,9 +119,9 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   //std::cout<<suffix<<"  hSummary->numIsolatedNoiseChannels(): "<<hSummary->numIsolatedNoiseChannels()<<std::endl;
   //std::cout<<suffix<<"  hSummary->isolatedNoiseSumE()       : "<<hSummary->isolatedNoiseSumE()<<std::endl;
   //std::cout<<suffix<<"  hSummary->isolatedNoiseSumEt()      : "<<hSummary->isolatedNoiseSumEt()<<std::endl;
-  //std::cout<<suffix<<"               hSummary->numSpikeNoiseChannels() : "<<hSummary->numSpikeNoiseChannels()<<std::endl;
-  //std::cout<<suffix<<"          hSummary->numIsolatedNoiseChannels()   : "<<hSummary->numIsolatedNoiseChannels()<<std::endl;
-  //std::cout<<suffix<<"  hSummary->numNegativeNoiseChannels()           : "<<hSummary->numNegativeNoiseChannels()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->numSpikeNoiseChannels()   : "<<hSummary->numSpikeNoiseChannels()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->numIsolatedNoiseChannels(): "<<hSummary->numIsolatedNoiseChannels()<<std::endl;
+  //std::cout<<suffix<<"  hSummary->numNegativeNoiseChannels(): "<<hSummary->numNegativeNoiseChannels()<<std::endl;
   //
   hpdhits                  -> push_back ( hSummary->maxHPDHits() );
   hpdnootherhits           -> push_back ( hSummary->maxHPDNoOtherHits() );
@@ -169,16 +171,24 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     RBXEnergy15[i] = 0;
   }
 
+
+  //loop over rechits
+  for(HBHERecHitCollection::const_iterator iter = hRecHits->begin(); iter != hRecHits->end(); iter++){
+    hbherechitenergymethod0->push_back( iter->eraw() );//this is always method-0 rechit energy (raw energy).
+  }
+  
+
   if( isRAW ){
     // loop over digis
     for(HBHEDigiCollection::const_iterator iter = hHBHEDigis->begin(); iter != hHBHEDigis->end(); iter++){
       //
       HcalDetId id = iter->id();
       int RBXIndex = HcalHPDRBXMap::indexRBX(id);
-      //
-      // HCAL rechit flagword, auxword
-      //flagword -> push_back ( (*hRecHits)[RecHitIndex[id]].flags() );
-      //auxword  -> push_back ( (*hRecHits)[RecHitIndex[id]].aux()   );
+
+      //debugging
+      // Associated rechit flagword, auxword:
+      // (*hRecHits)[RecHitIndex[id]].flags(); 
+      // (*hRecHits)[RecHitIndex[id]].aux();   
       //
       //debugging
       //if( (*hRecHits)[RecHitIndex[id]].energy()>50 ){
@@ -186,7 +196,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
       //std::cout<<suffix<<"                          Bit11: "<< (( (*hRecHits)[RecHitIndex[id]].flags() >> 11 ) & 1) <<std::endl;
       //std::cout<< <<std::endl;
       //}
-      
+
       // First convert ADC to deposited charge
       const HcalCalibrations &Calibrations = hConditions->getHcalCalibrations(id);
       const HcalQIECoder *ChannelCoder = hConditions->getHcalCoder(id);
@@ -211,8 +221,6 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     for(int irbx = 0; irbx < 72; irbx++){
       std::vector<double> RBXChargevector(   std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
       std::vector<double> RBXCharge15vector( std::begin(RBXCharge15[irbx]), std::end(RBXCharge15[irbx]) );
-      //rbxcharge   -> push_back( RBXCharge[irbx]   );
-      //rbxcharge15 -> push_back( RBXCharge15[irbx] );
       rbxcharge   -> push_back( RBXChargevector   );
       rbxcharge15 -> push_back( RBXCharge15vector );
       rbxenergy   -> push_back( RBXEnergy[irbx]   );
@@ -241,10 +249,11 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.put( numspikenoisechannels    , prefix + "NumSpikeNoiseChannels"    + suffix );
   iEvent.put( spikenoisesume           , prefix + "SpikeNoiseSumE"           + suffix );
   iEvent.put( spikenoisesumet          , prefix + "SpikeNoiseSumEt"          + suffix );
-  //iEvent.put( flagword                 , prefix + "FlagWord"                 + suffix );
-  //iEvent.put( auxword                  , prefix + "AuxWord"                  + suffix );
+  //
   iEvent.put( rbxcharge                , prefix + "RBXCharge"                + suffix );
   iEvent.put( rbxcharge15              , prefix + "RBXCharge15"              + suffix );
   iEvent.put( rbxenergy                , prefix + "RBXEnergy"                + suffix );
   iEvent.put( rbxenergy15              , prefix + "RBXEnergy15"              + suffix );
+  //
+  iEvent.put( hbherechitenergymethod0  , prefix + "HBHERechitEnergyMethod0"  + suffix );
 }

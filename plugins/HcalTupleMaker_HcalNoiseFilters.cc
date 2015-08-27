@@ -53,7 +53,7 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   produces <std::vector<double> >               (prefix + "SpikeNoiseSumE"           + suffix );
   produces <std::vector<double> >               (prefix + "SpikeNoiseSumEt"          + suffix );
   //
-  // Perhaps these should be migrated to HcalTupleMaker_HcalRecHits and HcalTupleMaker_HcalDigis
+  // Used to be from RAW, now from RECO-aux
   produces <std::vector<std::vector<double> > > (prefix + "RBXCharge"                + suffix );
   produces <std::vector<std::vector<double> > > (prefix + "RBXCharge15"              + suffix );
   produces <std::vector<double> >               (prefix + "RBXEnergy"                + suffix );
@@ -187,8 +187,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   double RBXEnergy15[72];
   //
   // AUX charge, gain, etc. values..
-  int auxcapid[8];
-  int auxadc[8];
+  int    auxcapid[8];
+  int    auxadc[8];
   double auxallfc[8];
   double auxpedfc[8];
   double auxrcgain[8];
@@ -204,9 +204,19 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     }
     RBXEnergy[i] = 0;
     RBXEnergy15[i] = 0;
+    if( i < 8 ){
+      auxcapid[i]=0;
+      auxadc[i]=0;
+      auxallfc[i]=0;
+      auxpedfc[i]=0;
+      auxrcgain[i]=0;
+      auxfc[i]=0;
+      auxenergy[i]=0;
+      auxgain[i]=0;
+    }
   }
-  
 
+  
   //loop over rechits
   for(HBHERecHitCollection::const_iterator j = hRecHits->begin(); j != hRecHits->end(); j++){
     hbherechitenergymethod0->push_back( j->eraw() );//this is always method-0 rechit energy (raw energy).
@@ -306,9 +316,36 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     //}
     //std::cout<<std::endl;
     //}
+
+    // Calculate RBX total charge, total energy, using rechit info..
+    HcalDetId hcalDetId = HcalDetId(j -> detid());
+    int RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
+    //
+    for(int iTS = 0; iTS<8; iTS++){// loop over TS's
+      RBXCharge[RBXIndex][iTS] = RBXCharge[RBXIndex][iTS] + auxfc[iTS];// RBX pulse shape
+      if( j->eraw() > 1.5 )
+	RBXCharge15[RBXIndex][iTS] = RBXCharge15[RBXIndex][iTS] + auxfc[iTS];// RBX pulse shape for rechits > 1.5 GeV
+    }
+    //
+    RBXEnergy[RBXIndex] = RBXEnergy[RBXIndex] + j->eraw();
+    if( j->eraw() > 1.5 )
+      RBXEnergy15[RBXIndex] = RBXEnergy15[RBXIndex] + j->eraw();
+
+  }//loop over rechits
+
+  
+  // RBX charge and energy vectors are filled in
+  for(int irbx = 0; irbx < 72; irbx++){
+    std::vector<double> RBXChargevector(   std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
+    std::vector<double> RBXCharge15vector( std::begin(RBXCharge15[irbx]), std::end(RBXCharge15[irbx]) );
+    rbxcharge   -> push_back( RBXChargevector   );
+    rbxcharge15 -> push_back( RBXCharge15vector );
+    rbxenergy   -> push_back( RBXEnergy[irbx]   );
+    rbxenergy15 -> push_back( RBXEnergy15[irbx] );
   }
   
 
+  /*
   if( isRAW ){
     // loop over digis
     for(HBHEDigiCollection::const_iterator iter = hHBHEDigis->begin(); iter != hHBHEDigis->end(); iter++){
@@ -358,6 +395,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
       rbxenergy15 -> push_back( RBXEnergy15[irbx] );
     }  
   }
+  */
 
   iEvent.put( officialdecision         , prefix + "OfficialDecision"         + suffix );
   iEvent.put( officialdecisionrun1     , prefix + "OfficialDecisionRun1"     + suffix );

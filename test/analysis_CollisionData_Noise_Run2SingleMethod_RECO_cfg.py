@@ -78,6 +78,9 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
 # Set up noise filters
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalNoiseFilters_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
 
+# Set up iso noise filter parameters, used for iso-noise filter study in 25ns.
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalIsoNoiseFilterParameters_cfi")
+
 # Set up CaloJetMet quantities 
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
 
@@ -113,15 +116,18 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
 )
 
 
+# Place-holder for applying HBHE noise filter:
 process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),    
-    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun1'),
+    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),    
+    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun1'),
     #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Loose'),
     #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Tight'),
     reverseDecision = cms.bool(False)
 )
 
-# This enabled NEF, but needs reconstruction of RAW data 
+# This enables NEF flagging, but needs reconstruction of RAW data.
+# This is not needed for datasets reconstructed with >=CMSSW748:
+# i.e. 2015C Prompt-reco has NEF flags computed out-of-the-box.
 #process.hbheprereco.setNegativeFlags          = cms.bool(True)
 
 process.tuple_step = cms.Sequence(
@@ -144,6 +150,7 @@ process.tuple_step = cms.Sequence(
     #    # Make HCAL tuples: reco info
     process.hcalTupleHBHERecHits*
     process.hcalTupleHcalNoiseFilters*
+    process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
     process.hcalTupleCaloJetMet*
     #
     #process.hcalTupleHBHERecHitsMethod0*

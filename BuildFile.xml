@@ -7,6 +7,10 @@
 <use   name="CondFormats/HcalObjects"/>
 <use   name="Geometry/HcalTowerAlgo"/>
 <use   name="Geometry/Records"/>
+<use   name="RecoLocalCalo/HcalRecAlgos"/>
+<use   name="RecoLocalCalo/HcalRecProducers"/>
+<use   name="RecoLocalCalo/EcalRecAlgos"/>
+<use   name="CondFormats/DataRecord"/>
 <use   name="CalibCalorimetry/HcalTPGAlgos"/>
 <use   name="rootcore"/>
 <use   name="boost"/>
@@ -14,4 +18,3 @@
 <export>
   <lib   name="1"/>
 </export>
-

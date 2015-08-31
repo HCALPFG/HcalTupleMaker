@@ -175,6 +175,7 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
   objvalidator_.setEERecHitCollection(&(*eehits_h));
 
   // Parameters to study
+  // In CMSSW, these are defined in: RecoLocalCalo/HcalRecProducers/python/HBHEIsolatedNoiseReflagger_cfi.py
   double     LooseHcalIsol_  = 0.08;
   double     LooseEcalIsol_  = 0.08;
   double     LooseTrackIsol_ = 0.10;
@@ -441,97 +442,6 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
   //numisolatednoisechannels -> push_back ( hSummary->numIsolatedNoiseChannels() );
   //isolatednoisesume        -> push_back ( hSummary->isolatedNoiseSumE() );
   //isolatednoisesumet       -> push_back ( hSummary->isolatedNoiseSumEt() );
-
-
-  /*
-  edm::Handle<HBHERecHitCollection> hRecHits;
-  iEvent.getByLabel(recoInputTag, hRecHits);
-
-  edm::Handle<HBHEDigiCollection> hHBHEDigis;
-  if( isRAW ) iEvent.getByLabel("hcalDigis", hHBHEDigis);
-
-  edm::ESHandle<HcalDbService> hConditions;
-  iSetup.get<HcalDbRecord>().get(hConditions);
-
-  std::map<HcalDetId, int> RecHitIndex;
-  for(int i = 0; i < (int)hRecHits->size(); i++){
-    HcalDetId id = (*hRecHits)[i].id();
-    RecHitIndex.insert(std::pair<HcalDetId, int>(id, i));
-  }
-  
-  // HBHE RBX energy and mega-pulse shape
-  double RBXCharge[72][10];
-  double RBXEnergy[72];
-  double RBXCharge15[72][10];
-  double RBXEnergy15[72];
-  // Reset values to 0
-  for(int i = 0; i < 72; i++){
-    for(int j = 0; j < 10; j++){
-      RBXCharge[i][j] = 0;
-      RBXCharge15[i][j] = 0;
-    }
-    RBXEnergy[i] = 0;
-    RBXEnergy15[i] = 0;
-  }
-
-  if( isRAW ){
-    // loop over digis
-    for(HBHEDigiCollection::const_iterator iter = hHBHEDigis->begin(); iter != hHBHEDigis->end(); iter++){
-      //
-      HcalDetId id = iter->id();
-      int RBXIndex = HcalHPDRBXMap::indexRBX(id);
-      //
-      // HCAL rechit flagword, auxword
-      flagword -> push_back ( (*hRecHits)[RecHitIndex[id]].flags() );
-      auxword  -> push_back ( (*hRecHits)[RecHitIndex[id]].aux()   );
-      //
-      //debugging
-      //if( (*hRecHits)[RecHitIndex[id]].energy()>50 ){
-      //std::cout<<suffix<<"  RechitEnergy/iEta/iPhi/iDepth: "<< (*hRecHits)[RecHitIndex[id]].energy() <<" / "<<id.ieta()<<" / "<< id.iphi()<<" / "<< id.depth();
-      //std::cout<<suffix<<"                          Bit11: "<< (( (*hRecHits)[RecHitIndex[id]].flags() >> 11 ) & 1) <<std::endl;
-      //std::cout<< <<std::endl;
-      //}
-      
-      // First convert ADC to deposited charge
-      const HcalCalibrations &Calibrations = hConditions->getHcalCalibrations(id);
-      const HcalQIECoder *ChannelCoder = hConditions->getHcalCoder(id);
-      const HcalQIEShape *Shape = hConditions->getHcalShape(id);
-      HcalCoderDb Coder(*ChannelCoder, *Shape);
-      CaloSamples Tool;
-      Coder.adc2fC(*iter, Tool);
-      
-      // Calculate RBX total charge, total energy
-      for(int i = 0; i < (int)iter->size(); i++){// loop over TS's
-	const HcalQIESample &QIE = iter->sample(i);
-	RBXCharge[RBXIndex][i] = RBXCharge[RBXIndex][i] + Tool[i] - Calibrations.pedestal(QIE.capid());
-	if((*hRecHits)[RecHitIndex[id]].energy() > 1.5)
-	  RBXCharge15[RBXIndex][i] = RBXCharge15[RBXIndex][i] + Tool[i] - Calibrations.pedestal(QIE.capid());
-      }
-      RBXEnergy[RBXIndex] = RBXEnergy[RBXIndex] + (*hRecHits)[RecHitIndex[id]].energy();
-      if((*hRecHits)[RecHitIndex[id]].energy() > 1.5)
-	RBXEnergy15[RBXIndex] = RBXEnergy15[RBXIndex] + (*hRecHits)[RecHitIndex[id]].energy();
-    }
-    
-    //debugging
-    // for(int i = 0; i < 72; i++){
-    //if( RBXEnergy[i]>0 )
-    //std::cout<<"RBX "<<i<<"  : "<<RBXEnergy[i]<<std::endl;
-    //}
-    //
-
-    // RBX charge and energy vectors are filled in
-    for(int irbx = 0; irbx < 72; irbx++){
-      std::vector<double> RBXChargevector(   std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
-      std::vector<double> RBXCharge15vector( std::begin(RBXCharge15[irbx]), std::end(RBXCharge15[irbx]) );
-      //rbxcharge   -> push_back( RBXCharge[irbx]   );
-      //rbxcharge15 -> push_back( RBXCharge15[irbx] );
-      rbxcharge   -> push_back( RBXChargevector   );
-      rbxcharge15 -> push_back( RBXCharge15vector );
-      rbxenergy   -> push_back( RBXEnergy[irbx]   );
-      rbxenergy15 -> push_back( RBXEnergy15[irbx] );
-    }  
-  }
-  */
 
   // iso noise filter params
   //iEvent.put( numisolatednoisechannels , prefix + "NumIsolatedNoiseChannels" + suffix );

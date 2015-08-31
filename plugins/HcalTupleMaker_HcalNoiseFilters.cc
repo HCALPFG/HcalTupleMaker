@@ -35,6 +35,7 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   produces <std::vector<int> >                  (prefix + "OfficialDecisionRun1"     + suffix );
   produces <std::vector<int> >                  (prefix + "OfficialDecisionRun2L"    + suffix );
   produces <std::vector<int> >                  (prefix + "OfficialDecisionRun2T"    + suffix );
+  produces <std::vector<int> >                  (prefix + "IsoNoiseFilterDecision"   + suffix );
   produces <std::vector<int> >                  (prefix + "HPDHits"                  + suffix );
   produces <std::vector<int> >                  (prefix + "HPDNoOtherHits"           + suffix );
   produces <std::vector<int> >                  (prefix + "MaxZeros"                 + suffix );
@@ -60,16 +61,16 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   produces <std::vector<double> >               (prefix + "RBXEnergy15"              + suffix );
   //
   // Method-0 rechit collection accessed via eraw()
-  produces <std::vector<double> >               (prefix + "HBHERechitEnergyMethod0"  + suffix );
+  produces <std::vector<double> >               (prefix + "HBHERecHitEnergyRaw"      + suffix );
   //
-  produces <std::vector<std::vector<int> > >     (prefix + "HBHERechitAuxCapID"       + suffix );
-  produces <std::vector<std::vector<int> > >     (prefix + "HBHERechitAuxADC"         + suffix );
-  produces <std::vector<std::vector<double> > >  (prefix + "HBHERechitAuxAllfC"       + suffix );
-  produces <std::vector<std::vector<double> > >  (prefix + "HBHERechitAuxPedFC"       + suffix );
-  produces <std::vector<std::vector<double> > >  (prefix + "HBHERechitAuxGain"        + suffix );
-  produces <std::vector<std::vector<double> > >  (prefix + "HBHERechitAuxRCGain"      + suffix );
-  produces <std::vector<std::vector<double> > >  (prefix + "HBHERechitAuxFC"          + suffix );
-  produces <std::vector<std::vector<double> > >  (prefix + "HBHERechitAuxEnergy"      + suffix );
+  produces <std::vector<std::vector<int> > >     (prefix + "HBHERecHitAuxCapID"       + suffix );
+  produces <std::vector<std::vector<int> > >     (prefix + "HBHERecHitAuxADC"         + suffix );
+  produces <std::vector<std::vector<double> > >  (prefix + "HBHERecHitAuxAllfC"       + suffix );
+  produces <std::vector<std::vector<double> > >  (prefix + "HBHERecHitAuxPedFC"       + suffix );
+  produces <std::vector<std::vector<double> > >  (prefix + "HBHERecHitAuxGain"        + suffix );
+  produces <std::vector<std::vector<double> > >  (prefix + "HBHERecHitAuxRCGain"      + suffix );
+  produces <std::vector<std::vector<double> > >  (prefix + "HBHERecHitAuxFC"          + suffix );
+  produces <std::vector<std::vector<double> > >  (prefix + "HBHERecHitAuxEnergy"      + suffix );
 }
 
 void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -78,6 +79,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   std::auto_ptr<std::vector<int> >                  officialdecisionrun1       ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  officialdecisionrun2l      ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  officialdecisionrun2t      ( new std::vector<int>                  ());
+  std::auto_ptr<std::vector<int> >                  isonoisefilterdecision     ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  hpdhits                    ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  hpdnootherhits             ( new std::vector<int>                  ());
   std::auto_ptr<std::vector<int> >                  maxzeros                   ( new std::vector<int>                  ());
@@ -101,7 +103,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   std::auto_ptr<std::vector<double> >               rbxenergy                  ( new std::vector<double>               ());
   std::auto_ptr<std::vector<double> >               rbxenergy15                ( new std::vector<double>               ());
   //
-  std::auto_ptr<std::vector<double> >               hbherechitenergymethod0    ( new std::vector<double>               ());
+  std::auto_ptr<std::vector<double> >               hbherechitenergyraw        ( new std::vector<double>               ());
   //
   std::auto_ptr<std::vector<std::vector<int> > >    hbherechitauxcapid         ( new std::vector<std::vector<int> >    ());   
   std::auto_ptr<std::vector<std::vector<int> > >    hbherechitauxadc           ( new std::vector<std::vector<int> >    ());   
@@ -120,6 +122,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Loose", hNoiseResult_Run2Loose);
   edm::Handle<bool> hNoiseResult_Run2Tight;
   iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Tight", hNoiseResult_Run2Tight);
+  edm::Handle<bool> hNoiseResult_IsoNoiseFilter;
+  iEvent.getByLabel(noiseResultInputTag, "HBHEIsoNoiseFilterResult", hNoiseResult_IsoNoiseFilter);
 
 
   // HCAL Filter Decision
@@ -127,6 +131,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   officialdecisionrun1    -> push_back( *hNoiseResult_Run1 );
   officialdecisionrun2l   -> push_back( *hNoiseResult_Run2Loose );
   officialdecisionrun2t   -> push_back( *hNoiseResult_Run2Tight );
+  isonoisefilterdecision  -> push_back( *hNoiseResult_IsoNoiseFilter );
 
 
   edm::Handle<HcalNoiseSummary> hSummary;
@@ -219,7 +224,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   
   //loop over rechits
   for(HBHERecHitCollection::const_iterator j = hRecHits->begin(); j != hRecHits->end(); j++){
-    hbherechitenergymethod0->push_back( j->eraw() );//this is always method-0 rechit energy (raw energy).
+    hbherechitenergyraw->push_back( j->eraw() );//this is always method-0 rechit energy (raw energy).
     //
     // Reset values to 0
     for(int j = 0; j < 8; j++){
@@ -401,6 +406,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.put( officialdecisionrun1     , prefix + "OfficialDecisionRun1"     + suffix );
   iEvent.put( officialdecisionrun2l    , prefix + "OfficialDecisionRun2L"    + suffix );
   iEvent.put( officialdecisionrun2t    , prefix + "OfficialDecisionRun2T"    + suffix );
+  iEvent.put( isonoisefilterdecision   , prefix + "IsoNoiseFilterDecision"   + suffix );
   iEvent.put( hpdhits                  , prefix + "HPDHits"                  + suffix );
   iEvent.put( hpdnootherhits           , prefix + "HPDNoOtherHits"           + suffix );
   iEvent.put( maxzeros                 , prefix + "MaxZeros"                 + suffix );
@@ -424,14 +430,14 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.put( rbxenergy                , prefix + "RBXEnergy"                + suffix );
   iEvent.put( rbxenergy15              , prefix + "RBXEnergy15"              + suffix );
   //
-  iEvent.put( hbherechitenergymethod0  , prefix + "HBHERechitEnergyMethod0"  + suffix );
+  iEvent.put( hbherechitenergyraw      , prefix + "HBHERecHitEnergyRaw"      + suffix );
   //
-  iEvent.put( hbherechitauxcapid       , prefix + "HBHERechitAuxCapID"       + suffix ); 
-  iEvent.put( hbherechitauxadc         , prefix + "HBHERechitAuxADC"         + suffix ); 
-  iEvent.put( hbherechitauxallfc       , prefix + "HBHERechitAuxAllfC"       + suffix ); 
-  iEvent.put( hbherechitauxpedfc       , prefix + "HBHERechitAuxPedFC"       + suffix );
-  iEvent.put( hbherechitauxgain        , prefix + "HBHERechitAuxGain"        + suffix );
-  iEvent.put( hbherechitauxrcgain      , prefix + "HBHERechitAuxRCGain"      + suffix );
-  iEvent.put( hbherechitauxfc          , prefix + "HBHERechitAuxFC"          + suffix );  
-  iEvent.put( hbherechitauxenergy      , prefix + "HBHERechitAuxEnergy"      + suffix );
+  iEvent.put( hbherechitauxcapid       , prefix + "HBHERecHitAuxCapID"       + suffix ); 
+  iEvent.put( hbherechitauxadc         , prefix + "HBHERecHitAuxADC"         + suffix ); 
+  iEvent.put( hbherechitauxallfc       , prefix + "HBHERecHitAuxAllfC"       + suffix ); 
+  iEvent.put( hbherechitauxpedfc       , prefix + "HBHERecHitAuxPedFC"       + suffix );
+  iEvent.put( hbherechitauxgain        , prefix + "HBHERecHitAuxGain"        + suffix );
+  iEvent.put( hbherechitauxrcgain      , prefix + "HBHERecHitAuxRCGain"      + suffix );
+  iEvent.put( hbherechitauxfc          , prefix + "HBHERecHitAuxFC"          + suffix );  
+  iEvent.put( hbherechitauxenergy      , prefix + "HBHERecHitAuxEnergy"      + suffix );
 }

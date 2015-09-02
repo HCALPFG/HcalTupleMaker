@@ -24,7 +24,8 @@ process.source = cms.Source("PoolSource")
 
 process.source.fileNames = cms.untracked.vstring(
     #FILENAMES
-    'root://xrootd.unl.edu//store/data/Run2015A/MET/RECO/PromptReco-v1/000/248/038/00000/546E74FC-5D14-E511-9DCE-02163E0145BA.root'
+    #'root://xrootd.unl.edu//store/data/Run2015A/MET/RECO/PromptReco-v1/000/248/038/00000/546E74FC-5D14-E511-9DCE-02163E0145BA.root'
+    'root://xrootd.unl.edu//store/data/Run2015C/JetHT/RECO/PromptReco-v1/000/254/790/00000/F22D0473-DD49-E511-BA34-02163E014336.root'
 )
 
 process.source.skipEvents = cms.untracked.uint32(0
@@ -211,5 +212,5 @@ process.preparation = cms.Path(
     process.tuple_step
 )
 
-from SLHCUpgradeSimulations.Configuration.postLS1Customs import customisePostLS1
-process = customisePostLS1(process)
+#from SLHCUpgradeSimulations.Configuration.postLS1Customs import customisePostLS1
+#process = customisePostLS1(process)

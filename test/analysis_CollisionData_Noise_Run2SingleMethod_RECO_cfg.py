@@ -9,8 +9,8 @@ from Configuration.StandardSequences.Eras import eras
 # Declare the process
 #------------------------------------------------------------------------------------
 
-process = cms.Process('NOISE',eras.Run2_50ns)#for 50ns 13 TeV data
-#process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
+#process = cms.Process('NOISE',eras.Run2_50ns)#for 50ns 13 TeV data
+process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
 
 #------------------------------------------------------------------------------------
 # Set up the input source

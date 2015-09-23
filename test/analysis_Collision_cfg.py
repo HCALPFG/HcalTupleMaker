@@ -36,7 +36,7 @@ options.register('outputFile',
                  "Output file")
 
 options.register('globalTag',
-		'GR_H_V58C',
+		'74X_dataRun2_Express_v2',
 		VarParsing.VarParsing.multiplicity.singleton,
 		VarParsing.VarParsing.varType.string,
 		"Global Tag")
@@ -140,7 +140,7 @@ process.CustomizedRawToDigi = cms.Sequence(
 #------------------------------------------------------------------------------------------------------------------------------------
 # Configure Reconstruction Method
 #------------------------------------------------------------------------------------------------------------------------------------
-process.hbheprereco.puCorrMethod = cms.int32(0)
+process.hbheprereco.puCorrMethod = cms.int32(2)
 
 #------------------------------------------------------------------------------------------------------------------------------------
 # Create Noise Filter
@@ -161,19 +161,19 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 # Set up new HO emap
 #------------------------------------------------------------------------------------------------------------------------------------
 # New HO emap
-process.es_pool = cms.ESSource("PoolDBESSource",
-    process.CondDBSetup,
-    timetype = cms.string('runnumber'),
-    toGet = cms.VPSet(
-        cms.PSet(
-            record = cms.string("HcalElectronicsMapRcd"),
-            tag = cms.string("HcalElectronicsMap_v7.00_offline")
-        )
-    ),
-    connect = cms.string('frontier://FrontierPrep/CMS_COND_HCAL'),
-    authenticationMethod = cms.untracked.uint32(2)
-)
-process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
+# process.es_pool = cms.ESSource("PoolDBESSource",
+#     process.CondDBSetup,
+#     timetype = cms.string('runnumber'),
+#     toGet = cms.VPSet(
+#         cms.PSet(
+#             record = cms.string("HcalElectronicsMapRcd"),
+#             tag = cms.string("HcalElectronicsMap_v7.00_offline")
+#         )
+#     ),
+#     connect = cms.string('frontier://FrontierPrep/CMS_COND_HCAL'),
+#     authenticationMethod = cms.untracked.uint32(2)
+# )
+# process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
 
 
 

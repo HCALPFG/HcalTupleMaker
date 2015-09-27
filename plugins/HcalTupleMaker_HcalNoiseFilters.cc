@@ -28,6 +28,7 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
   noiseResultInputTag  (iConfig.getUntrackedParameter<std::string>("noiseResultInputTag")), 
   recoInputTag         (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
   isRAW                (iConfig.getUntrackedParameter<bool>("isRAW")),
+  isRECO               (iConfig.getUntrackedParameter<bool>("isRECO")),
   prefix               (iConfig.getUntrackedParameter<std::string>("Prefix")),
   suffix               (iConfig.getUntrackedParameter<std::string>("Suffix"))
 {
@@ -170,185 +171,186 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   spikenoisesume           -> push_back ( hSummary->spikeNoiseSumE() );
   spikenoisesumet          -> push_back ( hSummary->spikeNoiseSumEt() );
 
-  edm::Handle<HBHERecHitCollection> hRecHits;
-  iEvent.getByLabel(recoInputTag, hRecHits);
-
-  edm::Handle<HBHEDigiCollection> hHBHEDigis;
-  if( isRAW ) iEvent.getByLabel("hcalDigis", hHBHEDigis);
-
-  edm::ESHandle<HcalDbService> hConditions;
-  iSetup.get<HcalDbRecord>().get(hConditions);
-
-  std::map<HcalDetId, int> RecHitIndex;
-  for(int i = 0; i < (int)hRecHits->size(); i++){
-    HcalDetId id = (*hRecHits)[i].id();
-    RecHitIndex.insert(std::pair<HcalDetId, int>(id, i));
-  }
-  
-  // HBHE RBX energy and mega-pulse shape
-  double RBXCharge[72][10];
-  double RBXEnergy[72];
-  double RBXCharge15[72][10];
-  double RBXEnergy15[72];
-  //
-  // AUX charge, gain, etc. values..
-  int    auxcapid[8];
-  int    auxadc[8];
-  double auxallfc[8];
-  double auxpedfc[8];
-  double auxrcgain[8];
-  double auxfc[8];
-  double auxenergy[8];
-  double auxgain[8];
-  //
-  // Reset values to 0
-  for(int i = 0; i < 72; i++){
-    for(int j = 0; j < 10; j++){
-      RBXCharge[i][j] = 0;
-      RBXCharge15[i][j] = 0;
+  if( isRECO ){
+    edm::Handle<HBHERecHitCollection> hRecHits;
+    iEvent.getByLabel(recoInputTag, hRecHits);
+    
+    edm::Handle<HBHEDigiCollection> hHBHEDigis;
+    if( isRAW ) iEvent.getByLabel("hcalDigis", hHBHEDigis);
+    
+    edm::ESHandle<HcalDbService> hConditions;
+    iSetup.get<HcalDbRecord>().get(hConditions);
+    
+    std::map<HcalDetId, int> RecHitIndex;
+    for(int i = 0; i < (int)hRecHits->size(); i++){
+      HcalDetId id = (*hRecHits)[i].id();
+      RecHitIndex.insert(std::pair<HcalDetId, int>(id, i));
     }
-    RBXEnergy[i] = 0;
-    RBXEnergy15[i] = 0;
-    if( i < 8 ){
-      auxcapid[i]=0;
-      auxadc[i]=0;
-      auxallfc[i]=0;
-      auxpedfc[i]=0;
-      auxrcgain[i]=0;
-      auxfc[i]=0;
-      auxenergy[i]=0;
-      auxgain[i]=0;
-    }
-  }
-
   
-  //loop over rechits
-  for(HBHERecHitCollection::const_iterator j = hRecHits->begin(); j != hRecHits->end(); j++){
-    hbherechitenergyraw->push_back( j->eraw() );//this is always method-0 rechit energy (raw energy).
+    // HBHE RBX energy and mega-pulse shape
+    double RBXCharge[72][10];
+    double RBXEnergy[72];
+    double RBXCharge15[72][10];
+    double RBXEnergy15[72];
+    //
+    // AUX charge, gain, etc. values..
+    int    auxcapid[8];
+    int    auxadc[8];
+    double auxallfc[8];
+    double auxpedfc[8];
+    double auxrcgain[8];
+    double auxfc[8];
+    double auxenergy[8];
+    double auxgain[8];
     //
     // Reset values to 0
-    for(int j = 0; j < 8; j++){
-      auxcapid[j]=0;
-      auxadc[j]=0;
-      auxallfc[j]=0;
-      auxpedfc[j]=0;
-      auxrcgain[j]=0;
-      auxfc[j]=0;
-      auxenergy[j]=0;
-      auxgain[j]=0;
+    for(int i = 0; i < 72; i++){
+      for(int j = 0; j < 10; j++){
+	RBXCharge[i][j] = 0;
+	RBXCharge15[i][j] = 0;
+      }
+      RBXEnergy[i] = 0;
+      RBXEnergy15[i] = 0;
+      if( i < 8 ){
+	auxcapid[i]=0;
+	auxadc[i]=0;
+	auxallfc[i]=0;
+	auxpedfc[i]=0;
+	auxrcgain[i]=0;
+	auxfc[i]=0;
+	auxenergy[i]=0;
+	auxgain[i]=0;
+      }
     }
-    //
-    // Extracting corresponding digi/pulse-shape information for the rechit via the auxword
-    // Code borrowed from S. Abdullin: /afs/cern.ch/user/a/abdullin/public/AUX_word_usage/HcalRecHitsValidation.cc
-    HcalDetId cell(j->id());
-    //const CaloCellGeometry* cellGeometry =  geometry->getSubdetectorGeometry (cell)->getGeometry (cell) ; //for eta-phi, but no need
-    //
-    CaloSamples tool;
-    const HcalCalibrations calibrations = hConditions->getHcalCalibrations(cell);
-    const HcalQIECoder *channelCoder = hConditions->getHcalCoder(cell);
-    const HcalQIEShape *shape = hConditions->getHcalShape(channelCoder);
-    HcalCoderDb coder(*channelCoder, *shape);
-
-    int auxwd1 = j->auxHBHE();  // TS = 0,1,2,3 info
-    int auxwd2 = j->aux();      // TS = 4,5,6,7 info
-
-    int adc[8]; // raw (non-linearized) ADC counts
-    int capid[8];
-
-    adc[0] = (auxwd1)       & 0x7F;
-    adc[1] = (auxwd1 >> 7)  & 0x7F;
-    adc[2] = (auxwd1 >> 14) & 0x7F;
-    adc[3] = (auxwd1 >> 21) & 0x7F;
-    adc[4] = (auxwd2)       & 0x7F;
-    adc[5] = (auxwd2 >> 7)  & 0x7F;
-    adc[6] = (auxwd2 >> 14) & 0x7F;
-    adc[7] = (auxwd2 >> 21) & 0x7F;
-    capid[0] = (auxwd1 >> 28) & 0x3;  // rotating through 4 values: 0,1,2,3
-    capid[1] = (capid[0] + 1 <= 3) ? capid[0] + 1 : 0;
-    capid[2] = (capid[1] + 1 <= 3) ? capid[1] + 1 : 0;
-    capid[3] = (capid[2] + 1 <= 3) ? capid[2] + 1 : 0;
-    capid[4] = (auxwd2 >> 28) & 0x3;
-    capid[5] = (capid[4] + 1 <= 3) ? capid[4] + 1 : 0;
-    capid[6] = (capid[5] + 1 <= 3) ? capid[5] + 1 : 0;
-    capid[7] = (capid[6] + 1 <= 3) ? capid[6] + 1 : 0;
-
-    HBHEDataFrame digi(cell);
-    digi.setSize(10);
-    digi.setPresamples(4);
-    for (int iTS = 0; iTS < 8; iTS++) {
-      HcalQIESample s (adc[iTS], capid[iTS], 0, 0);
-      digi.setSample(iTS,s);
-    }    
-
-    coder.adc2fC(digi, tool);
-
-    for (int iTS = 0; iTS < 8; iTS++) {
-      auxcapid[iTS]  = (int)(capid[iTS]);//just a naming change..
-      auxadc[iTS]    = (int)(adc[iTS]);//just a naming change..
-      auxallfc[iTS]  = tool[iTS];
-      auxpedfc[iTS]  = calibrations.pedestal     ( capid[iTS] );
-      auxrcgain[iTS] = calibrations.respcorrgain ( capid[iTS] );
-      auxfc[iTS]     = auxallfc[iTS] - auxpedfc[iTS];
-      auxenergy[iTS] = auxfc[iTS] * auxrcgain[iTS];
-      auxgain[iTS]   = calibrations.rawgain( capid[iTS] );
-    }
-
-    //converting arrays into vectors
-    std::vector<int>    auxcapidvector(   std::begin(auxcapid), std::end(auxcapid)  );
-    std::vector<int>    auxadcvector(     std::begin(auxadc),   std::end(auxadc)    );
-    std::vector<double> auxallfcvector(   std::begin(auxallfc), std::end(auxallfc)  );
-    std::vector<double> auxpedfcvector(   std::begin(auxpedfc), std::end(auxpedfc)  );
-    std::vector<double> auxrcgainvector(  std::begin(auxrcgain),std::end(auxrcgain) );
-    std::vector<double> auxfcvector(      std::begin(auxfc),    std::end(auxfc)     );
-    std::vector<double> auxenergyvector(  std::begin(auxenergy),std::end(auxenergy) );
-    std::vector<double> auxgainvector(    std::begin(auxgain),  std::end(auxgain)   );
-    hbherechitauxcapid  -> push_back( auxcapidvector  );
-    hbherechitauxadc    -> push_back( auxadcvector    );
-    hbherechitauxallfc  -> push_back( auxallfcvector  );
-    hbherechitauxpedfc  -> push_back( auxpedfcvector  );
-    hbherechitauxrcgain -> push_back( auxrcgainvector );
-    hbherechitauxfc     -> push_back( auxfcvector     );
-    hbherechitauxenergy -> push_back( auxenergyvector );
-    hbherechitauxgain   -> push_back( auxgainvector   );
-
-    //debugging
-    //if( j->eraw()> 2){
-    //std::cout<<"Eraw: "<<j->eraw()<<"   ";
-    //std::cout<<"Charge: ";
-    //for( int iTS=0; iTS<8; iTS++){
-    //if(iTS==4) std::cout<< auxfcvector.at(iTS)<<"*  ";
-    //else std::cout<< auxfcvector.at(iTS) <<"  ";
-    //}
-    //std::cout<<std::endl;
-    //}
-
-    // Calculate RBX total charge, total energy, using rechit info..
-    HcalDetId hcalDetId = HcalDetId(j -> detid());
-    int RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
-    //
-    for(int iTS = 0; iTS<8; iTS++){// loop over TS's
-      RBXCharge[RBXIndex][iTS] = RBXCharge[RBXIndex][iTS] + auxfc[iTS];// RBX pulse shape
+    
+    
+    //loop over rechits
+    for(HBHERecHitCollection::const_iterator j = hRecHits->begin(); j != hRecHits->end(); j++){
+      hbherechitenergyraw->push_back( j->eraw() );//this is always method-0 rechit energy (raw energy).
+      //
+      // Reset values to 0
+      for(int j = 0; j < 8; j++){
+	auxcapid[j]=0;
+	auxadc[j]=0;
+	auxallfc[j]=0;
+	auxpedfc[j]=0;
+	auxrcgain[j]=0;
+	auxfc[j]=0;
+	auxenergy[j]=0;
+	auxgain[j]=0;
+      }
+      //
+      // Extracting corresponding digi/pulse-shape information for the rechit via the auxword
+      // Code borrowed from S. Abdullin: /afs/cern.ch/user/a/abdullin/public/AUX_word_usage/HcalRecHitsValidation.cc
+      HcalDetId cell(j->id());
+      //const CaloCellGeometry* cellGeometry =  geometry->getSubdetectorGeometry (cell)->getGeometry (cell) ; //for eta-phi, but no need
+      //
+      CaloSamples tool;
+      const HcalCalibrations calibrations = hConditions->getHcalCalibrations(cell);
+      const HcalQIECoder *channelCoder = hConditions->getHcalCoder(cell);
+      const HcalQIEShape *shape = hConditions->getHcalShape(channelCoder);
+      HcalCoderDb coder(*channelCoder, *shape);
+      
+      int auxwd1 = j->auxHBHE();  // TS = 0,1,2,3 info
+      int auxwd2 = j->aux();      // TS = 4,5,6,7 info
+      
+      int adc[8]; // raw (non-linearized) ADC counts
+      int capid[8];
+      
+      adc[0] = (auxwd1)       & 0x7F;
+      adc[1] = (auxwd1 >> 7)  & 0x7F;
+      adc[2] = (auxwd1 >> 14) & 0x7F;
+      adc[3] = (auxwd1 >> 21) & 0x7F;
+      adc[4] = (auxwd2)       & 0x7F;
+      adc[5] = (auxwd2 >> 7)  & 0x7F;
+      adc[6] = (auxwd2 >> 14) & 0x7F;
+      adc[7] = (auxwd2 >> 21) & 0x7F;
+      capid[0] = (auxwd1 >> 28) & 0x3;  // rotating through 4 values: 0,1,2,3
+      capid[1] = (capid[0] + 1 <= 3) ? capid[0] + 1 : 0;
+      capid[2] = (capid[1] + 1 <= 3) ? capid[1] + 1 : 0;
+      capid[3] = (capid[2] + 1 <= 3) ? capid[2] + 1 : 0;
+      capid[4] = (auxwd2 >> 28) & 0x3;
+      capid[5] = (capid[4] + 1 <= 3) ? capid[4] + 1 : 0;
+      capid[6] = (capid[5] + 1 <= 3) ? capid[5] + 1 : 0;
+      capid[7] = (capid[6] + 1 <= 3) ? capid[6] + 1 : 0;
+      
+      HBHEDataFrame digi(cell);
+      digi.setSize(10);
+      digi.setPresamples(4);
+      for (int iTS = 0; iTS < 8; iTS++) {
+	HcalQIESample s (adc[iTS], capid[iTS], 0, 0);
+	digi.setSample(iTS,s);
+      }    
+      
+      coder.adc2fC(digi, tool);
+      
+      for (int iTS = 0; iTS < 8; iTS++) {
+	auxcapid[iTS]  = (int)(capid[iTS]);//just a naming change..
+	auxadc[iTS]    = (int)(adc[iTS]);//just a naming change..
+	auxallfc[iTS]  = tool[iTS];
+	auxpedfc[iTS]  = calibrations.pedestal     ( capid[iTS] );
+	auxrcgain[iTS] = calibrations.respcorrgain ( capid[iTS] );
+	auxfc[iTS]     = auxallfc[iTS] - auxpedfc[iTS];
+	auxenergy[iTS] = auxfc[iTS] * auxrcgain[iTS];
+	auxgain[iTS]   = calibrations.rawgain( capid[iTS] );
+      }
+      
+      //converting arrays into vectors
+      std::vector<int>    auxcapidvector(   std::begin(auxcapid), std::end(auxcapid)  );
+      std::vector<int>    auxadcvector(     std::begin(auxadc),   std::end(auxadc)    );
+      std::vector<double> auxallfcvector(   std::begin(auxallfc), std::end(auxallfc)  );
+      std::vector<double> auxpedfcvector(   std::begin(auxpedfc), std::end(auxpedfc)  );
+      std::vector<double> auxrcgainvector(  std::begin(auxrcgain),std::end(auxrcgain) );
+      std::vector<double> auxfcvector(      std::begin(auxfc),    std::end(auxfc)     );
+      std::vector<double> auxenergyvector(  std::begin(auxenergy),std::end(auxenergy) );
+      std::vector<double> auxgainvector(    std::begin(auxgain),  std::end(auxgain)   );
+      hbherechitauxcapid  -> push_back( auxcapidvector  );
+      hbherechitauxadc    -> push_back( auxadcvector    );
+      hbherechitauxallfc  -> push_back( auxallfcvector  );
+      hbherechitauxpedfc  -> push_back( auxpedfcvector  );
+      hbherechitauxrcgain -> push_back( auxrcgainvector );
+      hbherechitauxfc     -> push_back( auxfcvector     );
+      hbherechitauxenergy -> push_back( auxenergyvector );
+      hbherechitauxgain   -> push_back( auxgainvector   );
+      
+      //debugging
+      //if( j->eraw()> 2){
+      //std::cout<<"Eraw: "<<j->eraw()<<"   ";
+      //std::cout<<"Charge: ";
+      //for( int iTS=0; iTS<8; iTS++){
+      //if(iTS==4) std::cout<< auxfcvector.at(iTS)<<"*  ";
+      //else std::cout<< auxfcvector.at(iTS) <<"  ";
+      //}
+      //std::cout<<std::endl;
+      //}
+      
+      // Calculate RBX total charge, total energy, using rechit info..
+      HcalDetId hcalDetId = HcalDetId(j -> detid());
+      int RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
+      //
+      for(int iTS = 0; iTS<8; iTS++){// loop over TS's
+	RBXCharge[RBXIndex][iTS] = RBXCharge[RBXIndex][iTS] + auxfc[iTS];// RBX pulse shape
+	if( j->eraw() > 1.5 )
+	  RBXCharge15[RBXIndex][iTS] = RBXCharge15[RBXIndex][iTS] + auxfc[iTS];// RBX pulse shape for rechits > 1.5 GeV
+      }
+      //
+      RBXEnergy[RBXIndex] = RBXEnergy[RBXIndex] + j->eraw();
       if( j->eraw() > 1.5 )
-	RBXCharge15[RBXIndex][iTS] = RBXCharge15[RBXIndex][iTS] + auxfc[iTS];// RBX pulse shape for rechits > 1.5 GeV
+	RBXEnergy15[RBXIndex] = RBXEnergy15[RBXIndex] + j->eraw();
+      
+    }//loop over rechits
+    
+    
+    // RBX charge and energy vectors are filled in
+    for(int irbx = 0; irbx < 72; irbx++){
+      std::vector<double> RBXChargevector(   std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
+      std::vector<double> RBXCharge15vector( std::begin(RBXCharge15[irbx]), std::end(RBXCharge15[irbx]) );
+      rbxcharge   -> push_back( RBXChargevector   );
+      rbxcharge15 -> push_back( RBXCharge15vector );
+      rbxenergy   -> push_back( RBXEnergy[irbx]   );
+      rbxenergy15 -> push_back( RBXEnergy15[irbx] );
     }
-    //
-    RBXEnergy[RBXIndex] = RBXEnergy[RBXIndex] + j->eraw();
-    if( j->eraw() > 1.5 )
-      RBXEnergy15[RBXIndex] = RBXEnergy15[RBXIndex] + j->eraw();
-
-  }//loop over rechits
-
-  
-  // RBX charge and energy vectors are filled in
-  for(int irbx = 0; irbx < 72; irbx++){
-    std::vector<double> RBXChargevector(   std::begin(RBXCharge[irbx]), std::end(RBXCharge[irbx]) );
-    std::vector<double> RBXCharge15vector( std::begin(RBXCharge15[irbx]), std::end(RBXCharge15[irbx]) );
-    rbxcharge   -> push_back( RBXChargevector   );
-    rbxcharge15 -> push_back( RBXCharge15vector );
-    rbxenergy   -> push_back( RBXEnergy[irbx]   );
-    rbxenergy15 -> push_back( RBXEnergy15[irbx] );
-  }
-  
+  }//closes if( isRECO )
 
   /*
   if( isRAW ){

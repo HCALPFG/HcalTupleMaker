@@ -15,6 +15,7 @@ class HcalTupleMaker_HcalNoiseFilters : public edm::EDProducer {
   std::string     noiseResultInputTag;
   std::string     recoInputTag;
   bool            isRAW;
+  bool            isRECO;
   std::string     prefix,suffix;
 };
 

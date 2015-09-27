@@ -112,6 +112,7 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
          recoInputTag         = cms.untracked.string("hbhereco"),
          isRAW  = cms.untracked.bool(False), # new Flag necessary for HcalNoiseFilters to run on RECO data
+         isRECO = cms.untracked.bool(True), 
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )

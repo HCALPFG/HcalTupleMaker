@@ -200,10 +200,10 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       gain            -> push_back ( std::vector<float>() ) ;    
       rcgain          -> push_back ( std::vector<float>() ) ;    */
       FC              -> push_back ( std::vector<float>() ) ;    
-      /*energy          -> push_back ( std::vector<float>() ) ;    
+      energy          -> push_back ( std::vector<float>() ) ;    
       
       size_t last_entry = energy -> size() - 1;
-      */
+      
       //-----------------------------------------------------
       // Loop through digi time slices
       //-----------------------------------------------------
@@ -216,13 +216,13 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	// Get slice-specific cc objects
 	//-----------------------------------------------------
 	
-	//const HcalQIESample * qieSample = & digi -> sample (iTS);
+	const HcalQIESample * qieSample = & digi -> sample (iTS);
 
 	//-----------------------------------------------------
 	// Standard stuff without charge reconstruction
 	//-----------------------------------------------------
 
-	//	int tmp_capid = qieSample -> capid();
+       	int tmp_capid = qieSample -> capid();
 
 	/*(*dv       )[last_entry].push_back ( (int) qieSample -> dv()         );
 	(*er       )[last_entry].push_back ( (int) qieSample -> er()         );
@@ -240,16 +240,16 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	
 	if ( m_doChargeReco ){
 
-	  /*float tmp_allFC = tool[iTS];
+	  float tmp_allFC = tool[iTS];
 	  float tmp_pedFC = calibrations -> pedestal     ( tmp_capid );
-	  float tmp_gain  = calibrations -> respcorrgain ( tmp_capid );
+	  //float tmp_gain  = calibrations -> respcorrgain ( tmp_capid );
 	  float tmp_FC    = tmp_allFC - tmp_pedFC;
-	  
+	  /*
 	  (*allFC )[last_entry].push_back (tmp_allFC);
 	  (*pedFC )[last_entry].push_back (tmp_pedFC);
-	  (*rcgain)[last_entry].push_back (tmp_gain);
+	  (*rcgain)[last_entry].push_back (tmp_gain);*/
 	  (*FC    )[last_entry].push_back (tmp_FC);
-	  (*energy)[last_entry].push_back (tmp_FC * tmp_gain);
+	  /*(*energy)[last_entry].push_back (tmp_FC * tmp_gain);
 	  (*gain  )[last_entry].push_back (calibrations -> rawgain ( tmp_capid ));
 	  */
 

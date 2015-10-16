@@ -11,7 +11,7 @@
 #include "boost/foreach.hpp"
 #include <TBranch.h>
 #include <TLorentzVector.h>
-
+#include <iostream>
 void HcalTupleMaker_Tree::
 analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
   BOOST_FOREACH( BranchConnector* connector, connectors)
@@ -79,6 +79,9 @@ beginJob() {
   edm::SelectedProducts allBranches = reg->allBranchDescriptions();
   edm::ProductSelectorRules productSelectorRules_(pset, "outputCommands", "HcalTupleMaker_Tree");
   edm::ProductSelector productSelector_;
+  for(unsigned int ibranch=0; ibranch<allBranches.size();ibranch++){
+    std::cout<<ibranch<<" "<<allBranches.at(ibranch)->moduleLabel()<<" "<<allBranches.at(ibranch)->branchName()<<std::endl;
+  }
   productSelector_.initialize(productSelectorRules_, allBranches);
 
   std::set<std::string> branchnames;

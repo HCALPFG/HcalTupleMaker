@@ -114,7 +114,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       // Get the position
       //-----------------------------------------------------
       
-      const GlobalPoint& position = geometry.getPosition(*hcalDetId);
+      //      const GlobalPoint& position = geometry.getPosition(*hcalDetId);
       
       //-----------------------------------------------------
       // Get linear ADC
@@ -152,19 +152,36 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 
       if( totalFC < m_totalFCthreshold ) continue;
 
+      if ( m_doEnergyReco ){
+
+      	reco = recos.find ( * hcalDetId ) ;
+      	
+      	float reco_energy = -999.;
+      	float reco_time   = -999.;
+      	
+      	if ( reco != reco_end ) {
+      	  reco_energy = reco -> energy();
+      	  reco_time   = reco -> time();
+      	}
+	if(reco_energy < 5.) continue;
+      	rec_energy -> push_back ( reco_energy );
+      	rec_time   -> push_back ( reco_time   );
+      
+      }
+
       //-----------------------------------------------------
       // Get digi-specific values
       //-----------------------------------------------------
 
-      eta             -> push_back ( position  .  eta             () );
-      phi             -> push_back ( position  .  phi             () );
+      //eta             -> push_back ( position  .  eta             () );
+      //phi             -> push_back ( position  .  phi             () );
       ieta            -> push_back ( hcalDetIdW -> ieta           () );
       iphi            -> push_back ( hcalDetIdW -> iphi           () );
       depth           -> push_back ( hcalDetIdW -> depth          () );
-      subdet          -> push_back ( hcalDetIdW -> subdet         () );
-      presamples      -> push_back ( digi      -> presamples      () );
+      // subdet          -> push_back ( hcalDetIdW -> subdet         () );
+      //presamples      -> push_back ( digi      -> presamples      () );
       size            -> push_back ( digi      -> size            () );
-      fiberIdleOffset -> push_back ( digi      -> fiberIdleOffset () );
+      /*fiberIdleOffset -> push_back ( digi      -> fiberIdleOffset () );
       electronicsId   -> push_back ( digi -> elecId().rawId() );
       rawId           -> push_back ( hcalDetIdW -> rawId() );
 
@@ -181,12 +198,12 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       allFC           -> push_back ( std::vector<float>() ) ;    
       pedFC           -> push_back ( std::vector<float>() ) ;    
       gain            -> push_back ( std::vector<float>() ) ;    
-      rcgain          -> push_back ( std::vector<float>() ) ;    
+      rcgain          -> push_back ( std::vector<float>() ) ;    */
       FC              -> push_back ( std::vector<float>() ) ;    
-      energy          -> push_back ( std::vector<float>() ) ;    
-
-      size_t last_entry = energy -> size() - 1;
+      /*energy          -> push_back ( std::vector<float>() ) ;    
       
+      size_t last_entry = energy -> size() - 1;
+      */
       //-----------------------------------------------------
       // Loop through digi time slices
       //-----------------------------------------------------
@@ -199,15 +216,15 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	// Get slice-specific cc objects
 	//-----------------------------------------------------
 	
-	const HcalQIESample * qieSample = & digi -> sample (iTS);
+	//const HcalQIESample * qieSample = & digi -> sample (iTS);
 
 	//-----------------------------------------------------
 	// Standard stuff without charge reconstruction
 	//-----------------------------------------------------
 
-	int tmp_capid = qieSample -> capid();
+	//	int tmp_capid = qieSample -> capid();
 
-	(*dv       )[last_entry].push_back ( (int) qieSample -> dv()         );
+	/*(*dv       )[last_entry].push_back ( (int) qieSample -> dv()         );
 	(*er       )[last_entry].push_back ( (int) qieSample -> er()         );
 	(*raw      )[last_entry].push_back (       qieSample -> raw()        );
 	(*adc      )[last_entry].push_back (       qieSample -> adc()        );
@@ -216,25 +233,25 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 	(*fiberChan)[last_entry].push_back (       qieSample -> fiberChan()  );
 	(*capid    )[last_entry].push_back (       tmp_capid                 );
 	(*ladc     )[last_entry].push_back (       itool[iTS]                );
-
+	*/
 	//-----------------------------------------------------
 	// Charge reconstruction values
 	//-----------------------------------------------------
 	
 	if ( m_doChargeReco ){
 
-	  float tmp_allFC = tool[iTS];
+	  /*float tmp_allFC = tool[iTS];
 	  float tmp_pedFC = calibrations -> pedestal     ( tmp_capid );
 	  float tmp_gain  = calibrations -> respcorrgain ( tmp_capid );
 	  float tmp_FC    = tmp_allFC - tmp_pedFC;
-
+	  
 	  (*allFC )[last_entry].push_back (tmp_allFC);
 	  (*pedFC )[last_entry].push_back (tmp_pedFC);
 	  (*rcgain)[last_entry].push_back (tmp_gain);
 	  (*FC    )[last_entry].push_back (tmp_FC);
 	  (*energy)[last_entry].push_back (tmp_FC * tmp_gain);
 	  (*gain  )[last_entry].push_back (calibrations -> rawgain ( tmp_capid ));
-	  
+	  */
 
 	}
       }
@@ -242,7 +259,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       //-----------------------------------------------------
       // For each digi, try to find a rechit
       //-----------------------------------------------------
-
+      /*
       if ( m_doEnergyReco ){
 
       	reco = recos.find ( * hcalDetId ) ;
@@ -258,7 +275,7 @@ class HcalTupleMaker_HcalDigiAlgorithm {
       	rec_energy -> push_back ( reco_energy );
       	rec_time   -> push_back ( reco_time   );
       
-      }
+	}*/
     } // end of loop over digis
   }
 

@@ -188,14 +188,14 @@ process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     # Make HCAL tuples: FED info
-    process.hcalTupleFEDs*
+    # process.hcalTupleFEDs*
     # Make HCAL tuples: digi info
     process.hcalTupleHBHEDigis*
-    process.hcalTupleHODigis*
-    process.hcalTupleHFDigis*
+    # process.hcalTupleHODigis*
+    # process.hcalTupleHFDigis*
     # process.hcalTupleTriggerPrimitives*
     # Trigger info
-    process.hcalTupleTrigger*
+    # process.hcalTupleTrigger*
     # process.hcalTupleTriggerObjects*
     # Package everything into a tree
     process.hcalTupleTree

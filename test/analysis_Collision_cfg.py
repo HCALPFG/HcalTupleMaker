@@ -187,10 +187,16 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 process.hcalTupleHBHEDigis.recHits = cms.untracked.InputTag("hbheprereco")
 process.hcalnoise.recHitCollName = cms.string("hbheprereco")
 
+process.hcalDigiReco_step = cms.Sequence(
+	process.CustomizedRawToDigi*
+	# process.RawToDigi *
+	process.hcalLocalRecoSequence 
+	)
+
 #------------------------------------------------------------------------------------
 # Define the tuple-making sequence
 #------------------------------------------------------------------------------------
-    
+
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
@@ -200,29 +206,28 @@ process.tuple_step = cms.Sequence(
     process.hcalTupleHBHEDigis*
     process.hcalTupleHODigis*
     process.hcalTupleHFDigis*
-    process.hcalTupleTriggerPrimitives*
+    process.hcalTupleTriggerPrimitives
     # Trigger info
     # process.hcalTupleTrigger*
     # process.hcalTupleTriggerObjects*
     # Package everything into a tree
-    process.hcalTupleTree
+    # process.hcalTupleTree
 )
-
-process.hcalDigiReco_step = cms.Sequence(
-	process.CustomizedRawToDigi*
-	# process.RawToDigi *
-	process.hcalLocalRecoSequence 
-	)
 
 #------------------------------------------------------------------------------------
 # Emulate Trigger Primitive
 #------------------------------------------------------------------------------------
 if options.emulateTP:
 	process.load('SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff')
-	# process.load("Configuration.Geometry.GeometryIdeal_cff")
 	process.emulDigis = process.simHcalTriggerPrimitiveDigis.clone()
 	process.emulDigis.inputLabel = cms.VInputTag('hcalDigis', 'hcalDigis')
 	process.reco_step = cms.Sequence(process.hcalDigiReco_step * process.emulDigis)
+	process.hcalTupleEmulatedTriggerPrimitives = process.hcalTupleTriggerPrimitives.clone()
+	process.hcalTupleEmulatedTriggerPrimitives.source = cms.untracked.InputTag("emulDigis")
+	process.hcalTupleEmulatedTriggerPrimitives.Prefix = cms.untracked.string("HcalEmulTriggerPrimitive")
+	process.tuple_step += cms.Sequence(process.hcalTupleEmulatedTriggerPrimitives)
+	process.hcalTupleTree.outputCommands.extend([ 'keep *_hcalTupleEmulatedTriggerPrimitives_*_*' ])
+
 else:
 	process.reco_step = process.hcalDigiReco_step
 
@@ -235,10 +240,8 @@ process.preparation = cms.Path(
     process.reco_step *
     process.hcalnoise *
     process.HBHENoiseFilterResultProducer *
-    process.ApplyBaselineHBHENoiseFilter* 
-    process.tuple_step
+    process.ApplyBaselineHBHENoiseFilter * 
+    process.tuple_step * 
+    process.hcalTupleTree
 )
-
-
-
 

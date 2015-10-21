@@ -41,6 +41,13 @@ options.register('globalTag',
 		VarParsing.VarParsing.varType.string,
 		"Global Tag")
 
+options.register('emulateTP',
+		False,
+		VarParsing.VarParsing.multiplicity.singleton,
+		VarParsing.VarParsing.varType.string,
+		"Run Emulated TP")
+
+
 options.parseArguments()
 
 print "Skip events =", options.skipEvents
@@ -48,6 +55,7 @@ print "Process events =", options.processEvents
 print "inputFiles =", options.inputFiles
 print "outputFile =", options.outputFile
 print "Global Tag =", options.globalTag
+print "Run emulated TP=", options.emulateTP
 
 #------------------------------------------------------------------------------------
 # Declare the process
@@ -176,7 +184,6 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 # process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
 
 
-
 process.hcalTupleHBHEDigis.recHits = cms.untracked.InputTag("hbheprereco")
 process.hcalnoise.recHitCollName = cms.string("hbheprereco")
 
@@ -188,18 +195,36 @@ process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     # Make HCAL tuples: FED info
-    process.hcalTupleFEDs*
+    # process.hcalTupleFEDs*
     # Make HCAL tuples: digi info
     process.hcalTupleHBHEDigis*
     process.hcalTupleHODigis*
     process.hcalTupleHFDigis*
-    # process.hcalTupleTriggerPrimitives*
+    process.hcalTupleTriggerPrimitives*
     # Trigger info
-    process.hcalTupleTrigger*
+    # process.hcalTupleTrigger*
     # process.hcalTupleTriggerObjects*
     # Package everything into a tree
     process.hcalTupleTree
 )
+
+process.hcalDigiReco_step = cms.Sequence(
+	process.CustomizedRawToDigi*
+	# process.RawToDigi *
+	process.hcalLocalRecoSequence 
+	)
+
+#------------------------------------------------------------------------------------
+# Emulate Trigger Primitive
+#------------------------------------------------------------------------------------
+if options.emulateTP:
+	process.load('SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff')
+	# process.load("Configuration.Geometry.GeometryIdeal_cff")
+	process.emulDigis = process.simHcalTriggerPrimitiveDigis.clone()
+	process.emulDigis.inputLabel = cms.VInputTag('hcalDigis', 'hcalDigis')
+	process.reco_step = cms.Sequence(process.hcalDigiReco_step * process.emulDigis)
+else:
+	process.reco_step = process.hcalDigiReco_step
 
 #------------------------------------------------------------------------------------
 # Define the path
@@ -207,12 +232,13 @@ process.tuple_step = cms.Sequence(
 
 # Path and EndPath definitions
 process.preparation = cms.Path(
-    process.CustomizedRawToDigi*
-    # process.RawToDigi *
-    process.hcalLocalRecoSequence *
+    process.reco_step *
     process.hcalnoise *
     process.HBHENoiseFilterResultProducer *
     process.ApplyBaselineHBHENoiseFilter* 
     process.tuple_step
 )
+
+
+
 

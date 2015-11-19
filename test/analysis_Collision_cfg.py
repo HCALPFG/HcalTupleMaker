@@ -18,7 +18,7 @@ options.register('skipEvents',
                  "Number of events to skip")
 
 options.register('processEvents',
-                 0, #default value
+                 -1, #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Number of events to process")
@@ -79,7 +79,7 @@ process.source = cms.Source("PoolSource",
    ),
    skipEvents = cms.untracked.uint32(
        options.skipEvents
-   )
+   ),
 )
 
 #------------------------------------------------------------------------------------
@@ -229,7 +229,7 @@ if options.emulateTP:
 	process.hcalTupleTree.outputCommands.extend([ 'keep *_hcalTupleEmulatedTriggerPrimitives_*_*' ])
 
 else:
-	process.reco_step = process.hcalDigiReco_step
+	process.reco_step = cms.Sequence(process.hcalDigiReco_step)
 
 #------------------------------------------------------------------------------------
 # Define the path

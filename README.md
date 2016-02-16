@@ -30,8 +30,10 @@ To run:
 To run local runs:
 1)Data of local runs can be found in hcal dpg space on eos with USC_XXXXXX.root
 * root://eoscms.cern.ch//eos/cms/store/group/dpg_hcal/comm_hcal/LS1/
+
 2) Check the global tags from:
 * https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
+
 For CMSSW_7_4_10, use 74X_dataRun2_Express_v1. (Tested 16Feb2016)
 
 Maintained by Edmund Berry: Edmund.A.Berry(at)CERN.CH

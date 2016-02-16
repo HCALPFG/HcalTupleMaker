@@ -11,6 +11,7 @@ To build:
 * mkdir CMSSW_7_3_1_patch2/src/HCALPFG/
 * cd CMSSW_7_3_1_patch2/src/HCALPFG/
 * cmsenv
+
 For the use of CMSSW_7_4_X:
 ```
  git clone git@github.com:HCALPFG/HcalTupleMaker.git --branch CMSSW_7_4_X

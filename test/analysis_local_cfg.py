@@ -18,7 +18,7 @@ options.register('skipEvents',
                  "Number of events to skip")
 
 options.register('processEvents',
-                 0, #default value
+                 100, #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Number of events to process")
@@ -111,7 +111,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 # Which to use?  https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V49', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '74X_dataRun2_Express_v1', '')
 
 
 # Need to unpack digis from RAW

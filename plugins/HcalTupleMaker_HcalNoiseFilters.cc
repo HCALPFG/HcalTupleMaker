@@ -1,5 +1,5 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalNoiseFilters.h"
-#include "DataFormats/METReco/interface/HcalNoiseSummary.h"
+//#include "DataFormats/METReco/interface/HcalNoiseSummary.h"
 #include "DataFormats/METReco/interface/HcalNoiseRBX.h"
 #include "RecoMET/METAlgorithms/interface/HcalHPDRBXMap.h"
 #include "DataFormats/HcalDetId/interface/HcalDetId.h"
@@ -9,7 +9,7 @@
 #include "CalibFormats/HcalObjects/interface/HcalDbRecord.h"
 #include "CalibCalorimetry/HcalAlgos/interface/HcalPulseShapes.h"
 #include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
-#include "DataFormats/HcalRecHit/interface/HBHERecHit.h"
+//#include "DataFormats/HcalRecHit/interface/HBHERecHit.h"
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 #include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "Geometry/CaloGeometry/interface/CaloCellGeometry.h"
@@ -24,13 +24,20 @@
 
 
 HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::ParameterSet& iConfig):
-  noiseSummaryInputTag (iConfig.getUntrackedParameter<edm::InputTag>("noiseSummaryInputTag")),
-  noiseResultInputTag  (iConfig.getUntrackedParameter<std::string>("noiseResultInputTag")), 
-  recoInputTag         (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
-  isRAW                (iConfig.getUntrackedParameter<bool>("isRAW")),
-  isRECO               (iConfig.getUntrackedParameter<bool>("isRECO")),
-  prefix               (iConfig.getUntrackedParameter<std::string>("Prefix")),
-  suffix               (iConfig.getUntrackedParameter<std::string>("Suffix"))
+  //noiseSummaryInputTag (iConfig.getUntrackedParameter<edm::InputTag>("noiseSummaryInputTag")),
+  noiseSummaryInputToken (consumes<HcalNoiseSummary>(iConfig.getUntrackedParameter<edm::InputTag>("noiseSummaryInputTag"))),
+  noiseResultInputTag    (iConfig.getUntrackedParameter<std::string>("noiseResultInputTag")), 
+  //recoInputTag         (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
+  recoInputToken         (consumes<HBHERecHitCollection>(iConfig.getUntrackedParameter<std::string>("recoInputTag"))),
+  //isRAW                (iConfig.getUntrackedParameter<bool>("isRAW")),
+  isRECO                 (iConfig.getUntrackedParameter<bool>("isRECO")),
+  prefix                 (iConfig.getUntrackedParameter<std::string>("Prefix")),
+  suffix                 (iConfig.getUntrackedParameter<std::string>("Suffix")),
+  defaultNoiseResultInputToken   (consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResult"))),
+  run1NoiseResultInputToken      (consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResultRun1"))),
+  run2LooseNoiseResultInputToken (consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResultRun2Loose"))),
+  run2TightNoiseResultInputToken (consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResultRun2Tight"))),
+  isoNoiseResultInputToken       (consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHEIsoNoiseFilterResult")))
 {
   produces <std::vector<int> >                  (prefix + "OfficialDecision"         + suffix );
   produces <std::vector<int> >                  (prefix + "OfficialDecisionRun1"     + suffix );
@@ -115,16 +122,34 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   std::auto_ptr<std::vector<std::vector<double> > > hbherechitauxfc            ( new std::vector<std::vector<double> > ());
   std::auto_ptr<std::vector<std::vector<double> > > hbherechitauxenergy        ( new std::vector<std::vector<double> > ());
 
+
   edm::Handle<bool> hNoiseResult;
-  iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResult", hNoiseResult);
+  //iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResult", hNoiseResult);
+  //edm::InputTag defaultNoiseResultInputTag = edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResult");
+  //edm::EDGetTokenT<bool> defaultNoiseResultInputToken = consumes<bool>(defaultNoiseResultInputTag);
+  //edm::EDGetTokenT<bool> defaultNoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResult"));
+  //defaultNoiseResultInputToken    = consumes<bool>(defaultNoiseResultInputTag);
+  iEvent.getByToken(defaultNoiseResultInputToken, hNoiseResult);
+
   edm::Handle<bool> hNoiseResult_Run1;
-  iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun1", hNoiseResult_Run1);
+  //iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun1", hNoiseResult_Run1);
+  //edm::EDGetTokenT<bool> run1NoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResultRun1"));
+  iEvent.getByToken(run1NoiseResultInputToken, hNoiseResult_Run1);
+
   edm::Handle<bool> hNoiseResult_Run2Loose;
-  iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Loose", hNoiseResult_Run2Loose);
+  //iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Loose", hNoiseResult_Run2Loose);
+  //edm::EDGetTokenT<bool> run2LooseNoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResultRun2Loose"));
+  iEvent.getByToken(run2LooseNoiseResultInputToken, hNoiseResult_Run2Loose);
+
   edm::Handle<bool> hNoiseResult_Run2Tight;
-  iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Tight", hNoiseResult_Run2Tight);
+  //iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Tight", hNoiseResult_Run2Tight);
+  //edm::EDGetTokenT<bool> run2TightNoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag, "HBHENoiseFilterResultRun2Tight"));
+  iEvent.getByToken(run2TightNoiseResultInputToken, hNoiseResult_Run2Tight);
+
   edm::Handle<bool> hNoiseResult_IsoNoiseFilter;
-  iEvent.getByLabel(noiseResultInputTag, "HBHEIsoNoiseFilterResult", hNoiseResult_IsoNoiseFilter);
+  //iEvent.getByLabel(noiseResultInputTag, "HBHEIsoNoiseFilterResult", hNoiseResult_IsoNoiseFilter);
+  //edm::EDGetTokenT<bool> isoNoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag, "HBHEIsoNoiseFilterResult"));
+  iEvent.getByToken(isoNoiseResultInputToken, hNoiseResult_IsoNoiseFilter);
 
 
   // HCAL Filter Decision
@@ -136,7 +161,9 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
 
 
   edm::Handle<HcalNoiseSummary> hSummary;
-  iEvent.getByLabel(noiseSummaryInputTag, hSummary);
+  //iEvent.getByLabel(noiseSummaryInputTag, hSummary);  
+  iEvent.getByToken(noiseSummaryInputToken, hSummary);
+
 
   // HCAL summary objects
   //debugging
@@ -173,10 +200,11 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
 
   if( isRECO ){
     edm::Handle<HBHERecHitCollection> hRecHits;
-    iEvent.getByLabel(recoInputTag, hRecHits);
+    //iEvent.getByLabel(recoInputTag, hRecHits);
+    iEvent.getByToken(recoInputToken, hRecHits);
     
-    edm::Handle<HBHEDigiCollection> hHBHEDigis;
-    if( isRAW ) iEvent.getByLabel("hcalDigis", hHBHEDigis);
+    //edm::Handle<HBHEDigiCollection> hHBHEDigis;
+    //if( isRAW ) iEvent.getByLabel("hcalDigis", hHBHEDigis);
     
     edm::ESHandle<HcalDbService> hConditions;
     iSetup.get<HcalDbRecord>().get(hConditions);

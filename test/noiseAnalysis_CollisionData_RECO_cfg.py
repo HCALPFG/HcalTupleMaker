@@ -1,56 +1,40 @@
 #------------------------------------------------------------------------------------
 # Imports
 #------------------------------------------------------------------------------------
-
 import FWCore.ParameterSet.Config as cms
 from Configuration.StandardSequences.Eras import eras
+import FWCore.ParameterSet.VarParsing as VarParsing
+
 
 #------------------------------------------------------------------------------------
-# Declare the process
+# Declare the process and input variables
 #------------------------------------------------------------------------------------
-
 #process = cms.Process('NOISE',eras.Run2_50ns)#for 50ns 13 TeV data
 process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
+options = VarParsing.VarParsing ('analysis')
+options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
+#options.inputFiles = 'root://xrootd.unl.edu//store/data/Run2015D/DoubleMuon/RECO/16Dec2015-v1/10000/002C811B-80A7-E511-8C4D-0CC47A4D7644.root'
+options.inputFiles = '/store/data/Run2015D/DoubleMuon/RECO/16Dec2015-v1/10000/002C811B-80A7-E511-8C4D-0CC47A4D7644.root'
+options.outputFile = 'results.root'
+#options.maxEvents = 100 # -1 means all events
+#options.skipEvents = 0 # default is 0.
+
 
 #------------------------------------------------------------------------------------
-# Set up the input source
+# Get and parse the command line arguments
 #------------------------------------------------------------------------------------
-
-process.source = cms.Source("PoolSource")
-
-#------------------------------------------------------------------------------------
-# What files should we run over?
-#------------------------------------------------------------------------------------
-
-process.source.fileNames = cms.untracked.vstring(
-    #FILENAMES
-    #'root://xrootd.unl.edu//store/data/Run2015A/MET/RECO/PromptReco-v1/000/248/038/00000/546E74FC-5D14-E511-9DCE-02163E0145BA.root'
-    #'root://xrootd.unl.edu//store/data/Run2015C/JetHT/RECO/PromptReco-v1/000/254/790/00000/F22D0473-DD49-E511-BA34-02163E014336.root'
-    #'root://xrootd.unl.edu//store/relval/CMSSW_7_6_2/MET/RECO/76X_dataRun2_v15_rerecoGT_RelVal_met2015D-v1/00000/02B32D34-C49C-E511-8E1F-0CC47A4D76C8.root'
-    'root://xrootd.unl.edu//store/data/Run2015D/DoubleMuon/RECO/16Dec2015-v1/10000/002C811B-80A7-E511-8C4D-0CC47A4D7644.root'
+options.parseArguments()
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
+process.source = cms.Source("PoolSource",
+    fileNames  = cms.untracked.vstring(options.inputFiles),
+    skipEvents = cms.untracked.uint32(options.skipEvents) # default is 0.
 )
-
-process.source.skipEvents = cms.untracked.uint32(0
-    #SKIPEVENTS
-)
-
-#------------------------------------------------------------------------------------
-# How many events should we run over?
-#------------------------------------------------------------------------------------
-
-process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(2
-        #PROCESSEVENTS
-    )
-)
-
-#------------------------------------------------------------------------------------
-# Set up the output
-#------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string('file:/tmp/hsaka/Test.root')
+   # fileName = cms.string('file:/tmp/hsaka/Test.root')
+     fileName = cms.string(options.outputFile)
 )
+
 
 #------------------------------------------------------------------------------------
 # import of standard configurations
@@ -65,13 +49,17 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
-#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
 
+#------------------------------------------------------------------------------------
 # Set up L1 Jet digis #Disabled 
+#------------------------------------------------------------------------------------
 #process.load("HCALPFG.HcalTupleMaker.HcalL1JetDigisProducer_cfi")
 
+
+#------------------------------------------------------------------------------------
 # Set up our analyzer
+#------------------------------------------------------------------------------------
 #process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi") # Dont want to use this, load modules individually
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
@@ -79,34 +67,33 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
 #process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 
+
+#------------------------------------------------------------------------------------
 # Set up noise filters
+#------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalNoiseFilters_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
-
+#------------------------------------------------------------------------------------
 # Set up iso noise filter parameters, used for iso-noise filter study in 25ns.
+#------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalIsoNoiseFilterParameters_cfi")
-
+#------------------------------------------------------------------------------------
 # Set up CaloJetMet quantities 
+#------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
 
 
-## Other statements
-#from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '') # This GT includes NEF DB, but is not useful for RECO anyway.. 
-##from Configuration.AlCa.autoCond_condDBv2 import autoCond
-##process.GlobalTag.globaltag = autoCond['run2_data']
-
+#------------------------------------------------------------------------------------
+# Specify Global Tag
+#------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 process.GlobalTag.globaltag = '76X_dataRun2_v16'
-#76X_dataRun2_v16
 #from Configuration.AlCa.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['run2_data']
 
 
-
-
-
-
+#------------------------------------------------------------------------------------
 # Disabled since we dont deal with HLT
+#------------------------------------------------------------------------------------
 #process.my_hlt = cms.EDFilter("HLTHighLevel",
 #     TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),
 #     HLTPaths = cms.vstring("HLT_L1SingleJet16*"), # provide list of HLT paths (or patterns) you want
@@ -115,7 +102,10 @@ process.GlobalTag.globaltag = '76X_dataRun2_v16'
 #     throw = cms.bool(False)    # throw exception on unknown path names
 #)
 
+
+#------------------------------------------------------------------------------------
 #Remove Method 0, Rename Method 2 as "default" where necessary:
+#------------------------------------------------------------------------------------
 process.hcalTupleCaloJetMet = cms.EDProducer("HcalTupleMaker_CaloJetMet",
          recoInputTag         = cms.untracked.string("hbhereco"),
          Prefix = cms.untracked.string(""),
@@ -132,20 +122,29 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
 )
 
 
+#------------------------------------------------------------------------------------
 # Place-holder for applying HBHE noise filter:
-process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),    
-    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun1'),
-    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Loose'),
-    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Tight'),
-    reverseDecision = cms.bool(False)
-)
+#------------------------------------------------------------------------------------
+#process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
+#    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),    
+#    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun1'),
+#    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Loose'),
+#    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Tight'),
+#    reverseDecision = cms.bool(False)
+#)
 
+
+#------------------------------------------------------------------------------------
 # This enables NEF flagging, but needs reconstruction of RAW data.
 # This is not needed for datasets reconstructed with >=CMSSW748:
 # i.e. 2015C Prompt-reco has NEF flags computed out-of-the-box.
+#------------------------------------------------------------------------------------
 #process.hbheprereco.setNegativeFlags          = cms.bool(True)
 
+
+#------------------------------------------------------------------------------------
+# HcalTupleMaker sequence definition
+#------------------------------------------------------------------------------------
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
@@ -188,14 +187,15 @@ process.tuple_step = cms.Sequence(
 )
 
 
-
+#-----------------------------------------------------------------------------------
 # Path and EndPath definitions
+#-----------------------------------------------------------------------------------
 process.preparation = cms.Path(
     #process.my_hlt *
-    #raw#process.RawToDigi *
+    #process.RawToDigi * #needed for RAW files
     #process.L1Reco *
-    #raw#process.reconstruction *
-    #process. caloglobalreco *
+    #rprocess.reconstruction * #needed for RAW files
+    #process.caloglobalreco *
     #process.reconstructionCosmics *
     #
     #process.horeco *
@@ -219,13 +219,9 @@ process.preparation = cms.Path(
     #process.hcalCosmicDigis *
     #process.hcalL1JetDigis *
     #
-    # cmsRun noise filter
-    #raw#process.hcalnoise *
+    #process.hcalnoise *  #needed for RAW files
     process.HBHENoiseFilterResultProducer *
     #process.ApplyBaselineHBHENoiseFilter *
     #
     process.tuple_step
 )
-
-#from SLHCUpgradeSimulations.Configuration.postLS1Customs import customisePostLS1
-#process = customisePostLS1(process)

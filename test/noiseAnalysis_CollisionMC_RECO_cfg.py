@@ -14,8 +14,7 @@ process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
 #options.inputFiles = 'root://xrootd.unl.edu//store/mc/RunIIFall15DR75/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/GEN-SIM-RECO/Asympt25nsReco_75X_mcRun2_asymptotic_v8-v1/50000/02453C84-9A71-E511-A4E5-0025905A48BC.root'
-options.inputFiles = '/store/mc/RunIIFall15DR75/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/GEN-SIM-RECO/Asympt25nsReco_75X\
-_mcRun2_asymptotic_v8-v1/50000/02453C84-9A71-E511-A4E5-0025905A48BC.root'
+options.inputFiles = '/store/mc/RunIIFall15DR75/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/GEN-SIM-RECO/Asympt25nsReco_75X_mcRun2_asymptotic_v8-v1/50000/02453C84-9A71-E511-A4E5-0025905A48BC.root'
 options.outputFile = 'results.root'
 #options.maxEvents = 100 # -1 means all events
 #options.skipEvents = 0 # default is 0.

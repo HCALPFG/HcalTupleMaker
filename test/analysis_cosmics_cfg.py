@@ -18,7 +18,7 @@ options.register('skipEvents',
                  "Number of events to skip")
 
 options.register('processEvents',
-                 100, #default value
+                 -1, #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Number of events to process")
@@ -31,7 +31,7 @@ options.register('inputFiles',
                  "Input files")
 
 options.register('outputFile',
-                 "file:outputFile.root", #default value
+                 "file:outputFile_full.root", #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Output file")
@@ -119,9 +119,27 @@ process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.L1Reco_cff')
 process.load('Configuration.StandardSequences.ReconstructionCosmics_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
-#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 process.load('SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff')
+
+#------------------------------------------------------------------------------------------------------------------------------------
+# Configure Unpacking
+#------------------------------------------------------------------------------------------------------------------------------------
+from Configuration.StandardSequences.RawToDigi_Data_cff import *
+process.CustomizedRawToDigi = cms.Sequence(
+		gtDigis*
+		siPixelDigis*
+		siStripDigis*
+		ecalDigis*
+		ecalPreshowerDigis*
+		hcalDigis*
+		muonDTDigis*
+		muonCSCDigis*
+		muonRPCDigis*
+		castorDigis*
+		scalersRawToDigi*
+		tcdsDigis
+)
 
 # Set up cosmic digis
 process.load("HCALPFG.HcalTupleMaker.HcalCosmicDigisProducer_cfi")
@@ -138,30 +156,16 @@ process.GlobalTag = GlobalTag(process.GlobalTag, options.globalTag, '')
     
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
-    process.hcalTupleEvent*
+    process.hcalTupleEvent*    # Make HCAL tuples: FED info
     # Make HCAL tuples: FED info
-    process.hcalTupleFEDs*
+    #process.hcalTupleFEDs*
     # Make HCAL tuples: digi info
-    process.hcalTupleHBHEDigis*
-    process.hcalTupleHODigis*
-    process.hcalTupleHFDigis*
-    process.hcalTupleTriggerPrimitives*
+    #process.hcalTupleHBHEDigis*
+    #process.hcalTupleHODigis*
+    #process.hcalTupleHFDigis*
+    #process.hcalTupleTriggerPrimitives*
     # Make HCAL tuples: digi info
     process.hcalTupleHBHECosmicsDigis*
-    process.hcalTupleHOCosmicsDigis*
-    # Make HCAL tuples: digi info
-    process.hcalTupleHBHEL1JetsDigis*
-    process.hcalTupleHFL1JetsDigis*
-    process.hcalTupleL1JetTriggerPrimitives*
-    # Make HCAL tuples: reco info
-    process.hcalTupleHBHERecHits*
-    process.hcalTupleHORecHits*
-    process.hcalTupleHFRecHits*
-    # Trigger info
-    process.hcalTupleTrigger*
-    process.hcalTupleTriggerObjects*
-    # L1 jet info
-    process.hcalTupleL1Jets*
     # Make HCAL tuples: cosmic muon info
     process.hcalTupleCosmicMuons*
     # Package everything into a tree
@@ -172,10 +176,11 @@ process.tuple_step = cms.Sequence(
 
 # Path and EndPath definitions
 process.preparation = cms.Path(
-    process.RawToDigi *
-    process.L1Reco *
+    #process.RawToDigi *
+    process.CustomizedRawToDigi*
+    #process.L1Reco *
     process.reconstructionCosmics *
     process.hcalCosmicDigis *
-    process.hcalL1JetDigis *
+    #process.hcalL1JetDigis *
     process.tuple_step
 )

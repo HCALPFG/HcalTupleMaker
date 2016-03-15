@@ -15,7 +15,7 @@ process = cms.Process("ANA")
 # Is this a local run? Or a global run?
 #------------------------------------------------------------------------------------
 
-isLocalRun = True
+isLocalRun = False
 isGlobalRun = not isLocalRun 
 
 #------------------------------------------------------------------------------------
@@ -45,9 +45,10 @@ if isGlobalRun:
 
 process.source.fileNames = cms.untracked.vstring(
     # Example local run:
-    "root://eoscms//eos/cms/store/group/comm_hcal/LS1/USC_228119.root"
+    #"root://eoscms//eos/cms/store/group/comm_hcal/LS1/USC_228119.root"
     # Example global run:
     # "root://eoscms//eos/cms/store/data/Commissioning2014/MinimumBias/RAW/v3/000/225/826/00000/DEE3076C-9C33-E411-90F0-02163E00F114.root"
+    "root://cmsxrootd-site.fnal.gov//store/data/Commissioning2016/MinimumBias/RAW/v1/000/266/150/00000/1A844C25-14E5-E511-B9B5-02163E013471.root"
 )
 
 #------------------------------------------------------------------------------------
@@ -55,7 +56,7 @@ process.source.fileNames = cms.untracked.vstring(
 #------------------------------------------------------------------------------------
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(10)
 )
 
 #------------------------------------------------------------------------------------
@@ -130,15 +131,15 @@ process.p = cms.Path(
     # Unpack digis from RAW
     process.hcalDigis*
     # Do energy reconstruction
-    process.horeco* 
+    process.hfreco* 
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     # Make HCAL tuples: FED info
     process.hcalTupleFEDs*
     # Make HCAL tuples: digi info
-    process.hcalTupleHODigis*
+    process.hcalTupleHFDigis*
     # Make HCAL tuples: reco info
-    process.hcalTupleHORecHits*
+    process.hcalTupleHFRecHits*
     # Package everything into a tree
     process.hcalTupleTree
 )

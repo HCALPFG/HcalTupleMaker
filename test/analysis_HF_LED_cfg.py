@@ -79,12 +79,14 @@ process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 # Which to use?  https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V46::All')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_P_V46::All')
+process.GlobalTag = GlobalTag(process.GlobalTag, '80X_dataRun2_Prompt_v2')
 
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
 
 # Need the topology to analyze digis
+process.load("Geometry.HcalCommonData.hcalDBConstants_cff")
 process.load("Geometry.HcalEventSetup.HcalTopology_cfi")
 
 # Need the geometry to get digi and rechit positions
@@ -130,6 +132,8 @@ if isLocalRun:
 process.p = cms.Path(
     # Unpack digis from RAW
     process.hcalDigis*
+    # For CMSSW_8_0_X
+    #cms.Sequence( process.hcalTopologyIdeal )*
     # Do energy reconstruction
     process.hfreco* 
     # Make HCAL tuples: Event, run, ls number

@@ -16,6 +16,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
   const edm::InputTag   m_hcalRecHitsTag;
   const std::string     m_prefix;
   const std::string     m_suffix;
+  edm::EDGetTokenT<RecHitCollection> token_rechitstag_;
 
   HcalTupleMaker_HcalRecHitAlgorithm algo;
   
@@ -34,7 +35,8 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     bool run_algo = true;
     
     edm::Handle<RecHitCollection> hcalRecHits;
-    bool gotHcalRecHits = iEvent.getByLabel(m_hcalRecHitsTag, hcalRecHits);
+    //bool gotHcalRecHits = iEvent.getByLabel(m_hcalRecHitsTag, hcalRecHits);
+    bool gotHcalRecHits = iEvent.getByToken(token_rechitstag_, hcalRecHits);
     if (!gotHcalRecHits ) {
       std::cout << "Could not find HCAL RecHits with tag " << m_hcalRecHitsTag << std::endl;
       run_algo = false;
@@ -78,6 +80,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     produces<std::vector<int>   > ( m_prefix + "Aux"    + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Energy" + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Time"   + m_suffix );
+    token_rechitstag_ = consumes<RecHitCollection>(m_hcalRecHitsTag);
   }
 
  protected:

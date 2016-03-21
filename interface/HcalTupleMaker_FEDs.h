@@ -4,6 +4,7 @@
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/InputTag.h"
+#include "DataFormats/FEDRawData/interface/FEDRawDataCollection.h"
 
 class HcalTupleMaker_FEDs : public edm::EDProducer {
  public:
@@ -15,6 +16,8 @@ class HcalTupleMaker_FEDs : public edm::EDProducer {
   const std::string     prefix,suffix;
   const int minFEDID;
   const int maxFEDID;
+  edm::EDGetTokenT<FEDRawDataCollection> token_raw_;
+
 };
 
 #endif

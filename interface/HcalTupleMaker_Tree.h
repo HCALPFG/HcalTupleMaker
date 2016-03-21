@@ -4,6 +4,7 @@
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/EDAnalyzer.h"
 #include "FWCore/Framework/interface/Event.h"
+#include "FWCore/Framework/interface/ConsumesCollector.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
@@ -30,10 +31,12 @@ class HcalTupleMaker_Tree : public edm::EDAnalyzer {
    private:
     std::string ml;   //module label
     std::string pin;  //product instance name
+    edm::EDGetTokenT<T> token_;
     T object_;
     T* object_ptr_;
+
    public:
-    TypedBranchConnector(edm::BranchDescription const*, std::string, TTree*);
+    TypedBranchConnector(edm::BranchDescription const*, std::string, TTree*, edm::ConsumesCollector && iC);
     void connect(const edm::Event&);
   };
   
@@ -44,8 +47,8 @@ class HcalTupleMaker_Tree : public edm::EDAnalyzer {
   edm::ParameterSet pset;
   
  public:
-  explicit HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) : pset(iConfig) {}
-  
+  //explicit HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) : pset(iConfig) {}
+  explicit HcalTupleMaker_Tree(const edm::ParameterSet& iConfig);
   enum LEAFTYPE {BOOL=1,  BOOL_V,
                  SHORT,   SHORT_V,           U_SHORT, U_SHORT_V,
                  INT,     INT_V,             U_INT,   U_INT_V,

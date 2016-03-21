@@ -137,6 +137,37 @@ process.GlobalTag = GlobalTag(process.GlobalTag, options.globalTag)
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
 
+# Set up hcalDigis unpacker
+process.hcalDigis.FEDs = cms.untracked.vint32()
+
+# VME HBHE
+
+hbheFEDList = [ 1100 , 1102 , 1104 , 1112 , 1114 , 1116 ]
+hbheFEDList.extend(range( 700 , 718 ))
+
+for FED in hbheFEDList:
+  process.hcalDigis.FEDs.append ( FED ) 
+
+# uTCA HF
+process.hcalDigis.FEDs.append ( 1118 ) 
+process.hcalDigis.FEDs.append ( 1120 ) 
+process.hcalDigis.FEDs.append ( 1122 ) 
+
+# VME HO 
+for FED in range ( 724, 732 ):
+    process.hcalDigis.FEDs.append ( FED ) 
+
+# Aleko's EMAP
+process.es_ascii = cms.ESSource('HcalTextCalibrations',
+    input = cms.VPSet(
+        cms.PSet(
+            object = cms.string('ElectronicsMap'),
+            file = cms.FileInPath('HCALPFG/HcalTupleMaker/data/2016-feb-24/version_G_emap_all.txt')
+            ),
+        )
+    )
+process.es_prefer = cms.ESPrefer('HcalTextCalibrations','es_ascii')
+
 # Need the topology to analyze digis
 process.load("Geometry.HcalCommonData.hcalDBConstants_cff")
 process.load("Geometry.HcalEventSetup.HcalTopology_cfi")

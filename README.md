@@ -4,19 +4,12 @@ HcalTupleMaker
 EDM analyzer for making ntuples from HCAL DIGIs and RecHits
 
 Validated for:
-* CMSSW_7_3_X
+* CMSSW_8_X_Y
 
-To build:
-* scram p CMSSW CMSSW_7_3_1_patch2
-* mkdir CMSSW_7_3_1_patch2/src/HCALPFG/
-* cd CMSSW_7_3_1_patch2/src/HCALPFG/
-* cmsenv
-* git clone git@github.com:HCALPFG/HcalTupleMaker.git
-* scram b -j9
+Instructions:
+* https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalNoiseAnalyzer#Recommended_CMSSW_8_0_0_patch1_i
 
-To run:
-* cd $CMSSW_BASE/src/HCALPFG/HcalTupleMaker
-* cmsenv
-* cmsRun analysis_cfg.py
+Contact: Halil Saka 
 
-Maintained by Edmund Berry: Edmund.A.Berry(at)CERN.CH
+-------------
+Original author: Edmund Berry

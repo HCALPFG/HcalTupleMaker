@@ -24,10 +24,11 @@ number = 0 # starting at 0
 
 # List of datasets
 datasetnames = [
-'/SingleMuon/Run2015D-16Dec2015-v1/RECO',
-'/NoBPTX/Run2015D-16Dec2015-v1/RECO',
-'/ZeroBias/Run2015D-16Dec2015-v1/RECO',
-'/DoubleMuon/Run2015C_50ns-16Dec2015-v1/RECO'
+'/NoBPTX/Commissioning2016-PromptReco-v1/RECO',
+'/MinimumBias/Commissioning2016-PromptReco-v1/RECO',
+'/HcalHPDNoise/Commissioning2016-PromptReco-v1/RECO',
+'/HcalNZS/Commissioning2016-PromptReco-v1/RECO',
+'/Cosmics/Commissioning2016-PromptReco-v1/RECO'
 ]
 
 # Storage path for output files - EOS specific
@@ -82,13 +83,13 @@ config.Data.ignoreLocality   = True
 config.Data.outLFNDirBase    = storagepath
 config.Data.publication      = False
 config.Data.outputDatasetTag = dataset[1]+'_'+dataset[2]+timestamp
-config.Data.lumiMask         = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt'
-config.Data.runRange         = '254231-260627'
+#config.Data.lumiMask         = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt'
+#config.Data.runRange         = '254231-260627'
 #config.Data.runRange        = '260577-260578' #for test
 #config.Data.lumiMask        = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_50ns_JSON.txt'
 #config.Data.runRange        = '251244-254833'
 # -----------------------------------------------------------------------------------------------------------------------------
-# JSON files are available at: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/
+# JSON files are available at: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/
 # -----------------------------------------------------------------------------------------------------------------------------
 
 config.Site.storageSite = storageSite

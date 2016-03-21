@@ -80,6 +80,10 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalIsoNoiseFilterParameters
 # Set up CaloJetMet quantities 
 #------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
+#------------------------------------------------------------------------------------
+# Set up MuonTrack quantities 
+#------------------------------------------------------------------------------------
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
 
 
 #------------------------------------------------------------------------------------
@@ -167,6 +171,7 @@ process.tuple_step = cms.Sequence(
     process.hcalTupleHcalNoiseFilters*
     process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
     process.hcalTupleCaloJetMet*
+    process.hcalTupleMuonTrack*
     #
     #process.hcalTupleHBHERecHitsMethod0*
     #process.hcalTupleHcalNoiseFiltersMethod0*

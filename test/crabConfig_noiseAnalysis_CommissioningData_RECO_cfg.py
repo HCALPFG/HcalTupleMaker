@@ -7,7 +7,7 @@
 #    cmsenv
 #    source /cvmfs/cms.cern.ch/crab3/crab.sh
 # To submit: 
-#    crab submit -c crabConfig_noiseAnalysis_CollisionData_RECO_cfg.py
+#    crab submit -c crabConfig_noiseAnalysis_CommissioningData_RECO_cfg.py
 # To check status: 
 #    crab status -d <CRAB-project-directory> [--jobids <comma-separated-list-of-jobs-and/or-job-ranges>]
 # To kill jobs:
@@ -24,11 +24,11 @@ number = 0 # starting at 0
 
 # List of datasets
 datasetnames = [
-'/Cosmics/Commissioning2016-PromptReco-v1/RECO'
+'/Cosmics/Commissioning2016-PromptReco-v1/RECO',
 '/NoBPTX/Commissioning2016-PromptReco-v1/RECO',
 '/MinimumBias/Commissioning2016-PromptReco-v1/RECO',
 '/HcalHPDNoise/Commissioning2016-PromptReco-v1/RECO',
-'/HcalNZS/Commissioning2016-PromptReco-v1/RECO',
+'/HcalNZS/Commissioning2016-PromptReco-v1/RECO'
 ]
 
 # Storage path for output files - EOS specific

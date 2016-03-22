@@ -91,7 +91,7 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v2'
+process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v4'
 #process.GlobalTag.globaltag = '76X_dataRun2_v16'
 #from Configuration.AlCa.autoCond import autoCond
 #process.GlobalTag.globaltag = autoCond['run2_data']

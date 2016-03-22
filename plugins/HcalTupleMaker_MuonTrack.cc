@@ -13,13 +13,27 @@
 
 HcalTupleMaker_MuonTrack::HcalTupleMaker_MuonTrack(const edm::ParameterSet& iConfig):
   //recoInputTag         (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
-  inputMuonCollection  (iConfig.getParameter<edm::InputTag>("inputMuonCollection")),
-  inputTrackCollection (iConfig.getParameter<edm::InputTag>("inputTrackCollection")),
-  prefix               (iConfig.getUntrackedParameter<std::string>("Prefix")),
-  suffix               (iConfig.getUntrackedParameter<std::string>("Suffix")),
-  muonCollection_      (consumes<reco::MuonCollection>(inputMuonCollection)),
-  trackCollection_     (consumes<reco::TrackCollection>(inputTrackCollection)),
-  //
+  inputMuonCollection            (iConfig.getParameter<edm::InputTag>("inputMuonCollection")),
+  inputTrackCollection           (iConfig.getParameter<edm::InputTag>("inputTrackCollection")),
+  CSCSegmentsCollection          (iConfig.getParameter<edm::InputTag>("CSCSegmentsCollection")),
+  CSC2DRecHitsCollection         (iConfig.getParameter<edm::InputTag>("CSC2DRecHitsCollection")),
+  RPCRecHitsCollection           (iConfig.getParameter<edm::InputTag>("RPCRecHitsCollection")),
+  DT1DRecHitsCollection          (iConfig.getParameter<edm::InputTag>("DT1DRecHitsCollection")),
+  DT1DCosmicRecHitsCollection    (iConfig.getParameter<edm::InputTag>("DT1DCosmicRecHitsCollection")),
+  DTRecSegmentsCollection        (iConfig.getParameter<edm::InputTag>("DTRecSegmentsCollection")),
+  DTRecCosmicSegmentsCollection  (iConfig.getParameter<edm::InputTag>("DTRecCosmicSegmentsCollection")),
+  prefix                         (iConfig.getUntrackedParameter<std::string>("Prefix")),
+  suffix                         (iConfig.getUntrackedParameter<std::string>("Suffix")),
+  muonCollection_                (consumes<reco::MuonCollection>(inputMuonCollection)),
+  trackCollection_               (consumes<reco::TrackCollection>(inputTrackCollection)),
+  CSCSegmentsCollection_         (consumes<CSCSegmentCollection>(CSCSegmentsCollection)),
+  CSC2DRecHitsCollection_        (consumes<CSCRecHit2DCollection>(CSC2DRecHitsCollection)),
+  RPCRecHitsCollection_          (consumes<RPCRecHitCollection>(RPCRecHitsCollection)),
+  DT1DRecHitsCollection_         (consumes<DTRecHitCollection>(DT1DRecHitsCollection)),
+  DT1DCosmicRecHitsCollection_   (consumes<DTRecHitCollection>(DT1DCosmicRecHitsCollection)),
+  DTRecSegmentsCollection_       (consumes<DTRecSegment4DCollection>(DTRecSegmentsCollection)),
+  DTRecCosmicSegmentsCollection_ (consumes<DTRecSegment4DCollection>(DTRecCosmicSegmentsCollection))
+  /*
   CSCSegmentsCollection_         (consumes<CSCSegmentCollection>(edm::InputTag{"cscSegments"})),
   CSC2DRecHitsCollection_        (consumes<CSCRecHit2DCollection>(edm::InputTag{"csc2DRecHits"})),
   RPCRecHitsCollection_          (consumes<RPCRecHitCollection>(edm::InputTag{"rpcRecHits"})),
@@ -27,6 +41,7 @@ HcalTupleMaker_MuonTrack::HcalTupleMaker_MuonTrack(const edm::ParameterSet& iCon
   DT1DCosmicRecHitsCollection_   (consumes<DTRecHitCollection>(edm::InputTag{"dt1DCosmicRecHits"})),
   DTRecSegmentsCollection_       (consumes<DTRecSegment4DCollection>(edm::InputTag{"dt4DSegments"})),
   DTRecCosmicSegmentsCollection_ (consumes<DTRecSegment4DCollection>(edm::InputTag{"dt4DCosmicSegments"}))
+  */
 {
   produces <std::vector<double> >            (prefix + "MuonEta"                        + suffix );
   produces <std::vector<double> >            (prefix + "MuonPt"                         + suffix );

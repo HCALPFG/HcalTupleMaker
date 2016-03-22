@@ -24,7 +24,15 @@ class HcalTupleMaker_MuonTrack : public edm::EDProducer {
   void produce( edm::Event &, const edm::EventSetup & );
   edm::InputTag   inputMuonCollection;
   edm::InputTag   inputTrackCollection;
+  edm::InputTag   CSCSegmentsCollection;
+  edm::InputTag   CSC2DRecHitsCollection;
+  edm::InputTag   RPCRecHitsCollection;
+  edm::InputTag   DT1DRecHitsCollection;
+  edm::InputTag   DT1DCosmicRecHitsCollection;
+  edm::InputTag   DTRecSegmentsCollection;
+  edm::InputTag   DTRecCosmicSegmentsCollection;
   std::string     prefix,suffix;
+  //
   edm::EDGetTokenT<reco::MuonCollection>     muonCollection_;
   edm::EDGetTokenT<reco::TrackCollection>    trackCollection_;
   edm::EDGetTokenT<CSCSegmentCollection>     CSCSegmentsCollection_;

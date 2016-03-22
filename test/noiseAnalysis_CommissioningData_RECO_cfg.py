@@ -111,12 +111,10 @@ process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v4'
 #------------------------------------------------------------------------------------
 #Customize muon-track collection tags such that it runs in Commissioning2016 data
 #------------------------------------------------------------------------------------
-process.hcalTupleCaloJetMet = cms.EDProducer("HcalTupleMaker_CaloJetMet",
-         inputMuonCollection     = cms.InputTag("muons"),
-         inputTrackCollection    = cms.InputTag("cosmicMuons"),
-         DT1DCosmicRecHitsCollection   = cms.InputTag("dt1DRecHits"),
-         DTRecCosmicSegmentsCollection = cms.InputTag("dt4DSegments")
-)
+process.hcalTupleMuonTrack.inputMuonCollection           = cms.InputTag("muons")
+process.hcalTupleMuonTrack.inputTrackCollection          = cms.InputTag("cosmicMuons")
+process.hcalTupleMuonTrack.DT1DCosmicRecHitsCollection   = cms.InputTag("dt1DRecHits")
+process.hcalTupleMuonTrack.DTRecCosmicSegmentsCollection = cms.InputTag("dt4DSegments")
 
 #------------------------------------------------------------------------------------
 #Remove Method 0, Rename Method 2 as "default" where necessary:

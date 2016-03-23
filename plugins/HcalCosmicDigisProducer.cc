@@ -15,6 +15,10 @@ HcalCosmicDigisProducer::HcalCosmicDigisProducer(const edm::ParameterSet& iConfi
   edm::ConsumesCollector iC = consumesCollector();
   m_trackParameters.loadParameters( m_trackParameterSet, iC );
   m_trackAssociator.useDefaultPropagator();
+  hbheToken_ = consumes<HBHEDigiCollection>(m_hbheDigisTag);
+  hoToken_ = consumes<HODigiCollection>(m_hoDigisTag);
+  hfToken_ = consumes<HFDigiCollection>(m_hfDigisTag);
+  trackToken_ = consumes<std::vector<reco::Track>>(m_recoTracksTag);
 }
 
 HcalCosmicDigisProducer::~HcalCosmicDigisProducer(){}
@@ -22,15 +26,14 @@ HcalCosmicDigisProducer::~HcalCosmicDigisProducer(){}
 void HcalCosmicDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   
   edm::Handle<reco::TrackCollection> recoTracks;
-  iEvent.getByLabel(m_recoTracksTag, recoTracks);  
+  iEvent.getByToken(trackToken_,recoTracks);
 
   edm::Handle<HBHEDigiCollection> hbheInputDigis;
   edm::Handle<HODigiCollection>   hoInputDigis;
   edm::Handle<HFDigiCollection>   hfInputDigis;
-
-  iEvent.getByLabel(m_hbheDigisTag, hbheInputDigis);
-  iEvent.getByLabel(m_hoDigisTag  , hoInputDigis);
-  iEvent.getByLabel(m_hfDigisTag  , hfInputDigis);
+  iEvent.getByToken(hbheToken_,hbheInputDigis);
+  iEvent.getByToken(hoToken_,hoInputDigis);
+  iEvent.getByToken(hfToken_,hfInputDigis);
 
   std::auto_ptr<HBHEDigiCollection> hbheOutputDigis(new HBHEDigiCollection()); 
   std::auto_ptr<HODigiCollection>   hoOutputDigis  (new HODigiCollection());

@@ -1,6 +1,4 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalCosmicDigisProducer.h"
-#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
-
 
 HcalCosmicDigisProducer::HcalCosmicDigisProducer(const edm::ParameterSet& iConfig):
   m_hbheDigisTag     (iConfig.getParameter<edm::InputTag>("HBHEDigis")),

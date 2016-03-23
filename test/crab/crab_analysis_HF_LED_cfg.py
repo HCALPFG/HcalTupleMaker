@@ -86,7 +86,6 @@ if isLocalRun:
 if isGlobalRun:
     process.source = cms.Source("PoolSource",
       fileNames = cms.untracked.vstring(options.inputFiles),
-      #fileNames = cms.untracked.vstring(),
       skipEvents = cms.untracked.uint32(options.skipEvents),
     )
 
@@ -137,6 +136,17 @@ process.GlobalTag = GlobalTag(process.GlobalTag, options.globalTag)
 
 # Need to unpack digis from RAW
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
+
+# Aleko's EMAP
+process.es_ascii = cms.ESSource('HcalTextCalibrations',
+    input = cms.VPSet(
+        cms.PSet(
+            object = cms.string('ElectronicsMap'),
+            file = cms.FileInPath('HCALPFG/HcalTupleMaker/data/2016-feb-24/version_G_emap_all.txt')
+            ),
+        )
+    )
+process.es_prefer = cms.ESPrefer('HcalTextCalibrations','es_ascii')
 
 # Need the topology to analyze digis
 process.load("Geometry.HcalCommonData.hcalDBConstants_cff")

@@ -203,8 +203,10 @@ process.p = cms.Path(
     process.hcalTupleFEDs*
     # Make HCAL tuples: digi info
     process.hcalTupleHFDigis*
+    process.hcalTupleHBHEDigis*
     # Make HCAL tuples: reco info
     process.hcalTupleHFRecHits*
+    process.hcalTupleHBHERecHits*
     # Package everything into a tree
     process.hcalTupleTree
 )

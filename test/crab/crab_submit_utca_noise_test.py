@@ -13,7 +13,7 @@ run = '267594'
 jobname = dataset[1:].replace('/','_')
 jobname = jobname.replace(':','_')
 jobname = jobname.replace('RAW','RAW_'+run)
-jobname += "_vTEST1"
+jobname += "_vTEST2"
 ##________________________________________________________________________________||
 
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB

@@ -10,10 +10,10 @@ run = '267590'
 
 ##________________________________________________________________________________||
 
-jobname = dataset[1:].replace('/','__')
-jobname = jobname.replace(':','___')
+jobname = dataset[1:].replace('/','_')
+jobname = jobname.replace(':','_')
 jobname = jobname.replace('RAW','RAW_'+run)
-jobname += "_v2"
+jobname += "_v3"
 ##________________________________________________________________________________||
 
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB
@@ -28,6 +28,7 @@ config.General.transferLogs = False
 
 config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = '/uscms/home/dryu/HCAL/CMSSW_8_0_1/src/HCALPFG/HcalTupleMaker/test/crab/crab_analysis_HF_LED_cfg.py'
+config.JobType.pyCfgParams = ['outputFile=hcalTupleTree.root']
 
 config.Data.inputDataset = dataset
 config.Data.inputDBS = 'global'

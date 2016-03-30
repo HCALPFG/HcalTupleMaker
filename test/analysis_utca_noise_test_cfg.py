@@ -24,7 +24,7 @@ options.register('processEvents',
                  "Number of events to process")
 
 options.register('inputFiles',
-                 "root://cmsxrootd-site.fnal.gov//store/data/Commissioning2016/MinimumBias/RAW/v1/000/264/232/00000/1EDB8470-71D1-E511-A299-02163E014504.root", #default value
+                 "root://cmsxrootd-site.fnal.gov//store/data/Commissioning2016/MinimumBias/RAW/v1/000/264/232/00000/1EDB8470-71D1-E511-A299-02163E014504.root", #default value, corresponds to LFN /store/data/Commissioning2016/MinimumBias/RAW/v1/000/264/232/00000/1EDB8470-71D1-E511-A299-02163E014504.root from run 267594
                  VarParsing.VarParsing.multiplicity.list,
                  VarParsing.VarParsing.varType.string,
                  "Input files")
@@ -146,7 +146,8 @@ process.es_prefer = cms.ESPrefer('HcalTextCalibrations','es_ascii')
 # Set up utcaDigis unpacker
 process.hcalDigis.FilterDataQuality = cms.bool(False)
 process.hcalDigis.FEDs = cms.untracked.vint32()
-for FED in [x+700 for x in range(32)] + [1118, 1120, 1122]:
+#for FED in [x+700 for x in range(32)] + [1118, 1120, 1122]:
+for FED in xrange(1100, 1124, 2):
     process.hcalDigis.FEDs.append ( FED ) 
 
 # Need the geometry to get digi and rechit positions

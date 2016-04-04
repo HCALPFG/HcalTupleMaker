@@ -10,10 +10,9 @@ run = '267594'
 
 ##________________________________________________________________________________||
 
-jobname = dataset[1:].replace('/','_')
-jobname = jobname.replace(':','_')
-jobname = jobname.replace('RAW','RAW_'+run)
-jobname += "_vTEST2"
+jobname = "HCALPFG_utca_noise_test_"
+jobname += dataset[1:].replace('/','_').replace(':','_').replace('RAW','RAW_'+run)
+jobname += "_v1_1"
 ##________________________________________________________________________________||
 
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB

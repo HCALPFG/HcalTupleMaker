@@ -5,7 +5,8 @@
 #Configurables
 
 #dataset = '/MinimumBias/Commissioning2016-v1/RAW'
-dataset = '/Cosmics/Commissioning2016-v1/RAW'
+#dataset = '/Cosmics/Commissioning2016-v1/RAW'
+dataset = '/ExpressCosmics/Commissioning2016-Express-v1/FEVT'
 #run = '266150'
 run = '268500'
 
@@ -13,7 +14,7 @@ run = '268500'
 
 jobname = "HCALPFG_utca_noise_test_"
 jobname += dataset[1:].replace('/','_').replace(':','_').replace('RAW','RAW_'+run)
-jobname += "_v1_1"
+jobname += "_v1_2"
 ##________________________________________________________________________________||
 
 from CRABClient.UserUtilities import config, getUsernameFromSiteDB

@@ -8,18 +8,33 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
+#include "FWCore/Utilities/interface/InputTag.h"
 
 #include <string>
 #include <vector>
 #include <TTree.h>
 #include <TH1I.h>
 
+// --------------------------------------------------------------------------------------------------------
+// Updated using the example here:
+//    https://github.com/cms-sw/cmssw/blob/CMSSW_8_1_X/CalibTracker/SiStripCommon/plugins/ShallowTree.cc
+//    https://github.com/cms-sw/cmssw/blob/CMSSW_8_1_X/CalibTracker/SiStripCommon/interface/ShallowTree.h
+// --------------------------------------------------------------------------------------------------------
+
 class HcalTupleMaker_Tree : public edm::EDAnalyzer {
  private:
   virtual void beginJob();
+  //virtual void beginJob(const edm::ParameterSet&);
   virtual void analyze(const edm::Event&, const edm::EventSetup&);
   virtual void endJob(){}
   
+  
+     template <class T> 
+       void eat(edm::BranchDescription const* desc) {
+       consumes<T>(edm::InputTag(desc->moduleLabel(), desc->productInstanceName()));
+     }
+  
+     
   class BranchConnector {
    public:
     virtual ~BranchConnector() {};
@@ -44,11 +59,11 @@ class HcalTupleMaker_Tree : public edm::EDAnalyzer {
   TTree * tree;
   
   std::vector<BranchConnector*> connectors;
-  edm::ParameterSet pset;
+  //edm::ParameterSet pset;
   
  public:
-  //explicit HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) : pset(iConfig) {}
   explicit HcalTupleMaker_Tree(const edm::ParameterSet& iConfig);
+  
   enum LEAFTYPE {BOOL=1,  BOOL_V,
                  SHORT,   SHORT_V,           U_SHORT, U_SHORT_V,
                  INT,     INT_V,             U_INT,   U_INT_V,

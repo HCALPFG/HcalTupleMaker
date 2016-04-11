@@ -39,3 +39,15 @@ To run local runs:
 For CMSSW_7_4_10, use 74X_dataRun2_Express_v1. (Tested 16Feb2016)
 
 Maintained by Edmund Berry: Edmund.A.Berry(at)CERN.CH
+
+=======
+
+* CMSSW_8_X_Y
+
+Instructions:
+* https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalNoiseAnalyzer#Recommended_CMSSW_8_0_0_patch1_i
+
+Contact: Halil Saka, David Yu
+
+-------------
+Original author: Edmund Berry

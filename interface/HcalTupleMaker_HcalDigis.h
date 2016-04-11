@@ -14,7 +14,9 @@ template <class DigiCollection, class RecHitCollection, class DetIdClass, class 
 class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   
  protected:
-  
+ 
+  edm::EDGetTokenT<DigiCollection> m_hcalDigisToken;
+  edm::EDGetTokenT<RecHitCollection> m_hcalRecHitsToken;
   const edm::InputTag   m_hcalDigisTag;
   const edm::InputTag   m_hcalRecHitsTag;
   const std::string     m_prefix;
@@ -25,9 +27,6 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   
   HcalTupleMaker_HcalDigiAlgorithm algo;
   
-  edm::EDGetTokenT<DigiCollection> token_digi_;
-  edm::EDGetTokenT<RecHitCollection> token_rechit_;
-
   void produce( edm::Event & iEvent, const edm::EventSetup & iSetup ) { 
     
     //-----------------------------------------------------
@@ -43,17 +42,14 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     bool run_algo = true;
     
     edm::Handle<DigiCollection>  hcalDigis;
-    //bool gotHCALDigis = iEvent.getByLabel(m_hcalDigisTag, hcalDigis);
-    bool gotHCALDigis = iEvent.getByToken(token_digi_, hcalDigis);
+    bool gotHCALDigis = iEvent.getByToken(m_hcalDigisToken, hcalDigis);
     if (!gotHCALDigis ) {
       std::cout << "Could not find HCAL Digis with tag " << m_hcalDigisTag << std::endl;
       run_algo = false;
     }
-    
     edm::Handle<RecHitCollection>  hcalRecos;
     if ( m_doEnergyReco ){
-      //bool gotHCALRecos = iEvent.getByLabel(m_hcalRecHitsTag, hcalRecos);
-      bool gotHCALRecos = iEvent.getByToken(token_rechit_, hcalRecos);
+      bool gotHCALRecos = iEvent.getByToken(m_hcalRecHitsToken, hcalRecos);
       if (!gotHCALRecos ) {
     	std::cout << "Could not find HCAL RecHits with tag " << m_hcalRecHitsTag << std::endl;
     	run_algo = false;
@@ -130,8 +126,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<float> >               ( m_prefix + "RecEnergy"       + m_suffix );    	
     produces<std::vector<float> >               ( m_prefix + "RecTime"         + m_suffix );      
 
-    token_digi_ = consumes<DigiCollection>(m_hcalDigisTag);
-    token_rechit_ = consumes<RecHitCollection>(m_hcalRecHitsTag);
+    m_hcalDigisToken = consumes<DigiCollection>(m_hcalDigisTag);
+    m_hcalRecHitsToken = consumes<RecHitCollection>(m_hcalRecHitsTag);
 
     algo.setTotalFCthreshold ( m_totalFCthreshold );    
     algo.setDoChargeReco ( m_doChargeReco );

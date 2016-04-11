@@ -13,6 +13,9 @@
 #include "TrackingTools/TrackAssociator/interface/TrackDetectorAssociator.h"
 #include "TrackingTools/TrackAssociator/interface/TrackAssociatorParameters.h"
 
+// hcal digis
+#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
+
 class HcalCosmicDigisProducer : public edm::EDProducer {
  public:
   explicit HcalCosmicDigisProducer(const edm::ParameterSet&);
@@ -25,6 +28,10 @@ class HcalCosmicDigisProducer : public edm::EDProducer {
   virtual void produce(edm::Event&, const edm::EventSetup&) override;
   virtual void endJob() override;
 
+  edm::EDGetTokenT<HBHEDigiCollection> hbheToken_;
+  edm::EDGetTokenT<HODigiCollection> hoToken_;
+  edm::EDGetTokenT<HFDigiCollection> hfToken_;
+  edm::EDGetTokenT<std::vector<reco::Track>> trackToken_;
   edm::InputTag             m_hbheDigisTag;
   edm::InputTag             m_hoDigisTag;
   edm::InputTag             m_hfDigisTag;

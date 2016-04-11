@@ -12,6 +12,12 @@
 #include <TBranch.h>
 #include <TLorentzVector.h>
 
+// --------------------------------------------------------------------------------------------------------
+// Updated using the example here:
+//    https://github.com/cms-sw/cmssw/blob/CMSSW_8_1_X/CalibTracker/SiStripCommon/plugins/ShallowTree.cc
+//    https://github.com/cms-sw/cmssw/blob/CMSSW_8_1_X/CalibTracker/SiStripCommon/interface/ShallowTree.h
+// --------------------------------------------------------------------------------------------------------
+
 void HcalTupleMaker_Tree::
 analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
   BOOST_FOREACH( BranchConnector* connector, connectors)
@@ -45,7 +51,7 @@ TypedBranchConnector(edm::BranchDescription const* desc,
   else       { tree->Branch(pin.c_str(), &object_ptr_            );}  //vector<type>
 }
 
-HcalTupleMaker_Tree::HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) : pset(iConfig) {
+HcalTupleMaker_Tree::HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) {
 
   tree = fs->make<TTree>("tree", "");
 
@@ -81,7 +87,8 @@ HcalTupleMaker_Tree::HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) : pse
 
   edm::Service<edm::ConstProductRegistry> reg;
   edm::SelectedProducts allBranches = reg->allBranchDescriptions();
-  edm::ProductSelectorRules productSelectorRules_(pset, "outputCommands", "HcalTupleMaker_Tree");
+  //edm::ProductSelectorRules productSelectorRules_(pset, "outputCommands", "HcalTupleMaker_Tree");
+  edm::ProductSelectorRules productSelectorRules_(iConfig, "outputCommands", "HcalTupleMaker_Tree");
   edm::ProductSelector productSelector_;
   productSelector_.initialize(productSelectorRules_, allBranches);
 
@@ -95,7 +102,7 @@ HcalTupleMaker_Tree::HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) : pse
         throw edm::Exception(edm::errors::Configuration)
           << "More than one branch named: "
           << selection->productInstanceName() << std::endl
-          << "Exception thrown from HcalTupleMaker_Tree::beginJob" << std::endl;
+          << "Exception thrown from HcalTupleMaker_Tree::HcalTupleMaker" << std::endl;
       }
       else {
         branchnames.insert( selection->productInstanceName() );
@@ -148,7 +155,7 @@ HcalTupleMaker_Tree::HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) : pse
             <<   selection->processName()         << std::endl
             << "Valid leaf types are (friendlyClassName):\n"
             <<   leafstring
-            << "Exception thrown from HcalTupleMaker_Tree::beginJob\n";
+            << "Exception thrown from HcalTupleMaker_Tree::HcalTupleMaker\n";
         }
       }
     }

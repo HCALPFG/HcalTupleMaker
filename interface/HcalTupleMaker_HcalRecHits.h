@@ -6,6 +6,7 @@
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/ESHandle.h"
+#include "FWCore/Utilities/interface/EDGetToken.h"
 
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalRecHitAlgorithm.h"
 
@@ -14,9 +15,10 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
  protected:
   
   const edm::InputTag   m_hcalRecHitsTag;
+  edm::EDGetTokenT<RecHitCollection> m_hcalRecHitsToken;
+
   const std::string     m_prefix;
   const std::string     m_suffix;
-  edm::EDGetTokenT<RecHitCollection> token_rechitstag_;
 
   HcalTupleMaker_HcalRecHitAlgorithm algo;
   
@@ -33,10 +35,9 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     //-----------------------------------------------------
     
     bool run_algo = true;
-    
+
     edm::Handle<RecHitCollection> hcalRecHits;
-    //bool gotHcalRecHits = iEvent.getByLabel(m_hcalRecHitsTag, hcalRecHits);
-    bool gotHcalRecHits = iEvent.getByToken(token_rechitstag_, hcalRecHits);
+    bool gotHcalRecHits = iEvent.getByToken(m_hcalRecHitsToken, hcalRecHits);
     if (!gotHcalRecHits ) {
       std::cout << "Could not find HCAL RecHits with tag " << m_hcalRecHitsTag << std::endl;
       run_algo = false;
@@ -54,7 +55,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     //-----------------------------------------------------
     
     if ( run_algo ) algo.run ( *hcalRecHits, *geometry );
-  
+    
     //-----------------------------------------------------
     // Put things into the event
     //-----------------------------------------------------
@@ -65,10 +66,11 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
   
  public:
   
-  HcalTupleMaker_HcalRecHits(const edm::ParameterSet& iConfig) :
-   m_hcalRecHitsTag (iConfig.getUntrackedParameter<edm::InputTag>("source")),
-   m_prefix         (iConfig.getUntrackedParameter<std::string>  ("Prefix")),
-   m_suffix         (iConfig.getUntrackedParameter<std::string>  ("Suffix")) {
+ HcalTupleMaker_HcalRecHits(const edm::ParameterSet& iConfig) :
+  m_hcalRecHitsTag (iConfig.getUntrackedParameter<edm::InputTag>("source")),
+    m_hcalRecHitsToken (consumes<RecHitCollection>(iConfig.getUntrackedParameter<edm::InputTag>("source"))),
+    m_prefix         (iConfig.getUntrackedParameter<std::string>  ("Prefix")),
+    m_suffix         (iConfig.getUntrackedParameter<std::string>  ("Suffix")) {
     produces<std::vector<int>   > ( m_prefix + "IEta"   + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "IPhi"   + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Eta"    + m_suffix );
@@ -80,7 +82,6 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     produces<std::vector<int>   > ( m_prefix + "Aux"    + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Energy" + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Time"   + m_suffix );
-    token_rechitstag_ = consumes<RecHitCollection>(m_hcalRecHitsTag);
   }
 
  protected:

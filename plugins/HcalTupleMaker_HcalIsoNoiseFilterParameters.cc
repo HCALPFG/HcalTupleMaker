@@ -1,36 +1,16 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalIsoNoiseFilterParameters.h"
-#include "DataFormats/METReco/interface/HcalNoiseSummary.h"
-#include "DataFormats/METReco/interface/HcalNoiseRBX.h"
-#include "RecoMET/METAlgorithms/interface/HcalHPDRBXMap.h"
-#include "DataFormats/HcalDetId/interface/HcalDetId.h"
-#include "CalibFormats/HcalObjects/interface/HcalCoderDb.h"
-#include "CalibFormats/HcalObjects/interface/HcalCalibrations.h"
-#include "CalibFormats/HcalObjects/interface/HcalDbService.h"
-#include "CalibFormats/HcalObjects/interface/HcalDbRecord.h"
-#include "CalibCalorimetry/HcalAlgos/interface/HcalPulseShapes.h"
-#include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
-#include "DataFormats/HcalRecHit/interface/HBHERecHit.h"
-#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
-#include "DataFormats/Common/interface/Handle.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "RecoLocalCalo/HcalRecProducers/src/HBHEIsolatedNoiseReflagger.h"
-#include "RecoLocalCalo/HcalRecAlgos/interface/HBHEIsolatedNoiseAlgos.h"
-#include "CondFormats/DataRecord/interface/EcalChannelStatusRcd.h"
-#include "RecoLocalCalo/HcalRecAlgos/interface/HcalSeverityLevelComputerRcd.h"
-#include "DataFormats/METReco/interface/HcalCaloFlagLabels.h"
-#include "RecoLocalCalo/EcalRecAlgos/interface/EcalSeverityLevelAlgoRcd.h"
-#include "RecoLocalCalo/EcalRecAlgos/interface/EcalSeverityLevelAlgo.h"
-#include "FWCore/Framework/interface/Event.h"
-#include <iterator>
-#include <vector>
 
 HcalTupleMaker_HcalIsoNoiseFilterParameters::HcalTupleMaker_HcalIsoNoiseFilterParameters(const edm::ParameterSet& iConfig):
-  noiseSummaryInputTag (iConfig.getUntrackedParameter<edm::InputTag>("noiseSummaryInputTag")),
+  noiseSummaryInputToken (consumes<HcalNoiseSummary>(iConfig.getUntrackedParameter<edm::InputTag>("noiseSummaryInputTag"))),
   //noiseResultInputTag  (iConfig.getUntrackedParameter<std::string>("noiseResultInputTag")), 
   //recoInputTag         (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
   //isRAW                (iConfig.getUntrackedParameter<bool>("isRAW")),
-  prefix               (iConfig.getUntrackedParameter<std::string>("Prefix")),
-  suffix               (iConfig.getUntrackedParameter<std::string>("Suffix"))
+  prefix                 (iConfig.getUntrackedParameter<std::string>("Prefix")),
+  suffix                 (iConfig.getUntrackedParameter<std::string>("Suffix")),
+  hbheprerecoToken       (consumes<HBHERecHitCollection>(edm::InputTag("hbheprereco"))),
+  EcalRecHitsEBToken     (consumes<EcalRecHitCollection>(edm::InputTag("ecalRecHit","EcalRecHitsEB"))),
+  EcalRecHitsEEToken     (consumes<EcalRecHitCollection>(edm::InputTag("ecalRecHit","EcalRecHitsEE"))),
+  trackExtrapolatorToken (consumes<std::vector<reco::TrackExtrapolation> >(edm::InputTag("trackExtrapolator")))
 {
   // Iso noise filter params - these are already stored via the HcalNoiseFilters module.
   //produces <std::vector<int> >    (prefix + "NumIsolatedNoiseChannels" + suffix );
@@ -122,6 +102,9 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
 
   // Isolation Filter code
   // Reproduced from: http://cmslxr.fnal.gov/lxr/source/RecoLocalCalo/HcalRecProducers/src/HBHEIsolatedNoiseReflagger.cc?v=CMSSW_7_5_0_pre5
+  // Modified due to: 
+  //     http://cmslxr.fnal.gov/lxr/diff/RecoLocalCalo/HcalRecProducers/src/HBHEIsolatedNoiseReflagger.cc?v=CMSSW_7_5_0_pre5&~v=CMSSW_7_6_2
+
   bool isodebug = false;
   
   //ObjectValidator objvalidator_;
@@ -151,21 +134,27 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
   
   // get the calotower mappings
   edm::ESHandle<CaloTowerConstituentsMap> ctcm;
-  iSetup.get<IdealGeometryRecord>().get(ctcm);
+  //iSetup.get<IdealGeometryRecord>().get(ctcm);
+  iSetup.get<CaloGeometryRecord>().get(ctcm);
   
   // get the HB/HE hits
   edm::Handle<HBHERecHitCollection> hbhehits_h;
-  iEvent.getByLabel("hbheprereco", hbhehits_h);
+  //iEvent.getByLabel("hbheprereco", hbhehits_h);
+  iEvent.getByToken(hbheprerecoToken,hbhehits_h);
+
   
    // get the ECAL hits
   edm::Handle<EcalRecHitCollection> ebhits_h;
-  iEvent.getByLabel("ecalRecHit","EcalRecHitsEB", ebhits_h);
+  //iEvent.getByLabel("ecalRecHit","EcalRecHitsEB", ebhits_h);
+  iEvent.getByToken(EcalRecHitsEBToken, ebhits_h);
   edm::Handle<EcalRecHitCollection> eehits_h;
-  iEvent.getByLabel("ecalRecHit","EcalRecHitsEE", eehits_h);
+  //iEvent.getByLabel("ecalRecHit","EcalRecHitsEE", eehits_h);
+  iEvent.getByToken(EcalRecHitsEEToken, eehits_h);
   
   // get the tracks
   edm::Handle<std::vector<reco::TrackExtrapolation> > trackextraps_h;
-  iEvent.getByLabel("trackExtrapolator", trackextraps_h);
+  //iEvent.getByLabel("trackExtrapolator", trackextraps_h);
+  iEvent.getByToken(trackExtrapolatorToken, trackextraps_h);
   
   objvalidator_.setHcalChannelQuality(dbHcalChStatus);
   objvalidator_.setEcalChannelStatus(dbEcalChStatus);
@@ -432,7 +421,8 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
 
 
   edm::Handle<HcalNoiseSummary> hSummary;
-  iEvent.getByLabel(noiseSummaryInputTag, hSummary);
+  //iEvent.getByLabel(noiseSummaryInputTag, hSummary);
+  iEvent.getByToken(noiseSummaryInputToken, hSummary);
 
   if(isodebug) std::cout<<suffix<<"  hSummary->numIsolatedNoiseChannels(): "<<hSummary->numIsolatedNoiseChannels()<<std::endl;
   if(isodebug) std::cout<<suffix<<"  hSummary->isolatedNoiseSumE()       : "<<hSummary->isolatedNoiseSumE()<<std::endl;

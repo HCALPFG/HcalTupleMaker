@@ -1,27 +1,14 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_CaloJetMet.h"
-#include "Geometry/CaloGeometry/interface/CaloGeometry.h"
-#include "Geometry/Records/interface/CaloGeometryRecord.h"
-#include "Geometry/CaloTopology/interface/HcalTopology.h"
-#include "DataFormats/HcalDetId/interface/HcalDetId.h"
-#include "DataFormats/HcalRecHit/interface/HcalRecHitCollections.h"
-#include "DataFormats/HcalRecHit/interface/HBHERecHit.h"
-#include "DataFormats/HcalRecHit/interface/HFRecHit.h"
-#include "DataFormats/HcalRecHit/interface/HORecHit.h"
-#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
-#include "DataFormats/EcalRecHit/interface/EcalRecHitCollections.h"
-#include "DataFormats/EcalRecHit/interface/EcalRecHit.h"
-#include "DataFormats/METReco/interface/CaloMET.h"
-#include "DataFormats/METReco/interface/CaloMETFwd.h"
-#include "DataFormats/JetReco/interface/CaloJet.h"
-#include "DataFormats/JetReco/interface/CaloJetCollection.h"
-#include "DataFormats/Common/interface/Handle.h"
-#include "FWCore/Framework/interface/ESHandle.h"
-#include "FWCore/Framework/interface/Event.h"
 
 HcalTupleMaker_CaloJetMet::HcalTupleMaker_CaloJetMet(const edm::ParameterSet& iConfig):
-  recoInputTag   (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
-  prefix         (iConfig.getUntrackedParameter<std::string>("Prefix")),
-  suffix         (iConfig.getUntrackedParameter<std::string>("Suffix"))
+  //recoInputTag     (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
+  recoInputToken     (consumes<HBHERecHitCollection>((iConfig.getUntrackedParameter<std::string>("recoInputTag")))),
+  prefix             (iConfig.getUntrackedParameter<std::string>("Prefix")),
+  suffix             (iConfig.getUntrackedParameter<std::string>("Suffix")),
+  EcalRecHitsEBToken (consumes<EcalRecHitCollection>(edm::InputTag("ecalRecHit","EcalRecHitsEB"))),
+  EcalRecHitsEEToken (consumes<EcalRecHitCollection>(edm::InputTag("ecalRecHit","EcalRecHitsEE"))),
+  ak4CaloJetsToken   (consumes<reco::CaloJetCollection>(edm::InputTag("ak4CaloJets"))),
+  caloMetToken       (consumes<reco::CaloMETCollection>(edm::InputTag("caloMet")))
 {
   produces <std::vector<double> >            (prefix + "EBET"           + suffix );
   produces <std::vector<double> >            (prefix + "EEET"           + suffix );
@@ -87,23 +74,28 @@ void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetu
   std::auto_ptr<std::vector<int> >               jetn60       ( new std::vector<int>              ());
  
   edm::Handle<HBHERecHitCollection> hRecHits;
-  iEvent.getByLabel(recoInputTag, hRecHits);
+  //iEvent.getByLabel(recoInputTag, hRecHits);
+  iEvent.getByToken(recoInputToken, hRecHits);
 
   edm::Handle<EcalRecHitCollection> hEBRecHits;
-  iEvent.getByLabel("ecalRecHit","EcalRecHitsEB", hEBRecHits);
+  //iEvent.getByLabel("ecalRecHit","EcalRecHitsEB", hEBRecHits);
+  iEvent.getByToken(EcalRecHitsEBToken, hEBRecHits);
 
   edm::Handle<EcalRecHitCollection> hEERecHits;
-  iEvent.getByLabel("ecalRecHit","EcalRecHitsEE", hEERecHits);
+  //iEvent.getByLabel("ecalRecHit","EcalRecHitsEE", hEERecHits);
+  iEvent.getByToken(EcalRecHitsEEToken, hEERecHits);
 
   edm::ESHandle<CaloGeometry> hGeometry;
   iSetup.get<CaloGeometryRecord>().get(hGeometry);
   Geometry = hGeometry.product();
 
   edm::Handle<reco::CaloJetCollection> hCaloJets;
-  iEvent.getByLabel("ak4CaloJets", hCaloJets);
+  //iEvent.getByLabel("ak4CaloJets", hCaloJets);
+  iEvent.getByToken(ak4CaloJetsToken, hCaloJets);
 
   edm::Handle<reco::CaloMETCollection> hCaloMET;
-  iEvent.getByLabel("caloMet", hCaloMET);
+  //iEvent.getByLabel("caloMet", hCaloMET);
+  iEvent.getByToken(caloMetToken, hCaloMET);
   
   //std::cout<<" Jet size "<<(*hCaloJets).size()<<std::endl; 
   reco::CaloJetCollection::const_iterator jet = hCaloJets->begin ();

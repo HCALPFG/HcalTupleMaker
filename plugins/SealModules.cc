@@ -14,6 +14,7 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalNoiseFilters.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalIsoNoiseFilterParameters.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_CaloJetMet.h"
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_MuonTrack.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_L1GCTJets.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalTriggerPrimitives.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalUnpackerReport.h"
@@ -38,6 +39,7 @@ DEFINE_FWK_MODULE(HcalTupleMaker_L1Jets);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalNoiseFilters);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalIsoNoiseFilterParameters);
 DEFINE_FWK_MODULE(HcalTupleMaker_CaloJetMet);
+DEFINE_FWK_MODULE(HcalTupleMaker_MuonTrack);
 DEFINE_FWK_MODULE(HcalTupleMaker_L1GCTJets);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalTriggerPrimitives);
 DEFINE_FWK_MODULE(HcalTupleMaker_HcalUnpackerReport);

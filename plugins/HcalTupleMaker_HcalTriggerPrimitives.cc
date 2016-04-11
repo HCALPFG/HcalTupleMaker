@@ -24,6 +24,10 @@ HcalTupleMaker_HcalTriggerPrimitives::HcalTupleMaker_HcalTriggerPrimitives(const
   produces <std::vector<std::vector<int> > > (prefix + "FineGrain"       + suffix );
   produces <std::vector<std::vector<int> > > (prefix + "HBHEDigiIndex"   + suffix );
   produces <std::vector<std::vector<int> > > (prefix + "HFDigiIndex"     + suffix );
+
+  tpToken_ = consumes<HcalTrigPrimDigiCollection>(inputTag);
+  hbheToken_ = consumes<HBHEDigiCollection>(hbheInputTag);
+  hfToken_ = consumes<HFDigiCollection>(hfInputTag);
 }
 
 void HcalTupleMaker_HcalTriggerPrimitives::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -43,19 +47,19 @@ void HcalTupleMaker_HcalTriggerPrimitives::produce(edm::Event& iEvent, const edm
   iSetup.get<CaloGeometryRecord>().get(geometry);
 
   edm::Handle<HBHEDigiCollection> hbheDigis;
-  iEvent.getByLabel(hbheInputTag, hbheDigis);
+  iEvent.getByToken(hbheToken_, hbheDigis);
 
   HBHEDigiCollection::const_iterator iHBHE;
   HBHEDigiCollection::const_iterator first_HBHE = hbheDigis -> begin();
   
   edm::Handle<HFDigiCollection> hfDigis;
-  iEvent.getByLabel(hfInputTag, hfDigis);
+  iEvent.getByToken(hfToken_, hfDigis);
   
   HFDigiCollection::const_iterator iHF;
   HFDigiCollection::const_iterator first_HF = hfDigis -> begin();
 
   edm::Handle<HcalTrigPrimDigiCollection> tps;
-  iEvent.getByLabel(inputTag, tps);
+  iEvent.getByToken(tpToken_, tps);
   
   HcalTrigPrimDigiCollection::const_iterator itp     = tps -> begin();
   HcalTrigPrimDigiCollection::const_iterator itp_end = tps -> end();

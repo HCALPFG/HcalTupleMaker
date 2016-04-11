@@ -16,7 +16,7 @@ class HcalTupleMaker_FEDs : public edm::EDProducer {
   const std::string     prefix,suffix;
   const int minFEDID;
   const int maxFEDID;
-  edm::EDGetTokenT<FEDRawDataCollection> token_raw_;
+  edm::EDGetTokenT<FEDRawDataCollection> m_FEDRawDataToken;
 
 };
 

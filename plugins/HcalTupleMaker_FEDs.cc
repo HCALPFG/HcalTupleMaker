@@ -17,7 +17,7 @@ HcalTupleMaker_FEDs::HcalTupleMaker_FEDs(const edm::ParameterSet& iConfig) :
   produces <std::vector<int> > (prefix + "Size"   + suffix );
   produces <std::vector<int> > (prefix + "ORN"    + suffix );
   produces <std::vector<int> > (prefix + "BCN"    + suffix );
-  token_raw_ = consumes<FEDRawDataCollection>(inputTag);
+  m_FEDRawDataToken = consumes<FEDRawDataCollection>(inputTag);
     //(iConfig.getUntrackedParameter<edm::InputTag>("tagRaw", edm::InputTag("rawDataCollector")));
 }
 
@@ -30,9 +30,7 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   std::auto_ptr<std::vector<int> > orn    ( new std::vector<int> () );
   
   edm::Handle<FEDRawDataCollection> rawData;
-  //bool gotRawData = iEvent.getByLabel(inputTag, rawData);
-  //if (gotRawData){
-  if (iEvent.getByToken(token_raw_, rawData)) {
+  if (iEvent.getByToken(m_FEDRawDataToken, rawData)) {
     for (int fed_number=minFEDID; fed_number<=maxFEDID; ++fed_number){
     // for(int fed_number=FEDNumbering::MINHCALFEDID;fed_number<=FEDNumbering::MAXHCALFEDID; fed_number++) {
 

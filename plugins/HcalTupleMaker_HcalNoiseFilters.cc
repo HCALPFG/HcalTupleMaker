@@ -124,11 +124,6 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
 
 
   edm::Handle<bool> hNoiseResult;
-  //iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResult", hNoiseResult);
-  //edm::InputTag defaultNoiseResultInputTag = edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResult");
-  //edm::EDGetTokenT<bool> defaultNoiseResultInputToken = consumes<bool>(defaultNoiseResultInputTag);
-  //edm::EDGetTokenT<bool> defaultNoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResult"));
-  //defaultNoiseResultInputToken    = consumes<bool>(defaultNoiseResultInputTag);
   iEvent.getByToken(defaultNoiseResultInputToken, hNoiseResult);
 
   edm::Handle<bool> hNoiseResult_Run1;
@@ -137,18 +132,12 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   iEvent.getByToken(run1NoiseResultInputToken, hNoiseResult_Run1);
 
   edm::Handle<bool> hNoiseResult_Run2Loose;
-  //iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Loose", hNoiseResult_Run2Loose);
-  //edm::EDGetTokenT<bool> run2LooseNoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag,"HBHENoiseFilterResultRun2Loose"));
   iEvent.getByToken(run2LooseNoiseResultInputToken, hNoiseResult_Run2Loose);
 
   edm::Handle<bool> hNoiseResult_Run2Tight;
-  //iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResultRun2Tight", hNoiseResult_Run2Tight);
-  //edm::EDGetTokenT<bool> run2TightNoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag, "HBHENoiseFilterResultRun2Tight"));
   iEvent.getByToken(run2TightNoiseResultInputToken, hNoiseResult_Run2Tight);
 
   edm::Handle<bool> hNoiseResult_IsoNoiseFilter;
-  //iEvent.getByLabel(noiseResultInputTag, "HBHEIsoNoiseFilterResult", hNoiseResult_IsoNoiseFilter);
-  //edm::EDGetTokenT<bool> isoNoiseResultInputToken = consumes<bool>(edm::InputTag(noiseResultInputTag, "HBHEIsoNoiseFilterResult"));
   iEvent.getByToken(isoNoiseResultInputToken, hNoiseResult_IsoNoiseFilter);
 
 
@@ -161,7 +150,6 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
 
 
   edm::Handle<HcalNoiseSummary> hSummary;
-  //iEvent.getByLabel(noiseSummaryInputTag, hSummary);  
   iEvent.getByToken(noiseSummaryInputToken, hSummary);
 
 

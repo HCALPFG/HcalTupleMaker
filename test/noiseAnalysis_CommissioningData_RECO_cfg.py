@@ -13,8 +13,8 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
-#options.inputFiles = '/store/data/Run2015D/DoubleMuon/RECO/16Dec2015-v1/10000/002C811B-80A7-E511-8C4D-0CC47A4D7644.root'
-#options.inputFiles = '/store/data/Commissioning2016/MinimumBias/RECO/PromptReco-v1/000/266/653/00000/14AC0364-52E9-E511-A737-02163E0146FA.root'   #Need proper dataset here!
+#options.inputFiles = '/store/data/Commissioning2016/MinimumBias/RECO/PromptReco-v1/000/266/653/00000/14AC0364-52E9-E511-A737-02163E0146FA.root'
+options.inputFiles = '/store/data/Run2015D/Commissioning/RECO/PromptReco-v4/000/258/159/00000/343853B7-F96B-E511-9685-02163E0145BF.root'
 options.outputFile = 'results.root'
 #options.maxEvents = 100 # -1 means all events
 #options.skipEvents = 0 # default is 0.
@@ -91,10 +91,9 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v4'
 #process.GlobalTag.globaltag = '76X_dataRun2_v16'
-#from Configuration.AlCa.autoCond import autoCond
-#process.GlobalTag.globaltag = autoCond['run2_data']
+from Configuration.AlCa.autoCond import autoCond
+process.GlobalTag.globaltag = autoCond['run2_data']
 
 
 #------------------------------------------------------------------------------------
@@ -111,10 +110,10 @@ process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v4'
 #------------------------------------------------------------------------------------
 #Customize muon-track collection tags such that it runs in Commissioning2016 data
 #------------------------------------------------------------------------------------
-process.hcalTupleMuonTrack.inputMuonCollection           = cms.InputTag("muons")
-process.hcalTupleMuonTrack.inputTrackCollection          = cms.InputTag("cosmicMuons")
-process.hcalTupleMuonTrack.DT1DCosmicRecHitsCollection   = cms.InputTag("dt1DRecHits")
-process.hcalTupleMuonTrack.DTRecCosmicSegmentsCollection = cms.InputTag("dt4DSegments")
+#process.hcalTupleMuonTrack.inputMuonCollection           = cms.InputTag("muons")
+#process.hcalTupleMuonTrack.inputTrackCollection          = cms.InputTag("cosmicMuons")
+#process.hcalTupleMuonTrack.DT1DCosmicRecHitsCollection   = cms.InputTag("dt1DRecHits")
+#process.hcalTupleMuonTrack.DTRecCosmicSegmentsCollection = cms.InputTag("dt4DSegments")
 
 #------------------------------------------------------------------------------------
 #Remove Method 0, Rename Method 2 as "default" where necessary:

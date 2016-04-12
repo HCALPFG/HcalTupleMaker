@@ -56,7 +56,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     // Run the algorithm
     //-----------------------------------------------------
     
-    if ( run_algo ) algo.run ( *hcalRecHits, *geometry );
+    if ( run_algo ) algo.run ( *hcalRecHits, *geometry, m_isHBHE );
     
     //-----------------------------------------------------
     // Put things into the event

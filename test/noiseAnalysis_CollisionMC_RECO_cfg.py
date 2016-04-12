@@ -65,6 +65,7 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HFRecHits_cfi")
 #process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 
 
@@ -168,6 +169,7 @@ process.tuple_step = cms.Sequence(
     #    process.hcalTupleL1JetTriggerPrimitives*
     #    # Make HCAL tuples: reco info
     process.hcalTupleHBHERecHits*
+    process.hcalTupleHFRecHits*
     process.hcalTupleHcalNoiseFilters*
     process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
     process.hcalTupleCaloJetMet*

@@ -14,7 +14,7 @@ process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
 #options.inputFiles = '/store/data/Run2015D/DoubleMuon/RECO/16Dec2015-v1/10000/002C811B-80A7-E511-8C4D-0CC47A4D7644.root'
-options.inputFiles = '/store/data/Commissioning2016/MinimumBias/RECO/PromptReco-v1/000/266/653/00000/14AC0364-52E9-E511-A737-02163E0146FA.root'
+#options.inputFiles = '/store/data/Commissioning2016/MinimumBias/RECO/PromptReco-v1/000/266/653/00000/14AC0364-52E9-E511-A737-02163E0146FA.root'   #Need proper dataset here!
 options.outputFile = 'results.root'
 #options.maxEvents = 100 # -1 means all events
 #options.skipEvents = 0 # default is 0.
@@ -44,8 +44,8 @@ process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
-#process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
-process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff') #CommissioningData is often collected with 0T #check if this works OK?
+#process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')

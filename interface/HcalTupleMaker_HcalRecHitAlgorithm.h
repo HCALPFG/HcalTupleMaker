@@ -73,7 +73,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
 
       int RBXIndex=-1;
       int HPDIndex=-1;
-      if( abs(hcalDetId.ieta())<29 ){// HcalHPDRBXMap is valid for HBHE only!
+      if( m_isHBHE ){// HcalHPDRBXMap is valid for HBHE only!
         RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
         HPDIndex = HcalHPDRBXMap::indexHPD(hcalDetId);
       }

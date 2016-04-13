@@ -1,6 +1,5 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalUnpackerReport.h"
 #include "DataFormats/HcalDetId/interface/HcalDetId.h"
-#include "DataFormats/HcalDigi/interface/HcalUnpackerReport.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/Event.h"
 #include <iostream>
@@ -26,6 +25,7 @@ HcalTupleMaker_HcalUnpackerReport::HcalTupleMaker_HcalUnpackerReport(const edm::
   produces <std::vector<int> > (prefix + "BadDigiIPhi"         + suffix );
   produces <std::vector<int> > (prefix + "BadDigiDepth"        + suffix );
   produces <std::vector<int> > (prefix + "BadDigiSubdet"       + suffix );
+  token_report_ = consumes<HcalUnpackerReport>(inputTag);
   
 }
 
@@ -50,8 +50,10 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   std::auto_ptr<std::vector<int> > badDigiSubdet      ( new std::vector<int> () );
   
   edm::Handle<HcalUnpackerReport> report;
-  bool gotReport = iEvent.getByLabel(inputTag, report);
-  
+
+  //bool gotReport = iEvent.getByLabel(inputTag, report);
+  bool gotReport = iEvent.getByToken(token_report_, report);
+
   if ( gotReport ) { 
     (*errorFree)          = report -> errorFree   ();
     (*anyValid )          = report -> anyValidHCAL();

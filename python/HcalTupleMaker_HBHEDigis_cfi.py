@@ -31,3 +31,14 @@ hcalTupleHBHEL1JetsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   DoEnergyReco = cms.untracked.bool ( True ) ,
   TotalFCthreshold = cms.untracked.double ( -9999 ) 
 )
+
+hcalTupleHBHEUTCADigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
+  source  = cms.untracked.InputTag("utcaDigis"),
+  recHits = cms.untracked.InputTag("hbhereco"),
+  Prefix  = cms.untracked.string ( "HBHEUTCADigi"),
+  Suffix  = cms.untracked.string ( ""),
+  DoChargeReco = cms.untracked.bool ( True ) ,
+  DoEnergyReco = cms.untracked.bool ( True ) ,
+  TotalFCthreshold = cms.untracked.double ( -9999 )
+)
+

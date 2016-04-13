@@ -48,7 +48,10 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
     //-----------------------------------------------------
     // Loop through rechits
     //-----------------------------------------------------
-    
+    //for (; reco != reco_end ; ++reco ) {
+      //hcalDetId = HcalDetId(reco -> detid());
+      //std::cout << "Found HcalDetId = " << hcalDetId << std::endl;
+    //}
     for (; reco != reco_end ; ++reco ) {
 
       //-----------------------------------------------------
@@ -56,6 +59,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       //-----------------------------------------------------
       
       hcalDetId = HcalDetId(reco -> detid());
+      //std::cout << "Looking at HcalDetId = " << hcalDetId << std::endl;
 
       //-----------------------------------------------------
       // Get HPD and RBX IDs
@@ -71,10 +75,15 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       // total number of RBXs in the HB and HE: 72
       // total number of RBXs per subdetector (e.g. HB+, HB-, HE+, HE-): 18
 
-      int RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
-      int HPDIndex = HcalHPDRBXMap::indexHPD(hcalDetId);
-      rbxid -> push_back ( RBXIndex );
-      hpdid -> push_back ( HPDIndex );
+      if (hcalDetId.subdet() == HcalForward) {
+        rbxid->push_back(-1);
+        hpdid->push_back(-1);
+      } else {
+        int RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
+        int HPDIndex = HcalHPDRBXMap::indexHPD(hcalDetId);
+        rbxid -> push_back ( RBXIndex );
+        hpdid -> push_back ( HPDIndex );
+      }
 
       //-----------------------------------------------------
       // Get the position

@@ -4,6 +4,7 @@
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/InputTag.h"
+#include "DataFormats/HcalDigi/interface/HcalLaserDigi.h"
 
 class HcalTupleMaker_HcalLaserDigis : public edm::EDProducer {
  public:
@@ -14,6 +15,8 @@ class HcalTupleMaker_HcalLaserDigis : public edm::EDProducer {
   edm::InputTag inputTag;
   std::string   prefix,suffix;
   const int nQADC;
+  edm::EDGetTokenT<HcalLaserDigi> m_hcalLaserDigiToken;
+
 };
 
 #endif

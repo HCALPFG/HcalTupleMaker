@@ -24,8 +24,8 @@ process.source = cms.Source("PoolSource")
 
 process.source.fileNames = cms.untracked.vstring(
     #FILENAMES
-    #'root://xrootd.unl.edu//store/'
-    "root://eoscms//eos/cms/store/mc/RunIISpring15DR74/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/GEN-SIM-RECO/AsymptFlat0to50bx25Reco_MCRUN2_74_V9-v3/10000/B4DB0D3A-1707-E511-8EC6-02163E010D61.root"
+    #'root://xrootd.unl.edu//store/data/Run2015A/MET/RECO/PromptReco-v1/000/248/038/00000/546E74FC-5D14-E511-9DCE-02163E0145BA.root'
+    'root://xrootd.unl.edu//store/data/Run2015C/JetHT/RECO/PromptReco-v1/000/254/790/00000/F22D0473-DD49-E511-BA34-02163E014336.root'
 )
 
 process.source.skipEvents = cms.untracked.uint32(0
@@ -59,8 +59,8 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
-process.load('Configuration.StandardSequences.RawToDigi_cff')
-process.load('Configuration.StandardSequences.Reconstruction_cff')
+process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
+process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
@@ -88,9 +88,9 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi") # This is o
 
 # Other statements
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-#process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '') # This GT includes NEF DB, but is not useful for RECO anyway.. 
-from Configuration.AlCa.autoCond_condDBv2 import autoCond
-process.GlobalTag.globaltag = autoCond['run2_mc']
+process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '') # This GT includes NEF DB, but is not useful for RECO anyway.. 
+#from Configuration.AlCa.autoCond_condDBv2 import autoCond
+#process.GlobalTag.globaltag = autoCond['run2_data']
 
 # Disabled since we dont deal with HLT
 #process.my_hlt = cms.EDFilter("HLTHighLevel",
@@ -112,6 +112,7 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
          recoInputTag         = cms.untracked.string("hbhereco"),
          isRAW  = cms.untracked.bool(False), # new Flag necessary for HcalNoiseFilters to run on RECO data
+         isRECO = cms.untracked.bool(True), 
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )

@@ -44,6 +44,7 @@ hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilters",
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducerMethod2"),
          recoInputTag         = cms.untracked.string("hbherecoMethod2"),
          isRAW  = cms.untracked.bool(True),
+         isRECO = cms.untracked.bool(False),
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )
@@ -53,6 +54,7 @@ hcalTupleHcalNoiseFiltersMethod0 = cms.EDProducer("HcalTupleMaker_HcalNoiseFilte
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducerMethod0"),
          recoInputTag         = cms.untracked.string("hbherecoMethod0"),
          isRAW  = cms.untracked.bool(True),
+         isRECO = cms.untracked.bool(False),
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("Method0")
 )

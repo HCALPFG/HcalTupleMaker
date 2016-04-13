@@ -9,8 +9,8 @@ from Configuration.StandardSequences.Eras import eras
 # Declare the process
 #------------------------------------------------------------------------------------
 
-process = cms.Process('RECO',eras.Run2_50ns)#for 50ns 13 TeV data
-#process = cms.Process('RECO',eras.Run2_25ns)#for 25ns 13 TeV data
+#process = cms.Process('NOISE',eras.Run2_50ns)#for 50ns 13 TeV data
+process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
 
 #------------------------------------------------------------------------------------
 # Set up the input source
@@ -24,8 +24,8 @@ process.source = cms.Source("PoolSource")
 
 process.source.fileNames = cms.untracked.vstring(
     #FILENAMES
-    'root://xrootd.unl.edu//store/data/Run2015A/MET/RAW/v1/000/248/038/00000/DA2F1ED8-0513-E511-BBE5-02163E01451E.root'
-    #"root://eoscms//eos/cms/store/data/Run2012D/MET/RAW/v1/000/208/487/02185AD3-F03D-E211-BF08-001D09F25479.root"
+    #'root://xrootd.unl.edu//store/'
+    "root://eoscms//eos/cms/store/mc/RunIISpring15DR74/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/GEN-SIM-RECO/AsymptFlat0to50bx25Reco_MCRUN2_74_V9-v3/10000/B4DB0D3A-1707-E511-8EC6-02163E010D61.root"
 )
 
 process.source.skipEvents = cms.untracked.uint32(0
@@ -37,7 +37,7 @@ process.source.skipEvents = cms.untracked.uint32(0
 #------------------------------------------------------------------------------------
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(10
+    input = cms.untracked.int32(-1
         #PROCESSEVENTS
     )
 )
@@ -59,12 +59,13 @@ process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
-process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
-process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
+process.load('Configuration.StandardSequences.RawToDigi_cff')
+process.load('Configuration.StandardSequences.Reconstruction_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
 
-# Set up L1 Jet digis
+
+# Set up L1 Jet digis #Disabled 
 #process.load("HCALPFG.HcalTupleMaker.HcalL1JetDigisProducer_cfi")
 
 # Set up our analyzer
@@ -72,12 +73,14 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
-#process.hcalTupleHBHEDigis.TotalFCthreshold = cms.untracked.double(-9999)# per channel charge threshold to store corresponding digis
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
-process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
+#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 
 # Set up noise filters
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalNoiseFilters_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
+
+# Set up iso noise filter parameters, used for iso-noise filter study in 25ns.
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalIsoNoiseFilterParameters_cfi")
 
 # Set up CaloJetMet quantities 
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
@@ -85,9 +88,9 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi") # This is o
 
 # Other statements
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '') # This GT includes NEF DB, but is not useful for RECO anyway.. 
-#from Configuration.AlCa.autoCond_condDBv2 import autoCond
-#process.GlobalTag.globaltag = autoCond['run2_data']
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '') # This GT includes NEF DB, but is not useful for RECO anyway.. 
+from Configuration.AlCa.autoCond_condDBv2 import autoCond
+process.GlobalTag.globaltag = autoCond['run2_mc']
 
 # Disabled since we dont deal with HLT
 #process.my_hlt = cms.EDFilter("HLTHighLevel",
@@ -97,16 +100,6 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'GR_R_75_V5A', '') # This GT in
 #     andOr = cms.bool(True),             # how to deal with multiple triggers: True (OR) accept if ANY is true, False (AND) accept if ALL are true
 #     throw = cms.bool(False)    # throw exception on unknown path names
 #)
-
-# See: https://twiki.cern.ch/twiki/bin/view/CMS/HCALNoiseFilterRecipe 
-# This is just defined here, but not used.
-process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),    
-    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun1'), #CMSSW >=74 and >=75 has eraw() in noise anyway.
-    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Loose'),
-    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Tight'),
-    reverseDecision = cms.bool(False)
-)
 
 #Remove Method 0, Rename Method 2 as "default" where necessary:
 process.hcalTupleCaloJetMet = cms.EDProducer("HcalTupleMaker_CaloJetMet",
@@ -118,23 +111,34 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
          noiseSummaryInputTag = cms.untracked.InputTag("hcalnoise"),
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
          recoInputTag         = cms.untracked.string("hbhereco"),
-         isRAW  = cms.untracked.bool(True), # new Flag necessary for HcalNoiseFilters to run on RECO data
+         isRAW  = cms.untracked.bool(False), # new Flag necessary for HcalNoiseFilters to run on RECO data
+         isRECO = cms.untracked.bool(True),
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )
 
 
-# This enables NEF in HBHE reconstruction sequence
-process.hbheprereco.setNegativeFlags          = cms.bool(True)
+# Place-holder for applying HBHE noise filter:
+process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
+    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),    
+    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun1'),
+    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Loose'),
+    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Tight'),
+    reverseDecision = cms.bool(False)
+)
+
+# This enables NEF flagging, but needs reconstruction of RAW data.
+# This is not needed for datasets reconstructed with >=CMSSW748:
+# i.e. 2015C Prompt-reco has NEF flags computed out-of-the-box.
+#process.hbheprereco.setNegativeFlags          = cms.bool(True)
 
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     # Make HCAL tuples: FED info
-    #
     #    process.hcalTupleFEDs*
     #    # Make HCAL tuples: digi info
-    process.hcalTupleHBHEDigis*
+    #raw# process.hcalTupleHBHEDigis*
     #    process.hcalTupleHODigis*
     #    process.hcalTupleHFDigis*
     #    process.hcalTupleTriggerPrimitives*
@@ -148,6 +152,7 @@ process.tuple_step = cms.Sequence(
     #    # Make HCAL tuples: reco info
     process.hcalTupleHBHERecHits*
     process.hcalTupleHcalNoiseFilters*
+    process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
     process.hcalTupleCaloJetMet*
     #
     #process.hcalTupleHBHERecHitsMethod0*
@@ -173,37 +178,40 @@ process.tuple_step = cms.Sequence(
 # Path and EndPath definitions
 process.preparation = cms.Path(
     #process.my_hlt *
-    process.RawToDigi *
+    #raw#process.RawToDigi *
     #process.L1Reco *
-    process.reconstruction *
+    #raw#process.reconstruction *
     #process. caloglobalreco *
     #process.reconstructionCosmics *
     #
     #process.horeco *
     #process.hfreco *
     #
-    ##process.hbheprerecoMethod0 *
-    ##process.hbheprerecoMethod2 *
-    ##process.hbherecoMethod0 *
-    ##process.hbherecoMethod2 *
+    #process.hbheprerecoMethod0 *
+    #process.hbheprerecoMethod2 *
+    #process.hbherecoMethod0 *
+    #process.hbherecoMethod2 *
     #
-    ##process.towerMakerMethod0 *
-    ##process.towerMakerMethod2 *
+    #process.towerMakerMethod0 *
+    #process.towerMakerMethod2 *
     #
-    ##process.hcalnoiseMethod0 *
-    ##process.hcalnoiseMethod2 *
-    process.hcalnoise *
+    #process.hcalnoiseMethod0 *
+    #process.hcalnoiseMethod2 *
     #
-    ##process.HBHENoiseFilterResultProducerMethod0 *
-    ##process.HBHENoiseFilterResultProducerMethod2 *
-    process.HBHENoiseFilterResultProducer *
+    #process.HBHENoiseFilterResultProducerMethod0 *
+    #process.HBHENoiseFilterResultProducerMethod2 *
     #
-    #process.ApplyBaselineHBHENoiseFilter *
     #
     #process.hcalCosmicDigis *
     #process.hcalL1JetDigis *
+    #
+    # cmsRun noise filter
+    #raw#process.hcalnoise *
+    process.HBHENoiseFilterResultProducer *
+    #process.ApplyBaselineHBHENoiseFilter *
+    #
     process.tuple_step
 )
 
-from SLHCUpgradeSimulations.Configuration.postLS1Customs import customisePostLS1
-process = customisePostLS1(process)
+#from SLHCUpgradeSimulations.Configuration.postLS1Customs import customisePostLS1
+#process = customisePostLS1(process)

@@ -32,8 +32,8 @@ datasetnames = [
 ]
 
 # Storage path for output files - EOS specific
-storagepath = '/store/user/'+getUsernameFromSiteDB()+'/HCALnoise2016'
-#storagepath = '/store/group/dpg_hcal/comm_hcal/Noise/' # DO NOT USE
+#storagepath = '/store/user/'+getUsernameFromSiteDB()+'/HCALnoise2016'
+storagepath = '/store/group/dpg_hcal/comm_hcal/Noise/' # DO NOT USE
 
 # cmsRun file
 psetname = 'noiseAnalysis_CommissioningData_RECO_cfg.py'

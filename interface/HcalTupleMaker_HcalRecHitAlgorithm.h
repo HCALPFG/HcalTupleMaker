@@ -34,7 +34,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
   std::auto_ptr<std::vector<int  > > aux;     
   
   template <class RecoCollection > 
-    void run ( const RecoCollection & recos, const CaloGeometry & geometry ){
+    void run ( const RecoCollection & recos, const CaloGeometry & geometry, const bool isHBHE_ ){
     
     //-----------------------------------------------------
     // Get iterators
@@ -73,7 +73,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
 
       int RBXIndex=-1;
       int HPDIndex=-1;
-      if( abs(hcalDetId.ieta())<29 ){// HcalHPDRBXMap is valid for HBHE only!
+      if( isHBHE_ ){// HcalHPDRBXMap is valid for HBHE only!
         RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
         HPDIndex = HcalHPDRBXMap::indexHPD(hcalDetId);
       }

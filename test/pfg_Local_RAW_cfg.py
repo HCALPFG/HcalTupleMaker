@@ -7,25 +7,59 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 
 
 #------------------------------------------------------------------------------------
+# Options
+#------------------------------------------------------------------------------------
+
+options = VarParsing.VarParsing()
+
+options.register('skipEvents',
+                 0, #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.int,
+                 "Number of events to skip")
+
+options.register('processEvents',
+                 2000, #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.int,
+                 "Number of events to process")
+
+options.register('inputFiles',
+                 "file:inputFile.root", #default value
+                 VarParsing.VarParsing.multiplicity.list,
+                 VarParsing.VarParsing.varType.string,
+                 "Input files")
+
+options.register('outputFile',
+                 "file:outputFile.root", #default value
+                 VarParsing.VarParsing.multiplicity.singleton,
+                 VarParsing.VarParsing.varType.string,
+                 "Output file")
+
+options.parseArguments()
+
+print "Skip events =", options.skipEvents
+print "Process events =", options.processEvents
+print "inputFiles =", options.inputFiles
+print "outputFile =", options.outputFile
+
+
+#------------------------------------------------------------------------------------
 # Declare the process and input variables
 #------------------------------------------------------------------------------------
 process = cms.Process('PFG')
-inputFiles = "file:/afs/cern.ch/user/j/jaehyeok/work/scratch/USC_269836.root"
-skipEvents = 0
-processEvents = 2000 
-outputFile = "results.root"
 
 #------------------------------------------------------------------------------------
 # Get and parse the command line arguments
 #------------------------------------------------------------------------------------
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(processEvents) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.processEvents) )
 process.source = cms.Source("HcalTBSource",
-    fileNames  = cms.untracked.vstring(inputFiles),
-    skipEvents = cms.untracked.uint32(skipEvents),
+    fileNames  = cms.untracked.vstring(options.inputFiles),
+    skipEvents = cms.untracked.uint32(options.skipEvents),
 )
 
 process.TFileService = cms.Service("TFileService",
-     fileName = cms.string(outputFile)
+     fileName = cms.string(options.outputFile)
 )
 
 #------------------------------------------------------------------------------------
@@ -33,9 +67,10 @@ process.TFileService = cms.Service("TFileService",
 #------------------------------------------------------------------------------------
 process.load('Configuration.Geometry.GeometryIdeal_cff')
 process.load('FWCore.MessageLogger.MessageLogger_cfi')
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1000)
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
-process.load("RecoLocalCalo.Configuration.hcalLocalReco_cff")
-process.hbhereco = process.hbheprereco.clone()
+#process.load("RecoLocalCalo.Configuration.hcalLocalReco_cff")
+#process.hbhereco = process.hbheprereco.clone()
 process.load("CondCore.DBCommon.CondDBSetup_cfi")
 
 #------------------------------------------------------------------------------------
@@ -43,11 +78,14 @@ process.load("CondCore.DBCommon.CondDBSetup_cfi")
 #------------------------------------------------------------------------------------
 #process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi") # Dont want to use this, load modules individually
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
-process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalUnpackerReport_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
+process.hcalTupleHBHEDigis.DoEnergyReco = False
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HODigis_cfi")
+process.hcalTupleHODigis.DoEnergyReco = False
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HFDigis_cfi")
+process.hcalTupleHFDigis.DoEnergyReco = False
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalUnpackerReport_cfi")
 
 #------------------------------------------------------------------------------------
 # Since this is a local run, make sure we're looking for the FEDs in the right place
@@ -57,7 +95,7 @@ process.hcalDigis.InputLabel = cms.InputTag("source")
 #------------------------------------------------------------------------------------
 # FED numbers
 #------------------------------------------------------------------------------------
-#process.hcalDigis.FEDs = cms.untracked.vint32(1100, 1102, 1104, 1106, 1108, 1110, 1112, 1114, 1116)
+process.hcalDigis.FEDs = cms.untracked.vint32(1100, 1102, 1104, 1106, 1108, 1110, 1112, 1114, 1116)
 
 
 #------------------------------------------------------------------------------------

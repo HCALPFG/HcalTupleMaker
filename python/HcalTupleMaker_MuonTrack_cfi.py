@@ -1,7 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
 hcalTupleMuonTrack = cms.EDProducer("HcalTupleMaker_MuonTrack",
-         inputMuonCollection     = cms.InputTag("muonsFromCosmics"),
+         #inputMuonCollection     = cms.InputTag("muonsFromCosmics"),
+         inputMuonCollection     = cms.InputTag("muons"),
          inputTrackCollection    = cms.InputTag("generalTracks"),
          CSCSegmentsCollection   = cms.InputTag("cscSegments"),                                  
          CSC2DRecHitsCollection  = cms.InputTag("csc2DRecHits"),

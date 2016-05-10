@@ -14,9 +14,11 @@ process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
 #options.inputFiles = '/store/data/Run2015D/DoubleMuon/RECO/16Dec2015-v1/10000/002C811B-80A7-E511-8C4D-0CC47A4D7644.root'
-options.inputFiles = '/store/data/Commissioning2016/MinimumBias/RECO/PromptReco-v1/000/266/653/00000/14AC0364-52E9-E511-A737-02163E0146FA.root'
+#options.inputFiles = '/store/data/Commissioning2016/MinimumBias/RECO/PromptReco-v1/000/266/653/00000/14AC0364-52E9-E511-A737-02163E0146FA.root'
+options.inputFiles = '/store/data/Run2016B/NoBPTX/RECO/PromptReco-v1/000/272/147/00000/5484BE2E-8211-E611-9A9F-02163E01476B.root'
+#options.inputFiles = 'file:/tmp/hsaka/B0E078AC-D40F-E611-BDE9-02163E012874.root'
 options.outputFile = 'results.root'
-#options.maxEvents = 100 # -1 means all events
+options.maxEvents = 100 # -1 means all events
 #options.skipEvents = 0 # default is 0.
 
 
@@ -66,7 +68,7 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HFRecHits_cfi")
-#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 
 
 #------------------------------------------------------------------------------------
@@ -91,10 +93,10 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v4'
+#process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v4'
 #process.GlobalTag.globaltag = '76X_dataRun2_v16'
-#from Configuration.AlCa.autoCond import autoCond
-#process.GlobalTag.globaltag = autoCond['run2_data']
+from Configuration.AlCa.autoCond import autoCond
+process.GlobalTag.globaltag = autoCond['run2_data']
 
 
 #------------------------------------------------------------------------------------
@@ -182,7 +184,7 @@ process.tuple_step = cms.Sequence(
     #    process.hcalTupleHORecHits*
     #    process.hcalTupleHFRecHits*
     #    # Trigger info
-    #process.hcalTupleTrigger*
+    process.hcalTupleTrigger*
     
     #    process.hcalTupleTriggerObjects*
     #    # L1 jet info

@@ -34,7 +34,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
   std::auto_ptr<std::vector<int  > > aux;     
   
   template <class RecoCollection > 
-    void run ( const RecoCollection & recos, const CaloGeometry & geometry, const bool isHBHE_ ){
+    void run ( const RecoCollection & recos, const CaloGeometry & geometry, const bool isHBHE_, double energyThresholdHFHO ){
     
     //-----------------------------------------------------
     // Get iterators
@@ -50,6 +50,12 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
     //-----------------------------------------------------
     
     for (; reco != reco_end ; ++reco ) {
+
+      //-----------------------------------------------------
+      // "Custom Zero Suppression" - To suppress rechits coming from HF (and/or HO) 
+      //-----------------------------------------------------
+      if( !isHBHE_ && reco->energy()<energyThresholdHFHO ) continue;
+
 
       //-----------------------------------------------------
       // Save the detector id, no matter what

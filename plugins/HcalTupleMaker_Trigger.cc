@@ -9,10 +9,11 @@
 #include "FWCore/Framework/interface/ConsumesCollector.h"
 
 HcalTupleMaker_Trigger::HcalTupleMaker_Trigger(const edm::ParameterSet& iConfig) :
-  l1InputTag(iConfig.getParameter<edm::InputTag>("L1InputTag")),
-  hltInputTag(iConfig.getParameter<edm::InputTag>("HLTInputTag")),
-  sourceName(iConfig.getParameter<std::string>  ("SourceName")),
-  sourceType(NOT_APPLICABLE),
+  l1InputToken   (consumes<L1GlobalTriggerReadoutRecord>(iConfig.getParameter<edm::InputTag>("L1InputTag"))),
+  hltInputTag    (iConfig.getParameter<edm::InputTag>("HLTInputTag")),
+  hltInputToken  (consumes<edm::TriggerResults>(edm::InputTag(hltInputTag))),
+  sourceName     (iConfig.getParameter<std::string>("SourceName")),
+  sourceType     (NOT_APPLICABLE),
   hltPrescaleProvider(iConfig, consumesCollector(), *this) 
 {
   // Source is either a stream or a dataset (mutually exclusive)
@@ -129,7 +130,8 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
   //-----------------------------------------------------------------
   edm::Handle<L1GlobalTriggerReadoutRecord> l1GtReadoutRecord;
-  iEvent.getByLabel(l1InputTag, l1GtReadoutRecord);
+  //iEvent.getByLabel(l1InputTag, l1GtReadoutRecord);
+  iEvent.getByToken(l1InputToken, l1GtReadoutRecord);
 
   if(l1GtReadoutRecord.isValid()) {
     edm::LogInfo("HcalTupleMaker_TriggerInfo") << "Successfully obtained " << l1InputTag;
@@ -153,7 +155,8 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   }
 
   edm::Handle<edm::TriggerResults> triggerResults;
-  iEvent.getByLabel(hltInputTag, triggerResults);
+  //iEvent.getByLabel(hltInputTag, triggerResults);
+  iEvent.getByToken(hltInputToken, triggerResults);
 
 
   if(triggerResults.isValid()) {

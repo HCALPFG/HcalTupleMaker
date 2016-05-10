@@ -18,6 +18,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
 
   edm::EDGetTokenT<RecHitCollection> m_hcalRecHitsToken;
   const bool            m_isHBHE;
+  const double          m_energyThresholdHFHO;
   const std::string     m_prefix;
   const std::string     m_suffix;
 
@@ -56,7 +57,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     // Run the algorithm
     //-----------------------------------------------------
     
-    if ( run_algo ) algo.run ( *hcalRecHits, *geometry, m_isHBHE );
+    if ( run_algo ) algo.run ( *hcalRecHits, *geometry, m_isHBHE, m_energyThresholdHFHO );
     
     //-----------------------------------------------------
     // Put things into the event
@@ -69,11 +70,12 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
  public:
   
  HcalTupleMaker_HcalRecHits(const edm::ParameterSet& iConfig) :
-  m_hcalRecHitsTag (iConfig.getUntrackedParameter<edm::InputTag>("source")),
-    m_hcalRecHitsToken (consumes<RecHitCollection>(iConfig.getUntrackedParameter<edm::InputTag>("source"))),
-    m_isHBHE         (iConfig.getUntrackedParameter<bool>("isHBHE")),
-    m_prefix         (iConfig.getUntrackedParameter<std::string>  ("Prefix")),
-    m_suffix         (iConfig.getUntrackedParameter<std::string>  ("Suffix")) {
+    m_hcalRecHitsTag      (iConfig.getUntrackedParameter<edm::InputTag>("source")),
+    m_hcalRecHitsToken    (consumes<RecHitCollection>(iConfig.getUntrackedParameter<edm::InputTag>("source"))),
+    m_isHBHE              (iConfig.getUntrackedParameter<bool>("isHBHE")),
+    m_energyThresholdHFHO (iConfig.getUntrackedParameter<double>("energyThresholdHFHO")),
+    m_prefix              (iConfig.getUntrackedParameter<std::string>  ("Prefix")),
+    m_suffix              (iConfig.getUntrackedParameter<std::string>  ("Suffix")) {
     produces<std::vector<int>   > ( m_prefix + "IEta"   + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "IPhi"   + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Eta"    + m_suffix );

@@ -4,8 +4,10 @@
 ##________________________________________________________________________________||
 #Configurables
 
-dataset = '/JetHT/Run2015D-v1/RAW'
-run = '256729'
+#dataset = '/JetHT/Run2015D-v1/RAW'
+#run = '256729'
+dataset = '/MinimumBias/Commissioning2016-v1/RAW'
+run = '266667'
 
 ##________________________________________________________________________________||
 
@@ -28,7 +30,8 @@ config.General.workArea     = 'out_crab'
 
 config.section_("JobType")
 config.JobType.pluginName   = 'Analysis'
-config.JobType.psetName     = 'analysis_Collision_crab_cfg.py'
+#config.JobType.psetName     = 'analysis_Collision_crab_cfg.py'
+config.JobType.psetName     = 'pfg_CommissioningCosmic_RAW_cfg.py'
 
 ##________________________________________________________________________________||
 
@@ -40,7 +43,7 @@ config.Data.unitsPerJob     = 30
 config.Data.publication     = True
 config.Data.publishDBS      = 'phys03'
 #config.Data.lumiMask        = 'json.txt'
-config.Data.runRange        = '256729'
+config.Data.runRange        = run
 
 ##________________________________________________________________________________||
 

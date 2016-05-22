@@ -1,10 +1,5 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_L1Jets.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalPFGGeometry.h"
-#include "DataFormats/L1Trigger/interface/L1JetParticleFwd.h"
-#include "DataFormats/L1Trigger/interface/L1JetParticle.h"
-#include "DataFormats/L1CaloTrigger/interface/L1CaloRegionDetId.h"
-#include "DataFormats/HcalDetId/interface/HcalTrigTowerDetId.h"
-#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/Event.h"
 
@@ -20,6 +15,11 @@ HcalTupleMaker_L1Jets::HcalTupleMaker_L1Jets(const edm::ParameterSet& iConfig):
   produces <std::vector<int> >               (prefix + "Type"          + suffix );
   produces <std::vector<int> >               (prefix + "BX"            + suffix );
   produces <std::vector<std::vector<int> > > (prefix + "TrigPrimIndex" + suffix );
+  tpToken_ = consumes<HcalTrigPrimDigiCollection>(tpInputTag);
+  int ntags = inputTags.size();
+  for (int i = 0; i < ntags; ++i){
+    l1JetsTokens_.push_back(consumes<l1extra::L1JetParticleCollection>(inputTags[i]));
+  };
 }
 
 void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -35,7 +35,7 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
   std::vector<edm::Handle<l1extra::L1JetParticleCollection> > l1Jets ( nL1JetCollections );
 
   edm::Handle<HcalTrigPrimDigiCollection> tps;
-  iEvent.getByLabel(tpInputTag, tps);
+  iEvent.getByToken(tpToken_, tps);
 
   HcalTrigPrimDigiCollection::const_iterator itp;
   HcalTrigPrimDigiCollection::const_iterator first_tp = tps -> begin();
@@ -45,7 +45,7 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
   for (int iL1JetCollection = 0; iL1JetCollection < nL1JetCollections; ++iL1JetCollection){
 
     // Get jet collection from event
-    iEvent.getByLabel(inputTags[iL1JetCollection], l1Jets[iL1JetCollection]);
+    iEvent.getByToken(l1JetsTokens_[iL1JetCollection], l1Jets[iL1JetCollection]);
     l1extra::L1JetParticleCollection::const_iterator l1Jet     = l1Jets[iL1JetCollection] -> begin();
     l1extra::L1JetParticleCollection::const_iterator l1Jet_end = l1Jets[iL1JetCollection] -> end();
 

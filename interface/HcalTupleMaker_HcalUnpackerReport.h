@@ -4,6 +4,8 @@
 #include "FWCore/Framework/interface/EDProducer.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/InputTag.h"
+#include "DataFormats/HcalDigi/interface/HcalUnpackerReport.h"
+
 
 class HcalTupleMaker_HcalUnpackerReport : public edm::EDProducer {
  public:
@@ -13,6 +15,9 @@ class HcalTupleMaker_HcalUnpackerReport : public edm::EDProducer {
   void produce( edm::Event &, const edm::EventSetup & );
   const edm::InputTag   inputTag;
   const std::string     prefix,suffix;
+  edm::EDGetTokenT<HcalUnpackerReport> token_report_;
+
+  
 };
 
 #endif

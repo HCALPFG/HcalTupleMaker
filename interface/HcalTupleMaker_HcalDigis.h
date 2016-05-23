@@ -15,8 +15,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
   
  protected:
  
-  edm::EDGetTokenT<DigiCollection> digiToken_;
-  edm::EDGetTokenT<RecHitCollection> recHitToken_;
+  edm::EDGetTokenT<DigiCollection> m_hcalDigisToken;
+  edm::EDGetTokenT<RecHitCollection> m_hcalRecHitsToken;
   const edm::InputTag   m_hcalDigisTag;
   const edm::InputTag   m_hcalRecHitsTag;
   const std::string     m_prefix;
@@ -42,15 +42,14 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     bool run_algo = true;
     
     edm::Handle<DigiCollection>  hcalDigis;
-    bool gotHCALDigis = iEvent.getByToken(digiToken_, hcalDigis);
+    bool gotHCALDigis = iEvent.getByToken(m_hcalDigisToken, hcalDigis);
     if (!gotHCALDigis ) {
       std::cout << "Could not find HCAL Digis with tag " << m_hcalDigisTag << std::endl;
       run_algo = false;
     }
-    
     edm::Handle<RecHitCollection>  hcalRecos;
     if ( m_doEnergyReco ){
-      bool gotHCALRecos = iEvent.getByToken(recHitToken_, hcalRecos);
+      bool gotHCALRecos = iEvent.getByToken(m_hcalRecHitsToken, hcalRecos);
       if (!gotHCALRecos ) {
     	std::cout << "Could not find HCAL RecHits with tag " << m_hcalRecHitsTag << std::endl;
     	run_algo = false;
@@ -101,8 +100,6 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<float> >               ( m_prefix + "Phi"             + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Subdet"          + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Depth"           + m_suffix );
-    produces<std::vector<int>   >               ( m_prefix + "RBXid"           + m_suffix );
-    produces<std::vector<int>   >               ( m_prefix + "HPDid"           + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Presamples"      + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "Size"            + m_suffix );
     produces<std::vector<int>   >               ( m_prefix + "FiberIdleOffset" + m_suffix );
@@ -129,8 +126,8 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     produces<std::vector<float> >               ( m_prefix + "RecEnergy"       + m_suffix );    	
     produces<std::vector<float> >               ( m_prefix + "RecTime"         + m_suffix );      
 
-    digiToken_ = consumes<DigiCollection>(m_hcalDigisTag);
-    recHitToken_ = consumes<RecHitCollection>(m_hcalRecHitsTag);
+    m_hcalDigisToken = consumes<DigiCollection>(m_hcalDigisTag);
+    m_hcalRecHitsToken = consumes<RecHitCollection>(m_hcalRecHitsTag);
 
     algo.setTotalFCthreshold ( m_totalFCthreshold );    
     algo.setDoChargeReco ( m_doChargeReco );
@@ -146,8 +143,6 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
     algo.eta             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
     algo.phi             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
     algo.depth           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.rbxid           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.hpdid           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.subdet          = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.presamples      = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
     algo.size            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
@@ -183,8 +178,6 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
    iEvent.put ( algo.eta             , m_prefix + "Eta"             + m_suffix );
    iEvent.put ( algo.phi             , m_prefix + "Phi"             + m_suffix );
    iEvent.put ( algo.depth           , m_prefix + "Depth"           + m_suffix );
-   iEvent.put ( algo.rbxid           , m_prefix + "RBXid"           + m_suffix );
-   iEvent.put ( algo.hpdid           , m_prefix + "HPDid"           + m_suffix );
    iEvent.put ( algo.subdet          , m_prefix + "Subdet"          + m_suffix );
    iEvent.put ( algo.presamples      , m_prefix + "Presamples"      + m_suffix );
    iEvent.put ( algo.size            , m_prefix + "Size"            + m_suffix );

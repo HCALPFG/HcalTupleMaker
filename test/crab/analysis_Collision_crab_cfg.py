@@ -6,58 +6,6 @@ import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
 
 #------------------------------------------------------------------------------------
-# Options
-#------------------------------------------------------------------------------------
-
-options = VarParsing.VarParsing()
-
-options.register('skipEvents',
-                 0, #default value
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.int,
-                 "Number of events to skip")
-
-options.register('processEvents',
-                 -1, #default value
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.int,
-                 "Number of events to process")
-
-options.register('inputFiles',
-                 "file:inputFile.root", #default value
-                 VarParsing.VarParsing.multiplicity.list,
-                 VarParsing.VarParsing.varType.string,
-                 "Input files")
-
-options.register('outputFile',
-                 "file:outputFile.root", #default value
-                 VarParsing.VarParsing.multiplicity.singleton,
-                 VarParsing.VarParsing.varType.string,
-                 "Output file")
-
-options.register('globalTag',
-		'74X_dataRun2_Express_v2',
-		VarParsing.VarParsing.multiplicity.singleton,
-		VarParsing.VarParsing.varType.string,
-		"Global Tag")
-
-options.register('emulateTP',
-		False,
-		VarParsing.VarParsing.multiplicity.singleton,
-		VarParsing.VarParsing.varType.string,
-		"Run Emulated TP")
-
-
-options.parseArguments()
-
-print "Skip events =", options.skipEvents
-print "Process events =", options.processEvents
-print "inputFiles =", options.inputFiles
-print "outputFile =", options.outputFile
-print "Global Tag =", options.globalTag
-print "Run emulated TP=", options.emulateTP
-
-#------------------------------------------------------------------------------------
 # Declare the process
 #------------------------------------------------------------------------------------
 
@@ -75,11 +23,8 @@ process.source = cms.Source("PoolSource")
 
 process.source = cms.Source("PoolSource", 
    fileNames = cms.untracked.vstring(
-       options.inputFiles
-   ),
-   skipEvents = cms.untracked.uint32(
-       options.skipEvents
-   ),
+       "/store/data/Run2015C/JetHT/RAW/v1/000/254/852/00000/E86CC921-E048-E511-B5BB-02163E014261.root" 
+   )
 )
 
 #------------------------------------------------------------------------------------
@@ -87,9 +32,7 @@ process.source = cms.Source("PoolSource",
 #------------------------------------------------------------------------------------
 
 process.maxEvents = cms.untracked.PSet(
-   input = cms.untracked.int32(
-       options.processEvents
-   )
+   input = cms.untracked.int32(-1)
 )
 
 #------------------------------------------------------------------------------------
@@ -97,7 +40,7 @@ process.maxEvents = cms.untracked.PSet(
 #------------------------------------------------------------------------------------
 
 process.TFileService = cms.Service("TFileService",
-                                   fileName = cms.string( options.outputFile )
+                                   fileName = cms.string( "PFGtuple.root" )
 )
 
 #------------------------------------------------------------------------------------
@@ -128,12 +71,18 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 process.load('RecoMET.METProducers.hcalnoiseinfoproducer_cfi')
 process.load("CommonTools.RecoAlgos.HBHENoiseFilter_cfi")
 process.load("CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi")
+process.load('SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff') 
+
+#------------------------------------------------------------------------------------------------------------------------------------
+# Message logger
+#------------------------------------------------------------------------------------------------------------------------------------
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 #------------------------------------------------------------------------------------------------------------------------------------
 # Global tag
 #------------------------------------------------------------------------------------------------------------------------------------
 from Configuration.AlCa.GlobalTag_condDBv2 import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, options.globalTag, '')
+process.GlobalTag = GlobalTag(process.GlobalTag, "74X_dataRun2_Express_v2", '')
 
 
 #------------------------------------------------------------------------------------------------------------------------------------
@@ -184,52 +133,35 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
 # process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
 
 
+
 process.hcalTupleHBHEDigis.recHits = cms.untracked.InputTag("hbheprereco")
 process.hcalnoise.recHitCollName = cms.string("hbheprereco")
 
-process.hcalDigiReco_step = cms.Sequence(
-	process.CustomizedRawToDigi*
-	# process.RawToDigi *
-	process.hcalLocalRecoSequence 
-	)
+# FIXME 
+#process.emulDigis = process.simHcalTriggerPrimitiveDigis.clone()
+#process.emulDigis.inputLabel = cms.VInputTag('hcalDigis', 'hcalDigis')
+#process.HcalTPGCoderULUT.LUTGenerationMode = cms.bool(False) 
 
 #------------------------------------------------------------------------------------
 # Define the tuple-making sequence
 #------------------------------------------------------------------------------------
-
+    
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     # Make HCAL tuples: FED info
-    # process.hcalTupleFEDs*
+    #process.hcalTupleFEDs*
     # Make HCAL tuples: digi info
     process.hcalTupleHBHEDigis*
-    process.hcalTupleHODigis*
-    process.hcalTupleHFDigis*
-    process.hcalTupleTriggerPrimitives
+    #process.hcalTupleHODigis*
+    #process.hcalTupleHFDigis*
+    #process.hcalTupleTriggerPrimitives*
     # Trigger info
-    # process.hcalTupleTrigger*
-    # process.hcalTupleTriggerObjects*
+    #process.hcalTupleTrigger*
+    #process.hcalTupleTriggerObjects*
     # Package everything into a tree
-    # process.hcalTupleTree
+    process.hcalTupleTree
 )
-
-#------------------------------------------------------------------------------------
-# Emulate Trigger Primitive
-#------------------------------------------------------------------------------------
-if options.emulateTP:
-	process.load('SimCalorimetry.HcalTrigPrimProducers.hcaltpdigi_cff')
-	process.emulDigis = process.simHcalTriggerPrimitiveDigis.clone()
-	process.emulDigis.inputLabel = cms.VInputTag('hcalDigis', 'hcalDigis')
-	process.reco_step = cms.Sequence(process.hcalDigiReco_step * process.emulDigis)
-	process.hcalTupleEmulatedTriggerPrimitives = process.hcalTupleTriggerPrimitives.clone()
-	process.hcalTupleEmulatedTriggerPrimitives.source = cms.untracked.InputTag("emulDigis")
-	process.hcalTupleEmulatedTriggerPrimitives.Prefix = cms.untracked.string("HcalEmulTriggerPrimitive")
-	process.tuple_step += cms.Sequence(process.hcalTupleEmulatedTriggerPrimitives)
-	process.hcalTupleTree.outputCommands.extend([ 'keep *_hcalTupleEmulatedTriggerPrimitives_*_*' ])
-
-else:
-	process.reco_step = cms.Sequence(process.hcalDigiReco_step)
 
 #------------------------------------------------------------------------------------
 # Define the path
@@ -237,11 +169,12 @@ else:
 
 # Path and EndPath definitions
 process.preparation = cms.Path(
-    process.reco_step *
+    process.CustomizedRawToDigi*
+    # process.RawToDigi *
+    process.hcalLocalRecoSequence *
     process.hcalnoise *
     process.HBHENoiseFilterResultProducer *
-    process.ApplyBaselineHBHENoiseFilter * 
-    process.tuple_step * 
-    process.hcalTupleTree
+    process.ApplyBaselineHBHENoiseFilter* 
+    process.tuple_step
 )
 

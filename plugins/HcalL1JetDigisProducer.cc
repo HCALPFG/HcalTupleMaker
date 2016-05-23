@@ -1,25 +1,26 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalL1JetDigisProducer.h"
 #include "HCALPFG/HcalTupleMaker/interface/HcalPFGGeometry.h"
-#include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
+#include "DataFormats/L1CaloTrigger/interface/L1CaloRegionDetId.h"
+#include "DataFormats/HcalDetId/interface/HcalTrigTowerDetId.h"
+#include "Geometry/HcalTowerAlgo/interface/HcalTrigTowerGeometry.h"
 #include "Geometry/Records/interface/CaloGeometryRecord.h"
 #include "FWCore/Framework/interface/ESHandle.h"
 
 
 HcalL1JetDigisProducer::HcalL1JetDigisProducer(const edm::ParameterSet& iConfig):
-  m_l1JetsTags       (iConfig.getParameter<std::vector<edm::InputTag> >("L1Jets")),
-  m_hbheDigisTag     (iConfig.getParameter<edm::InputTag>("HBHEDigis")),
-  m_hfDigisTag       (iConfig.getParameter<edm::InputTag>("HFDigis")),
-  m_tpsTag           (iConfig.getParameter<edm::InputTag>("TrigPrims"))
+  l1_jets_tags_       (iConfig.getParameter<std::vector<edm::InputTag> >("L1Jets")),
+  hbhe_digis_tag_     (iConfig.getParameter<edm::InputTag>("HBHEDigis")),
+  hf_digis_tag_       (iConfig.getParameter<edm::InputTag>("HFDigis")),
+  tp_digi_tag_           (iConfig.getParameter<edm::InputTag>("TrigPrims"))
 {
   produces<HcalTrigPrimDigiCollection>();
   produces<HBHEDigiCollection>();
   produces<HFDigiCollection>  ();
-  tpToken_ = consumes<HcalTrigPrimDigiCollection>(m_tpsTag);
-  hbheToken_ = consumes<HBHEDigiCollection>(m_hbheDigisTag);
-  hfToken_ = consumes<HFDigiCollection>(m_hfDigisTag);
-  int ntags = m_l1JetsTags.size();
-  for (int i = 0; i < ntags; i++){
-    l1JetsTokens_.push_back( consumes<l1extra::L1JetParticleCollection>(m_l1JetsTags[i]) );
+  tp_digi_token_ = consumes<HcalTrigPrimDigiCollection>(tp_digi_tag_);
+  hbhe_digi_token_ = consumes<HBHEDigiCollection>(hbhe_digis_tag_);
+  hf_digi_token_ = consumes<HFDigiCollection>(hf_digis_tag_);
+  for (auto& it_l1_jets_tag : l1_jets_tags_) {
+    l1_jets_tokens_.push_back( consumes<l1extra::L1JetParticleCollection>(it_l1_jets_tag) );
   };
 }
 
@@ -34,16 +35,16 @@ void HcalL1JetDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   edm::Handle<HBHEDigiCollection>         hbheInputDigis;
   edm::Handle<HFDigiCollection>           hfInputDigis;
   edm::Handle<HcalTrigPrimDigiCollection> hcalInputTPs;
-  int nL1JetCollections = l1JetsTokens_.size();
+  int nL1JetCollections = l1_jets_tokens_.size();
   std::vector<edm::Handle<l1extra::L1JetParticleCollection> > l1Jets ( nL1JetCollections );
 
   // Get ESHandles
   iSetup.get<CaloGeometryRecord>().get(geometry);
 
   // Get Handles
-  iEvent.getByToken(hbheToken_, hbheInputDigis);
-  iEvent.getByToken(hfToken_  , hfInputDigis  );
-  iEvent.getByToken(tpToken_  , hcalInputTPs  );
+  iEvent.getByToken(hbhe_digi_token_, hbheInputDigis);
+  iEvent.getByToken(hf_digi_token_  , hfInputDigis  );
+  iEvent.getByToken(tp_digi_token_  , hcalInputTPs  );
 
   // Declare output collections
   std::auto_ptr<HBHEDigiCollection>         hbheOutputDigis(new HBHEDigiCollection()); 
@@ -64,7 +65,7 @@ void HcalL1JetDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   for (int iL1JetCollection = 0; iL1JetCollection < nL1JetCollections; ++iL1JetCollection){
 
     // Get jet collection from event
-    iEvent.getByToken(l1JetsTokens_[iL1JetCollection], l1Jets[iL1JetCollection]);
+    iEvent.getByToken(l1_jets_tokens_[iL1JetCollection], l1Jets[iL1JetCollection]);
     l1extra::L1JetParticleCollection::const_iterator l1Jet     = l1Jets[iL1JetCollection] -> begin();
     l1extra::L1JetParticleCollection::const_iterator l1Jet_end = l1Jets[iL1JetCollection] -> end();
 

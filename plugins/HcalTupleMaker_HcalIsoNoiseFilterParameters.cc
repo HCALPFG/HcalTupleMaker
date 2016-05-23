@@ -139,21 +139,17 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
   
   // get the HB/HE hits
   edm::Handle<HBHERecHitCollection> hbhehits_h;
-  //iEvent.getByLabel("hbheprereco", hbhehits_h);
   iEvent.getByToken(hbheprerecoToken,hbhehits_h);
 
   
    // get the ECAL hits
   edm::Handle<EcalRecHitCollection> ebhits_h;
-  //iEvent.getByLabel("ecalRecHit","EcalRecHitsEB", ebhits_h);
   iEvent.getByToken(EcalRecHitsEBToken, ebhits_h);
   edm::Handle<EcalRecHitCollection> eehits_h;
-  //iEvent.getByLabel("ecalRecHit","EcalRecHitsEE", eehits_h);
   iEvent.getByToken(EcalRecHitsEEToken, eehits_h);
   
   // get the tracks
   edm::Handle<std::vector<reco::TrackExtrapolation> > trackextraps_h;
-  //iEvent.getByLabel("trackExtrapolator", trackextraps_h);
   iEvent.getByToken(trackExtrapolatorToken, trackextraps_h);
   
   objvalidator_.setHcalChannelQuality(dbHcalChStatus);
@@ -421,7 +417,6 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
 
 
   edm::Handle<HcalNoiseSummary> hSummary;
-  //iEvent.getByLabel(noiseSummaryInputTag, hSummary);
   iEvent.getByToken(noiseSummaryInputToken, hSummary);
 
   if(isodebug) std::cout<<suffix<<"  hSummary->numIsolatedNoiseChannels(): "<<hSummary->numIsolatedNoiseChannels()<<std::endl;

@@ -74,15 +74,12 @@ void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetu
   std::auto_ptr<std::vector<int> >               jetn60       ( new std::vector<int>              ());
  
   edm::Handle<HBHERecHitCollection> hRecHits;
-  //iEvent.getByLabel(recoInputTag, hRecHits);
   iEvent.getByToken(recoInputToken, hRecHits);
 
   edm::Handle<EcalRecHitCollection> hEBRecHits;
-  //iEvent.getByLabel("ecalRecHit","EcalRecHitsEB", hEBRecHits);
   iEvent.getByToken(EcalRecHitsEBToken, hEBRecHits);
 
   edm::Handle<EcalRecHitCollection> hEERecHits;
-  //iEvent.getByLabel("ecalRecHit","EcalRecHitsEE", hEERecHits);
   iEvent.getByToken(EcalRecHitsEEToken, hEERecHits);
 
   edm::ESHandle<CaloGeometry> hGeometry;
@@ -90,11 +87,9 @@ void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetu
   Geometry = hGeometry.product();
 
   edm::Handle<reco::CaloJetCollection> hCaloJets;
-  //iEvent.getByLabel("ak4CaloJets", hCaloJets);
   iEvent.getByToken(ak4CaloJetsToken, hCaloJets);
 
   edm::Handle<reco::CaloMETCollection> hCaloMET;
-  //iEvent.getByLabel("caloMet", hCaloMET);
   iEvent.getByToken(caloMetToken, hCaloMET);
   
   //std::cout<<" Jet size "<<(*hCaloJets).size()<<std::endl; 

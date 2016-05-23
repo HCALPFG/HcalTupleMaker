@@ -38,7 +38,6 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
 
     edm::Handle<RecHitCollection> hcalRecHits;
     bool gotHcalRecHits = iEvent.getByToken(m_hcalRecHitsToken, hcalRecHits);
-    
     if (!gotHcalRecHits ) {
       std::cout << "Could not find HCAL RecHits with tag " << m_hcalRecHitsTag << std::endl;
       run_algo = false;

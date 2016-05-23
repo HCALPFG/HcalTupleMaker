@@ -1,5 +1,4 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalLaserDigis.h"
-#include "DataFormats/HcalDigi/interface/HcalLaserDigi.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/Event.h"
 
@@ -16,6 +15,7 @@ HcalTupleMaker_HcalLaserDigis::HcalTupleMaker_HcalLaserDigis(const edm::Paramete
   produces <int>                             (prefix + "Attenuator1"   + suffix );
   produces <int>                             (prefix + "Attenuator2"   + suffix );
   produces <int>                             (prefix + "Selector"      + suffix );
+  m_hcalLaserDigiToken = consumes<HcalLaserDigi>(inputTag);
 }
 
 void HcalTupleMaker_HcalLaserDigis::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -26,7 +26,7 @@ void HcalTupleMaker_HcalLaserDigis::produce(edm::Event& iEvent, const edm::Event
   std::auto_ptr<std::vector<double> > tdcHitNS      ( new std::vector<double> ());
 
   edm::Handle <HcalLaserDigi> digi;
-  iEvent.getByLabel(inputTag, digi);
+  iEvent.getByToken(m_hcalLaserDigiToken, digi);
 
   for (int iQADC = 0; iQADC < nQADC; ++iQADC)
     qadc -> push_back ( digi -> qadc(iQADC) );

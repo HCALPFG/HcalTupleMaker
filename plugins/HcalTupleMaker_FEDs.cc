@@ -1,7 +1,6 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_FEDs.h"
 
 // Raw data analysis
-#include "DataFormats/FEDRawData/interface/FEDRawDataCollection.h"
 #include "DataFormats/FEDRawData/interface/FEDNumbering.h"
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/Event.h"
@@ -18,6 +17,8 @@ HcalTupleMaker_FEDs::HcalTupleMaker_FEDs(const edm::ParameterSet& iConfig) :
   produces <std::vector<int> > (prefix + "Size"   + suffix );
   produces <std::vector<int> > (prefix + "ORN"    + suffix );
   produces <std::vector<int> > (prefix + "BCN"    + suffix );
+  m_FEDRawDataToken = consumes<FEDRawDataCollection>(inputTag);
+    //(iConfig.getUntrackedParameter<edm::InputTag>("tagRaw", edm::InputTag("rawDataCollector")));
 }
 
 void HcalTupleMaker_FEDs::
@@ -29,10 +30,7 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   std::auto_ptr<std::vector<int> > orn    ( new std::vector<int> () );
   
   edm::Handle<FEDRawDataCollection> rawData;
-
-  bool gotRawData = iEvent.getByLabel(inputTag, rawData);
-  if (gotRawData){
-
+  if (iEvent.getByToken(m_FEDRawDataToken, rawData)) {
     for (int fed_number=minFEDID; fed_number<=maxFEDID; ++fed_number){
     // for(int fed_number=FEDNumbering::MINHCALFEDID;fed_number<=FEDNumbering::MAXHCALFEDID; fed_number++) {
 

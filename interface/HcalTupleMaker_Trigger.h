@@ -21,12 +21,11 @@ class HcalTupleMaker_Trigger : public edm::EDProducer {
   const edm::InputTag   hltInputTag;
   const std::vector<std::string> hltPathsOfInterest;
   HLTConfigProvider hltConfig;
+  HLTPrescaleProvider hltPrescaleProvider_;
 
   std::string                 sourceName;
   DataSource                  sourceType;
   std::vector<std::string>    dataSource;
-
-  HLTPrescaleProvider hltPrescaleProvider;
 
 };
 

@@ -86,6 +86,7 @@ process.hcalTupleHODigis.DoEnergyReco = False
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HFDigis_cfi")
 process.hcalTupleHFDigis.DoEnergyReco = False
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalUnpackerReport_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_QIE10Digis_cfi")
 
 #------------------------------------------------------------------------------------
 # Since this is a local run, make sure we're looking for the FEDs in the right place
@@ -97,12 +98,18 @@ process.hcalDigis.InputLabel = cms.InputTag("source")
 #------------------------------------------------------------------------------------
 process.hcalDigis.FEDs = cms.untracked.vint32(1100, 1102, 1104, 1106, 1108, 1110, 1112, 1114, 1116)
 
+#------------------------------------------------------------------------------------
+# QIE10  Unpacker
+#------------------------------------------------------------------------------------
+process.qie10Digis = process.hcalDigis.clone()
+process.qie10Digis.InputLabel = cms.InputTag("source") 
+process.qie10Digis.FEDs = cms.untracked.vint32(1132)
 
 #------------------------------------------------------------------------------------
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v4'
+process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v8'
 
 #------------------------------------------------------------------------------------
 # HcalTupleMaker sequence definition
@@ -118,6 +125,7 @@ process.tuple_step = cms.Sequence(
     process.hcalTupleHBHEDigis*
     process.hcalTupleHODigis*
     process.hcalTupleHFDigis*
+    process.hcalTupleQIE10Digis*
     #process.hcalCosmicDigis*
     #    process.hcalTupleTriggerPrimitives*
     #    # Make HCAL tuples: digi info
@@ -156,6 +164,7 @@ process.tuple_step = cms.Sequence(
 process.preparation = cms.Path(
     # Unpack digis from RAW
     process.hcalDigis*
+    process.qie10Digis*
     # Do energy reconstruction
 #    process.hbhereco*
 #    process.horeco*

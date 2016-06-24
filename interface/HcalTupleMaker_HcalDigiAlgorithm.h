@@ -1,8 +1,6 @@
 #ifndef HCALTUPLEMAKER_DIGIALGORITHM_H
 #define HCALTUPLEMAKER_DIGIALGORITHM_H
 
-#include <iostream>
-
 // HCAL conditions
 #include "CalibFormats/HcalObjects/interface/HcalDbRecord.h"
 #include "CalibFormats/HcalObjects/interface/HcalDbService.h"
@@ -22,7 +20,7 @@
 
 class HcalTupleMaker_HcalDigiAlgorithm { 
 
- public:
+public:
 
   HcalTupleMaker_HcalDigiAlgorithm();
 
@@ -30,6 +28,8 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   void setTotalFCthreshold ( double totFCcut ) { m_totalFCthreshold = totFCcut; }
   void setDoChargeReco ( bool b ) { m_doChargeReco = b; }
   void setDoEnergyReco ( bool b ) { m_doEnergyReco = b; }
+  void setFilterChannels (bool b ) { m_filterChannels = b; }
+  void setChannelFilterList ( std::vector<edm::ParameterSet> vps ) { m_channelFilterList = vps; }
   
   std::auto_ptr<std::vector<int> > ieta;           
   std::auto_ptr<std::vector<int> > iphi;           
@@ -64,11 +64,11 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   std::auto_ptr<std::vector<float> > rec_time;    
   
   template <class DigiCollection, class RecoCollection, class DetIdClass, class DetIdClassWrapper > 
-    void run ( const HcalDbService    & conditions,  
-	       const DigiCollection   & digis     , 
-	       const RecoCollection   & recos     ,
-	       const CaloGeometry     & geometry  ,
-	       const HcalTPGCoder     * inCoder   ){
+  void run ( const HcalDbService    & conditions,  
+	     const DigiCollection   & digis     , 
+	     const RecoCollection   & recos     ,
+	     const CaloGeometry     & geometry  ,
+	     const HcalTPGCoder     * inCoder   ){
 
     //-----------------------------------------------------
     // Get iterators
@@ -152,6 +152,30 @@ class HcalTupleMaker_HcalDigiAlgorithm {
 
       if( totalFC < m_totalFCthreshold ) continue;
 
+      //-----------------------------------------------------
+      // Filter all channels not in the input tag
+      //-----------------------------------------------------
+
+      bool filterChannel = true;
+      
+      std::vector<std::vector<int> > channelFilterList;
+
+      for (std::vector<edm::ParameterSet>::iterator it = m_channelFilterList.begin(); it != m_channelFilterList.end(); ++it) {
+	std::vector<int> channel;
+	channel.push_back( (*it).getParameter<int>("iEta")  );
+	channel.push_back( (*it).getParameter<int>("iPhi")  );
+	channel.push_back( (*it).getParameter<int>("depth") );
+	channelFilterList.push_back(channel);
+      }
+
+      for (std::vector<std::vector<int> >::iterator it = channelFilterList.begin(); it != channelFilterList.end(); ++it) {
+	if ( (*it).at(0) == hcalDetIdW->ieta() &&
+	     (*it).at(1) == hcalDetIdW->iphi() &&
+	     (*it).at(2) == hcalDetIdW->depth() ) filterChannel = false;
+      }
+
+      if (m_filterChannels && filterChannel) continue;
+      
       //-----------------------------------------------------
       // Get digi-specific values
       //-----------------------------------------------------
@@ -268,14 +292,16 @@ class HcalTupleMaker_HcalDigiAlgorithm {
   void adc2Linear ( const HcalCalibDataFrame & frame, IntegerCaloSamples & tool ){ return; }
   
   
- private:
+private:
   
 
   bool m_doChargeReco;
   bool m_doEnergyReco;
   const HcaluLUTTPGCoder * m_inputCoder;
   double m_totalFCthreshold;
-
+  bool m_filterChannels;
+  std::vector<edm::ParameterSet> m_channelFilterList;
+  
 };
 
 #endif

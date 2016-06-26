@@ -9,14 +9,14 @@
 //#include "DataFormats/HcalDetId/interface/HcalDetId.h"
 
 class HcalTupleMaker_QIE10Digis : public edm::EDProducer {
- public:
+public:
   explicit HcalTupleMaker_QIE10Digis(const edm::ParameterSet&);
 
- private:
+private:
   void produce( edm::Event &, const edm::EventSetup & ); 
-  std::string   prefix,suffix; 
-  const edm::InputTag   m_qie10DigisTag;
-  edm::EDGetTokenT<QIE10DigiCollection>      qie10digisToken_;
+  std::string prefix,suffix; 
+  const edm::InputTag m_qie10DigisTag;
+  edm::EDGetTokenT<QIE10DigiCollection> qie10digisToken_;
 };
 
 #endif

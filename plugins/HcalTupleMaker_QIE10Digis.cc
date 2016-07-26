@@ -73,17 +73,20 @@ HcalTupleMaker_QIE10Digis::HcalTupleMaker_QIE10Digis(const edm::ParameterSet& iC
 
   qie10digisToken_ = consumes<QIE10DigiCollection>(m_qie10DigisTag);
     
-  produces<std::vector<int>   >                  ( "QIE10DigiIEta"    );
-  produces<std::vector<int>   >                  ( "QIE10DigiIPhi"    );
-  produces<std::vector<int>   >                  ( "QIE10DigiSubdet"  );
-  produces<std::vector<int>   >                  ( "QIE10DigiDepth"   );
-  produces<std::vector<int>   >                  ( "QIE10DigiRawID"   );
-  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiSOI"     );
-  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiADC"     );
-  produces<std::vector<std::vector<double>   > > ( "QIE10DigiFC"      );
-  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiLETDC"   );
-  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiTETDC"   );
-  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiCapID"   );
+  produces<std::vector<int>   >                  ( "QIE10DigiIEta"      );
+  produces<std::vector<int>   >                  ( "QIE10DigiIPhi"      );
+  produces<std::vector<int>   >                  ( "QIE10DigiSubdet"    );
+  produces<std::vector<int>   >                  ( "QIE10DigiDepth"     );
+  produces<std::vector<int>   >                  ( "QIE10DigiRawID"     );
+  produces<std::vector<int>   >                  ( "QIE10DigiLinkError" );
+  produces<std::vector<int>   >                  ( "QIE10DigiFlags"     );
+  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiSOI"       );
+  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiOK"        );
+  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiADC"       );
+  produces<std::vector<std::vector<double>   > > ( "QIE10DigiFC"        );
+  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiLETDC"     );
+  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiTETDC"     );
+  produces<std::vector<std::vector<int>   > >    ( "QIE10DigiCapID"     );
 }
 
 void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
@@ -93,7 +96,10 @@ void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetu
   std::auto_ptr<std::vector<int> >                    subdet ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    depth  ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    rawId  ( new std::vector<int>   ());
+  std::auto_ptr<std::vector<int> >                    linkEr ( new std::vector<int>   ());
+  std::auto_ptr<std::vector<int> >                    flags  ( new std::vector<int>   ());
   std::auto_ptr<std::vector<std::vector<int  > > >    soi    ( new std::vector<std::vector<int  > >   ());
+  std::auto_ptr<std::vector<std::vector<int  > > >    ok     ( new std::vector<std::vector<int  > >   ());
   std::auto_ptr<std::vector<std::vector<int  > > >    adc    ( new std::vector<std::vector<int  > >    ());
   std::auto_ptr<std::vector<std::vector<double  > > > fc     ( new std::vector<std::vector<double  > > ());
   std::auto_ptr<std::vector<std::vector<int  > > >    le_tdc ( new std::vector<std::vector<int  > >    ());
@@ -114,12 +120,14 @@ void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetu
     DetId detid = qie10df.detid();
     HcalDetId hcaldetid = HcalDetId(detid);
         
-    ieta -> push_back ( hcaldetid.ieta());
-    iphi -> push_back ( hcaldetid.iphi());
-    subdet -> push_back ( 5/*hcaldetid.subdet()*/);
-    depth -> push_back ( hcaldetid.depth());
-    rawId -> push_back ( hcaldetid.rawId());
-
+    ieta   -> push_back ( hcaldetid.ieta()        );
+    iphi   -> push_back ( hcaldetid.iphi()        );
+    subdet -> push_back ( 5/*hcaldetid.subdet()*/ );
+    depth  -> push_back ( hcaldetid.depth()       );
+    rawId  -> push_back ( hcaldetid.rawId()       );
+    linkEr -> push_back ( qie10df.linkError()     );
+    flags  -> push_back ( qie10df.flags()         );
+    
     if (0){
       std::cout << "Printing raw dataframe" << std::endl;
       std::cout << qie10df << std::endl;
@@ -129,6 +137,7 @@ void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetu
     }
 
     soi             -> push_back ( std::vector<int  >   () ) ;
+    ok              -> push_back ( std::vector<int  >   () ) ;
     adc             -> push_back ( std::vector<int  >   () ) ;
     fc              -> push_back ( std::vector<double  >() ) ;
     le_tdc          -> push_back ( std::vector<int  >   () ) ;
@@ -145,6 +154,7 @@ void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetu
       //int capid = qie10df[its].capid();
 
       (*soi      )[last_entry].push_back ( qie10df[its].soi()               ); // soi is a bool, but stored as an int
+      (*ok       )[last_entry].push_back ( qie10df[its].ok()                ); // ok is a bool, but stored as an int
       (*adc      )[last_entry].push_back ( qie10df[its].adc()               );
       (*fc       )[last_entry].push_back ( adc2fC_QIE10[qie10df[its].adc()] );
       (*le_tdc   )[last_entry].push_back ( qie10df[its].le_tdc()            );
@@ -156,16 +166,19 @@ void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetu
   }
 
   //  
-  iEvent.put( ieta          , "QIE10DigiIEta"     ); 
-  iEvent.put( iphi          , "QIE10DigiIPhi"     ); 
-  iEvent.put( subdet        , "QIE10DigiSubdet"   ); 
-  iEvent.put( depth         , "QIE10DigiDepth"    ); 
-  iEvent.put( rawId         , "QIE10DigiRawID"    );
-  iEvent.put( soi           , "QIE10DigiSOI"      );
-  iEvent.put( adc           , "QIE10DigiADC"      );
-  iEvent.put( fc            , "QIE10DigiFC"       );
-  iEvent.put( le_tdc        , "QIE10DigiLETDC"    );
-  iEvent.put( te_tdc        , "QIE10DigiTETDC"    );
-  iEvent.put( capid         , "QIE10DigiCapID"    ); 
+  iEvent.put( ieta          , "QIE10DigiIEta"      ); 
+  iEvent.put( iphi          , "QIE10DigiIPhi"      ); 
+  iEvent.put( subdet        , "QIE10DigiSubdet"    ); 
+  iEvent.put( depth         , "QIE10DigiDepth"     ); 
+  iEvent.put( rawId         , "QIE10DigiRawID"     );
+  iEvent.put( linkEr        , "QIE10DigiLinkError" );
+  iEvent.put( flags         , "QIE10DigiFlags"     );
+  iEvent.put( soi           , "QIE10DigiSOI"       );
+  iEvent.put( ok            , "QIE10DigiOK"        );
+  iEvent.put( adc           , "QIE10DigiADC"       );
+  iEvent.put( fc            , "QIE10DigiFC"        );
+  iEvent.put( le_tdc        , "QIE10DigiLETDC"     );
+  iEvent.put( te_tdc        , "QIE10DigiTETDC"     );
+  iEvent.put( capid         , "QIE10DigiCapID"     ); 
 
 }

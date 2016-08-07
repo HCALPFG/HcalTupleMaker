@@ -9,7 +9,9 @@ hcalTupleHBHEDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
   DoEnergyReco = cms.untracked.bool ( True ) ,
-  TotalFCthreshold = cms.untracked.double ( -9999 ) 
+  TotalFCthreshold = cms.untracked.double ( -9999 ) ,
+  FilterChannels = cms.untracked.bool ( False ) ,
+  ChannelFilterList = cms.untracked.VPSet(cms.PSet(iEta = cms.int32(0), iPhi = cms.int32(0), depth = cms.int32(0)))
 )
 
 hcalTupleHBHECosmicsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
@@ -19,7 +21,9 @@ hcalTupleHBHECosmicsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
   DoEnergyReco = cms.untracked.bool ( True ) , 
-  TotalFCthreshold = cms.untracked.double ( -9999 ) 
+  TotalFCthreshold = cms.untracked.double ( -9999 ) , 
+  FilterChannels = cms.untracked.bool ( False ) ,
+  ChannelFilterList = cms.untracked.VPSet(cms.PSet(iEta = cms.int32(0), iPhi = cms.int32(0), depth = cms.int32(0)))
 )
 
 hcalTupleHBHEL1JetsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
@@ -29,7 +33,9 @@ hcalTupleHBHEL1JetsDigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
   DoEnergyReco = cms.untracked.bool ( True ) ,
-  TotalFCthreshold = cms.untracked.double ( -9999 ) 
+  TotalFCthreshold = cms.untracked.double ( -9999 ) ,
+  FilterChannels = cms.untracked.bool ( False ) ,
+  ChannelFilterList = cms.untracked.VPSet(cms.PSet(iEta = cms.int32(0), iPhi = cms.int32(0), depth = cms.int32(0)))
 )
 
 hcalTupleHBHEUTCADigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
@@ -39,6 +45,8 @@ hcalTupleHBHEUTCADigis = cms.EDProducer("HcalTupleMaker_HBHEDigis",
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
   DoEnergyReco = cms.untracked.bool ( True ) ,
-  TotalFCthreshold = cms.untracked.double ( -9999 )
+  TotalFCthreshold = cms.untracked.double ( -9999 ) , 
+  FilterChannels = cms.untracked.bool ( False ) ,
+  ChannelFilterList = cms.untracked.VPSet(cms.PSet(iEta = cms.int32(0), iPhi = cms.int32(0), depth = cms.int32(0)))
 )
 

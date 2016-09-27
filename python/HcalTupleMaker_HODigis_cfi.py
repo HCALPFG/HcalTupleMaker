@@ -9,7 +9,9 @@ hcalTupleHODigis = cms.EDProducer("HcalTupleMaker_HODigis",
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
   DoEnergyReco = cms.untracked.bool ( True ) ,
-  TotalFCthreshold = cms.untracked.double ( -9999 )
+  TotalFCthreshold = cms.untracked.double ( -9999 ) ,
+  FilterChannels = cms.untracked.bool ( False ) ,
+  ChannelFilterList = cms.untracked.VPSet(cms.PSet(iEta = cms.int32(0), iPhi = cms.int32(0), depth = cms.int32(0)))
 )
 
 hcalTupleHOCosmicsDigis = cms.EDProducer("HcalTupleMaker_HODigis",
@@ -19,5 +21,7 @@ hcalTupleHOCosmicsDigis = cms.EDProducer("HcalTupleMaker_HODigis",
   Suffix  = cms.untracked.string ( ""),
   DoChargeReco = cms.untracked.bool ( True ) ,
   DoEnergyReco = cms.untracked.bool ( True ) ,
-  TotalFCthreshold = cms.untracked.double ( -9999 )
+  TotalFCthreshold = cms.untracked.double ( -9999 ) ,
+  FilterChannels = cms.untracked.bool ( False ) ,
+  ChannelFilterList = cms.untracked.VPSet(cms.PSet(iEta = cms.int32(0), iPhi = cms.int32(0), depth = cms.int32(0)))
 )

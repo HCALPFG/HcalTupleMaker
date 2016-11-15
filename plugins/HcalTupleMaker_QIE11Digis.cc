@@ -76,13 +76,11 @@ HcalTupleMaker_QIE11Digis::HcalTupleMaker_QIE11Digis(const edm::ParameterSet& iC
  
   qie11digisToken_ = consumes<HcalDataFrameContainer<QIE11DataFrame> >(m_qie11DigisTag);
  
-  if(storelaser) {std::cout<<" only laser is true"<<std::endl;
+  if(storelaser) {std::cout<<"Storing uMNio laser informaiton"<<std::endl;
     _tokuMNio = consumes<HcalUMNioDigi>(_taguMNio);
   }
-  else std::cout<<" only laser is false"<<std::endl;
+
   
- 
-//consumes<QIE10DigiCollection>(m_qie10DigisTag);
 
     
   produces<std::vector<int>   >                  ( "QIE11DigiIEta"      );

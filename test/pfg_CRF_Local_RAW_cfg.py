@@ -152,7 +152,7 @@ process.es_ascii = cms.ESSource('HcalTextCalibrations',
         input = cms.VPSet(
                cms.PSet(
                 object = cms.string('ElectronicsMap'),
-                file = cms.FileInPath('EMAP-kalinin_HTR99_phi.txt')  # EMAP here!
+                file = cms.FileInPath('HCALPFG/HcalTupleMaker/data/EMAP-kalinin_HTR99_phi.txt')  # EMAP here!
                )
         )
 )

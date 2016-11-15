@@ -6,6 +6,7 @@
 #include "FWCore/Utilities/interface/InputTag.h"
 
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
+#include "DataFormats/HcalDigi/interface/HcalUMNioDigi.h"
 //#include "DataFormats/HcalDetId/interface/HcalDetId.h"
 
 class HcalTupleMaker_QIE11Digis : public edm::EDProducer {
@@ -15,8 +16,12 @@ public:
 private:
   void produce( edm::Event &, const edm::EventSetup & ); 
   std::string prefix,suffix; 
+  bool storelaser;
+  const edm::InputTag _taguMNio;
   const edm::InputTag m_qie11DigisTag;
+  
   edm::EDGetTokenT<HcalDataFrameContainer<QIE11DataFrame> > qie11digisToken_;
+  edm::EDGetTokenT<HcalUMNioDigi> _tokuMNio;
 };
 
 #endif

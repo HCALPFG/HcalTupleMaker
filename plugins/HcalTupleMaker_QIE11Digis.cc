@@ -68,10 +68,20 @@ double adc2fC_QIE11[256]={
 HcalTupleMaker_QIE11Digis::HcalTupleMaker_QIE11Digis(const edm::ParameterSet& iConfig):
   prefix          (iConfig.getUntrackedParameter<std::string>("Prefix")),
   suffix          (iConfig.getUntrackedParameter<std::string>("Suffix")),
+  storelaser          (iConfig.getUntrackedParameter<bool>("StoreLaser")),
+  _taguMNio          (iConfig.getUntrackedParameter<edm::InputTag>("taguMNio",edm::InputTag("hcalDigis"))),
   m_qie11DigisTag (iConfig.getUntrackedParameter<edm::InputTag>("tagQIE11", edm::InputTag("hcalDigis")))
 { 
 
+ 
   qie11digisToken_ = consumes<HcalDataFrameContainer<QIE11DataFrame> >(m_qie11DigisTag);
+ 
+  if(storelaser) {std::cout<<" only laser is true"<<std::endl;
+    _tokuMNio = consumes<HcalUMNioDigi>(_taguMNio);
+  }
+  else std::cout<<" only laser is false"<<std::endl;
+  
+ 
 //consumes<QIE10DigiCollection>(m_qie10DigisTag);
 
     
@@ -81,14 +91,15 @@ HcalTupleMaker_QIE11Digis::HcalTupleMaker_QIE11Digis(const edm::ParameterSet& iC
   produces<std::vector<int>   >                  ( "QIE11DigiDepth"     );
   produces<std::vector<int>   >                  ( "QIE11DigiRawID"     );
   produces<std::vector<int>   >                  ( "QIE11DigiLinkError" );
+  produces<std::vector<int>   >                  ( "QIE11DigiCapIDError" );
   produces<std::vector<int>   >                  ( "QIE11DigiFlags"     );
   produces<std::vector<std::vector<int>   > >    ( "QIE11DigiSOI"       );
   produces<std::vector<std::vector<int>   > >    ( "QIE11DigiOK"        );
   produces<std::vector<std::vector<int>   > >    ( "QIE11DigiADC"       );
   produces<std::vector<std::vector<double>   > > ( "QIE11DigiFC"        );
-  produces<std::vector<std::vector<int>   > >    ( "QIE11DigiLETDC"     );
-  produces<std::vector<std::vector<int>   > >    ( "QIE11DigiTETDC"     );
+  produces<std::vector<std::vector<int>   > >    ( "QIE11DigiTDC"     );
   produces<std::vector<std::vector<int>   > >    ( "QIE11DigiCapID"     );
+  produces <int>                                 ( "laserType"   );
 }
 
 void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
@@ -99,89 +110,124 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
   std::auto_ptr<std::vector<int> >                    depth  ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    rawId  ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    linkEr ( new std::vector<int>   ());
+  std::auto_ptr<std::vector<int> >                    capidEr ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    flags  ( new std::vector<int>   ());
+  // std::auto_ptr<int>                                  lasertype (new int() );
   std::auto_ptr<std::vector<std::vector<int  > > >    soi    ( new std::vector<std::vector<int  > >   ());
   std::auto_ptr<std::vector<std::vector<int  > > >    ok     ( new std::vector<std::vector<int  > >   ());
   std::auto_ptr<std::vector<std::vector<int  > > >    adc    ( new std::vector<std::vector<int  > >    ());
   std::auto_ptr<std::vector<std::vector<double  > > > fc     ( new std::vector<std::vector<double  > > ());
-  std::auto_ptr<std::vector<std::vector<int  > > >    le_tdc ( new std::vector<std::vector<int  > >    ());
-  std::auto_ptr<std::vector<std::vector<int  > > >    te_tdc ( new std::vector<std::vector<int  > >    ());
+  std::auto_ptr<std::vector<std::vector<int  > > >    tdc ( new std::vector<std::vector<int  > >    ());
   std::auto_ptr<std::vector<std::vector<int  > > >    capid  ( new std::vector<std::vector<int  > >    ());
     
   //
+  bool use_event=true;
+
   edm::Handle<HcalDataFrameContainer<QIE11DataFrame> >  qie11Digis;
-  iEvent.getByToken(qie11digisToken_, qie11Digis);
-    
-  //
-  for (uint32_t i=0; i<qie11Digis->size(); i++){
-
-    // From: https://github.com/awhitbeck/HFcommissioningAnalysis/blob/b3456c9fe66ef9bcc6c54773d60f768c269a5c74/src/HFanalyzer.cc#L429
-    QIE11DataFrame qie11df = (*qie11Digis)[i];
-    //QIE10 structure: static_cast<QIE11DataFrame>((*qie11Digis)[i]);
-
-    //Extract info on detector location
-    DetId detid = qie11df.detid();
-    HcalDetId hcaldetid = HcalDetId(detid);
-
-    ieta   -> push_back ( hcaldetid.ieta()        );
-    iphi   -> push_back ( hcaldetid.iphi()        );
-    subdet -> push_back ( 8/*hcaldetid.subdet()*/ );
-    depth  -> push_back ( hcaldetid.depth()       );
-    rawId  -> push_back ( hcaldetid.rawId()       );
-    linkEr -> push_back ( qie11df.linkError()     );
-    flags  -> push_back ( qie11df.flags()         );
-    
-    if (0){
-      std::cout << "Printing raw dataframe" << std::endl;
-      std::cout << qie11df << std::endl;
-
-      std::cout << "Printing content of samples() method" << std::endl;
-      std::cout << qie11df.samples() << std::endl;
-    }
-
-    soi             -> push_back ( std::vector<int  >   () ) ;
-    ok              -> push_back ( std::vector<int  >   () ) ;
-    adc             -> push_back ( std::vector<int  >   () ) ;
-    fc              -> push_back ( std::vector<double  >() ) ;
-    le_tdc          -> push_back ( std::vector<int  >   () ) ;
-    te_tdc          -> push_back ( std::vector<int  >   () ) ;
-    capid           -> push_back ( std::vector<int  >   () ) ;
-    size_t last_entry = adc -> size() - 1;
-
-    // TS
-    int nTS = qie11df.samples();
-
-    for(int its=0; its<nTS; ++its)
-    { 
-      //int adc = qie10df[its].adc();
-      //int capid = qie10df[its].capid();
-
-      (*soi      )[last_entry].push_back ( qie11df[its].soi()               ); // soi is a bool, but stored as an int
-      //  (*ok       )[last_entry].push_back ( qie11df[its].ok()                ); // ok is a bool, but stored as an int
-      (*adc      )[last_entry].push_back ( qie11df[its].adc()               );
-      (*fc       )[last_entry].push_back ( adc2fC_QIE11[qie11df[its].adc()] );
-      //(*le_tdc   )[last_entry].push_back ( qie11df[its].le_tdc()            );
-      // (*te_tdc   )[last_entry].push_back ( qie11df[its].te_tdc()            );
-      (*capid    )[last_entry].push_back ( qie11df[its].capid()             );
-	  
-    }
-
+  bool gotqie11digis = iEvent.getByToken(qie11digisToken_, qie11Digis);
+  if (!gotqie11digis ) {
+	std::cout << "Could not find QIE11 digis " <<  m_qie11DigisTag << std::endl;
+	use_event = false;
   }
+  
+  
+  if(use_event){
+  
+    if(storelaser){
+      
+      edm::Handle<HcalUMNioDigi> cumnio;
+      std::cout<<"Only using laser events"<<std::endl;
+      bool gotuMNio = iEvent.getByToken(_tokuMNio,cumnio);                           
+      if (!gotuMNio ) {
+	std::cout << "Could not find uMNio " << _taguMNio<< std::endl;
+	use_event = false;
+      }
+      std::auto_ptr<int> lasertype (new int(cumnio -> valueUserWord(0)));
+      iEvent.put( lasertype          , "laserType"      ); 
+      //std::cout << "Laser type is " << lasertype<<std::endl;
+    }
+    else{
+      std::auto_ptr<int> lasertype (new int());
+      iEvent.put( lasertype          , "laserType"      ); 
+    }
+    //
 
-  //  
-  iEvent.put( ieta          , "QIE11DigiIEta"      ); 
-  iEvent.put( iphi          , "QIE11DigiIPhi"      ); 
-  iEvent.put( subdet        , "QIE11DigiSubdet"    ); 
-  iEvent.put( depth         , "QIE11DigiDepth"     ); 
-  iEvent.put( rawId         , "QIE11DigiRawID"     );
-  iEvent.put( linkEr        , "QIE11DigiLinkError" );
-  iEvent.put( flags         , "QIE11DigiFlags"     );
-  iEvent.put( soi           , "QIE11DigiSOI"       );
-  iEvent.put( ok            , "QIE11DigiOK"        );
-  iEvent.put( adc           , "QIE11DigiADC"       );
-  iEvent.put( fc            , "QIE11DigiFC"        );
-  iEvent.put( le_tdc        , "QIE11DigiLETDC"     );
-  iEvent.put( te_tdc        , "QIE11DigiTETDC"     );
-  iEvent.put( capid         , "QIE11DigiCapID"     ); 
+    for (uint32_t i=0; i<qie11Digis->size(); i++){
 
+      // From: https://github.com/awhitbeck/HFcommissioningAnalysis/blob/b3456c9fe66ef9bcc6c54773d60f768c269a5c74/src/HFanalyzer.cc#L429
+      QIE11DataFrame qie11df = (*qie11Digis)[i];
+      //QIE10 structure: static_cast<QIE11DataFrame>((*qie11Digis)[i]);
+
+      //Extract info on detector location
+      DetId detid = qie11df.detid();
+      HcalDetId hcaldetid = HcalDetId(detid);
+  
+      float eta = hcaldetid.ieta(); 
+    
+      if(iEvent.id().run() == 280662){
+	if(eta < 8) eta+=12;
+	else eta-=12;
+      }
+      
+      ieta   -> push_back ( eta );
+      iphi   -> push_back ( hcaldetid.iphi() );
+      subdet -> push_back ( 8/*hcaldetid.subdet()*/ );
+      depth  -> push_back ( hcaldetid.depth()       );
+      rawId  -> push_back ( hcaldetid.rawId()       );
+      linkEr -> push_back ( qie11df.linkError()     );
+      capidEr -> push_back ( qie11df.capidError()     );
+      flags  -> push_back ( qie11df.flags()         );
+    
+      if (0){
+	std::cout << "Printing raw dataframe" << std::endl;
+	std::cout << qie11df << std::endl;
+
+	std::cout << "Printing content of samples() method" << std::endl;
+	std::cout << qie11df.samples() << std::endl;
+      }
+
+      soi             -> push_back ( std::vector<int  >   () ) ;
+      ok              -> push_back ( std::vector<int  >   () ) ;
+      adc             -> push_back ( std::vector<int  >   () ) ;
+      fc              -> push_back ( std::vector<double  >() ) ;
+      tdc          -> push_back ( std::vector<int  >   () ) ;
+      capid           -> push_back ( std::vector<int  >   () ) ;
+      size_t last_entry = adc -> size() - 1;
+
+      // TS
+      int nTS = qie11df.samples();
+
+      for(int its=0; its<nTS; ++its)
+	{ 
+	  //int adc = qie10df[its].adc();
+	  //int capid = qie10df[its].capid();
+
+	  (*soi      )[last_entry].push_back ( qie11df[its].soi()               ); // soi is a bool, but stored as an int
+	  //  (*ok       )[last_entry].push_back ( qie11df[its].ok()                ); // ok is a bool, but stored as an int
+	  (*adc      )[last_entry].push_back ( qie11df[its].adc()               );
+	  (*fc       )[last_entry].push_back ( adc2fC_QIE11[qie11df[its].adc()] );
+	  (*tdc   )[last_entry].push_back ( qie11df[its].tdc()            );
+	
+	  (*capid    )[last_entry].push_back ( qie11df[its].capid()             );
+	  
+	}
+
+    }
+
+    //  
+    iEvent.put( ieta          , "QIE11DigiIEta"      ); 
+    iEvent.put( iphi          , "QIE11DigiIPhi"      ); 
+    iEvent.put( subdet        , "QIE11DigiSubdet"    ); 
+    iEvent.put( depth         , "QIE11DigiDepth"     ); 
+    iEvent.put( rawId         , "QIE11DigiRawID"     );
+    iEvent.put( linkEr        , "QIE11DigiLinkError" );
+    iEvent.put( capidEr       , "QIE11DigiCapIDError" );
+    iEvent.put( flags         , "QIE11DigiFlags"     );
+    iEvent.put( soi           , "QIE11DigiSOI"       );
+    iEvent.put( ok            , "QIE11DigiOK"        );
+    iEvent.put( adc           , "QIE11DigiADC"       );
+    iEvent.put( fc            , "QIE11DigiFC"        );
+    iEvent.put( tdc        , "QIE11DigiTDC"     );
+    iEvent.put( capid         , "QIE11DigiCapID"     ); 
+  }
 }

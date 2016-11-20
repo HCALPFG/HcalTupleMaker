@@ -7,6 +7,7 @@ HcalTupleMaker_Event::HcalTupleMaker_Event(const edm::ParameterSet& iConfig) {
   produces <unsigned int> ( "event"  );
   produces <unsigned int> ( "ls"     );
   produces <unsigned int> ( "bx"     );
+  produces <unsigned int> ( "orbit"  );
 }
 
 void HcalTupleMaker_Event::
@@ -18,10 +19,12 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
   edm::EventBase const & eventbase = iEvent;
   std::auto_ptr<unsigned int >  bx    ( new unsigned int(eventbase.bunchCrossing() ) );
+  std::auto_ptr<unsigned int >  orbit ( new unsigned int(eventbase.orbitNumber()   ) );
   
   iEvent.put( run,   "run"   );
   iEvent.put( event, "event" );
   iEvent.put( ls   , "ls"    );
   iEvent.put( bx   , "bx"    );
+  iEvent.put( orbit, "orbit" );
 
 }

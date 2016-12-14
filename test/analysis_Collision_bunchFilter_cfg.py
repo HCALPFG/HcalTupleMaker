@@ -161,9 +161,10 @@ process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
 			)
 
 #------------------------------------------------------------------------------------------------------------------------------------
-# Set up our analyzer
+# Set up our analyzer and filter
 #------------------------------------------------------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_cfi")
+process.load("HCALPFG.HcalTupleMaker.BunchNumberFilter_cfi")
 
 #------------------------------------------------------------------------------------------------------------------------------------
 # Set up new HO emap
@@ -237,6 +238,7 @@ else:
 
 # Path and EndPath definitions
 process.preparation = cms.Path(
+    process.bunchNumberFilter *
     process.reco_step *
     process.hcalnoise *
     process.HBHENoiseFilterResultProducer *

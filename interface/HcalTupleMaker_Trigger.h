@@ -5,7 +5,6 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
-#include "HLTrigger/HLTcore/interface/HLTPrescaleProvider.h"
 
 class HcalTupleMaker_Trigger : public edm::EDProducer {
  public:
@@ -25,8 +24,6 @@ class HcalTupleMaker_Trigger : public edm::EDProducer {
   std::string                 sourceName;
   DataSource                  sourceType;
   std::vector<std::string>    dataSource;
-
-  HLTPrescaleProvider hltPrescaleProvider;
 
 };
 

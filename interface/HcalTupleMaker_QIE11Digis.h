@@ -7,7 +7,7 @@
 
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 #include "DataFormats/HcalDigi/interface/HcalUMNioDigi.h"
-//#include "DataFormats/HcalDetId/interface/HcalDetId.h"
+#include "DataFormats/HcalDetId/interface/HcalGenericDetId.h"
 
 class HcalTupleMaker_QIE11Digis : public edm::EDProducer {
 public:

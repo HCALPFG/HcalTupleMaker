@@ -1,4 +1,6 @@
 #include <iostream>
+#include <ostream>
+#include <string>
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_QIE11Digis.h"
 //#include "DataFormats/HcalDigi/interface/HcalLaserDigi.h"
 //#include "DataFormats/Common/interface/Handle.h"
@@ -79,14 +81,16 @@ HcalTupleMaker_QIE11Digis::HcalTupleMaker_QIE11Digis(const edm::ParameterSet& iC
   if(storelaser) {std::cout<<"Storing uMNio laser informaiton"<<std::endl;
     _tokuMNio = consumes<HcalUMNioDigi>(_taguMNio);
   }
-
-  
-
     
   produces<std::vector<int>   >                  ( "QIE11DigiIEta"      );
   produces<std::vector<int>   >                  ( "QIE11DigiIPhi"      );
   produces<std::vector<int>   >                  ( "QIE11DigiSubdet"    );
   produces<std::vector<int>   >                  ( "QIE11DigiDepth"     );
+
+  produces<std::vector<int>   >                  ( "QIE11DigiRM"      );
+  produces<std::vector<int>   >                  ( "QIE11DigiRMFib"      );
+  produces<std::vector<int>   >                  ( "QIE11DigiFibCh"      );
+
   produces<std::vector<int>   >                  ( "QIE11DigiRawID"     );
   produces<std::vector<int>   >                  ( "QIE11DigiLinkError" );
   produces<std::vector<int>   >                  ( "QIE11DigiCapIDError" );
@@ -106,6 +110,11 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
   std::auto_ptr<std::vector<int> >                    iphi   ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    subdet ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    depth  ( new std::vector<int>   ());
+
+  std::auto_ptr<std::vector<int> >                    iRM   ( new std::vector<int>   ());
+  std::auto_ptr<std::vector<int> >                    iRMFib   ( new std::vector<int>   ());
+  std::auto_ptr<std::vector<int> >                    iFibCh   ( new std::vector<int>   ());
+
   std::auto_ptr<std::vector<int> >                    rawId  ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    linkEr ( new std::vector<int>   ());
   std::auto_ptr<std::vector<int> >                    capidEr ( new std::vector<int>   ());
@@ -159,7 +168,21 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
       //Extract info on detector location
       DetId detid = qie11df.detid();
       HcalDetId hcaldetid = HcalDetId(detid);
-  
+
+      //This is a hack in order to get the rm, fib, fibch for the channel since the emap is not processed correctly
+      std::ostringstream tmp;
+      TString detName;
+      tmp << HcalGenericDetId(detid);
+      detName = tmp.str();
+
+      //If the rm, rmfib, or fibch is more than 1 digit (i.e. rm=10) then you will need to change the parsing of detName
+      TString rm = "0", rmfib = "0", fibch = "0";
+      if(strlen(detName.Data()) >= 28){
+	rm = detName[19];
+	rmfib = detName[23];
+	fibch = detName[27];
+      }
+
       float eta = hcaldetid.ieta(); 
     
       if(iEvent.id().run() == 280662){
@@ -171,6 +194,11 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
       iphi   -> push_back ( hcaldetid.iphi() );
       subdet -> push_back ( 8/*hcaldetid.subdet()*/ );
       depth  -> push_back ( hcaldetid.depth()       );
+
+      iRM -> push_back(rm.Atoi());      
+      iRMFib -> push_back(rmfib.Atoi());
+      iFibCh -> push_back(fibch.Atoi());
+
       rawId  -> push_back ( hcaldetid.rawId()       );
       linkEr -> push_back ( qie11df.linkError()     );
       capidEr -> push_back ( qie11df.capidError()     );
@@ -217,9 +245,14 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
     iEvent.put( iphi          , "QIE11DigiIPhi"      ); 
     iEvent.put( subdet        , "QIE11DigiSubdet"    ); 
     iEvent.put( depth         , "QIE11DigiDepth"     ); 
+
+    iEvent.put( iRM           , "QIE11DigiRM"        );
+    iEvent.put( iRMFib        , "QIE11DigiRMFib"     );
+    iEvent.put( iFibCh        , "QIE11DigiFibCh"     );
+
     iEvent.put( rawId         , "QIE11DigiRawID"     );
     iEvent.put( linkEr        , "QIE11DigiLinkError" );
-    iEvent.put( capidEr       , "QIE11DigiCapIDError" );
+    iEvent.put( capidEr       , "QIE11DigiCapIDError");
     iEvent.put( flags         , "QIE11DigiFlags"     );
     iEvent.put( soi           , "QIE11DigiSOI"       );
     iEvent.put( ok            , "QIE11DigiOK"        );

@@ -8,8 +8,8 @@ from HCALPFG.HcalTupleMaker.HcalTupleMaker_HODigis_cfi               import *
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HFDigis_cfi               import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalCalibDigis_cfi        import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalLaserDigis_cfi        import * 
-from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalQIE10Digis_cfi        import *
-from HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalQIE11Digis_cfi        import * 
+from HCALPFG.HcalTupleMaker.HcalTupleMaker_QIE10Digis_cfi            import *
+from HCALPFG.HcalTupleMaker.HcalTupleMaker_QIE11Digis_cfi            import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi           import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HORecHits_cfi             import * 
 from HCALPFG.HcalTupleMaker.HcalTupleMaker_HFRecHits_cfi             import * 

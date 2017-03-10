@@ -9,10 +9,11 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 #------------------------------------------------------------------------------------
 # Declare the process and input variables
 #------------------------------------------------------------------------------------
-process = cms.Process('PFG')
-inputFiles = "/store/express/Commissioning2016/ExpressPhysics/FEVT/Express-v1/000/268/958/00000/E249E6DE-ECFD-E511-8979-02163E012A42.root"
+process = cms.Process('PFG',eras.Run2_2016)
+#inputFiles = "/store/express/Commissioning2016/ExpressPhysics/FEVT/Express-v1/000/268/958/00000/E249E6DE-ECFD-E511-8979-02163E012A42.root"
+inputFiles = "/store/data/Run2016H/JetHT/RAW/v1/000/283/877/00000/5C38E8B6-ED9B-E611-A26D-FA163E1C48F0.root"
 skipEvents = 0
-processEvents = 10000
+processEvents = 10
 outputFile = "results.root"
 
 #------------------------------------------------------------------------------------
@@ -24,9 +25,10 @@ process.source = cms.Source("PoolSource",
     skipEvents = cms.untracked.uint32(skipEvents)
 )
 
-process.TFileService = cms.Service("TFileService",
-     fileName = cms.string(outputFile)
-)
+#------------------------------------------------------------------------------------
+# Define output file
+#------------------------------------------------------------------------------------
+process.TFileService = cms.Service("TFileService",fileName = cms.string(outputFile))
 
 #------------------------------------------------------------------------------------
 # import of standard configurations
@@ -36,7 +38,7 @@ process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
-process.load('Configuration.StandardSequences.MagneticField_0T_cff')
+process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
@@ -65,24 +67,14 @@ process.load("HLTrigger.HLTfilters.triggerResultsFilter_cfi")
 from Configuration.StandardSequences.RawToDigi_Data_cff import *
 process.CustomizedRawToDigi = cms.Sequence(
 		gtDigis*
-		#siPixelDigis*
-		#siStripDigis*
-		#ecalDigis*
-		#ecalPreshowerDigis*
 		hcalDigis
-		#muonDTDigis*
-		#muonCSCDigis*
-		#muonRPCDigis*
-		#castorDigis*
-		#scalersRawToDigi*
-		#tcdsDigis
 )
 
 #------------------------------------------------------------------------------------
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '80X_dataRun2_Prompt_v4'
+process.GlobalTag.globaltag = '80X_dataRun2_HLT_v12'
 
 #------------------------------------------------------------------------------------
 # Configure modules
@@ -106,88 +98,28 @@ process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
 			)
 
 #------------------------------------------------------------------------------------
+# Configure sequence
+#------------------------------------------------------------------------------------
+process.hcalTupleHBHEDigis.recHits = cms.untracked.InputTag("hbheprereco")
+
+#------------------------------------------------------------------------------------
 # HcalTupleMaker sequence definition
 #------------------------------------------------------------------------------------
 process.tuple_step = cms.Sequence(
-    # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
-    # Make HCAL tuples: FED info
-    #    process.hcalTupleFEDs*
-    #    # Make HCAL tuples: digi info
-    #raw
     process.hcalTupleHBHEDigis*
-    #process.hcalTupleHODigis*
-    #process.hcalTupleHFDigis*
-    #process.hcalCosmicDigis*
-    process.hcalL1JetDigis*
-    process.hcalTupleTriggerPrimitives*
-    #    # Make HCAL tuples: digi info
-    #process.hcalTupleHBHECosmicsDigis*
-    #    process.hcalTupleHOCosmicsDigis*
-    #    # Make HCAL tuples: digi info
-    #process.hcalTupleHBHEL1JetsDigis*
-    #    process.hcalTupleHFL1JetsDigis*
-    #    process.hcalTupleL1JetTriggerPrimitives*
-    #    # Make HCAL tuples: reco info
-    process.hcalTupleHBHERecHits*
-    process.hcalTupleL1Jets*
-    #process.hcalTupleHFRecHits*
-    #process.hcalTupleHcalNoiseFilters*
-    #process.hcalTupleMuonTrack*
-    #
-    #process.hcalTupleHBHERecHitsMethod0*
-    #process.hcalTupleHcalNoiseFiltersMethod0*
-    #process.hcalTupleCaloJetMetMethod0*
-    #    process.hcalTupleHORecHits*
-    #    process.hcalTupleHFRecHits*
-    #    # Trigger info
-    #process.hcalTupleTrigger*
-    
-    #    process.hcalTupleTriggerObjects*
-    #    # Make HCAL tuples: cosmic muon info
-    # process.hcalTupleCosmicMuons*
-    #    # Package everything into a tree
-    #
+    process.hcalLocalRecoSequence *
     process.hcalTupleTree
 )
-
 
 #-----------------------------------------------------------------------------------
 # Path and EndPath definitions
 #-----------------------------------------------------------------------------------
 process.preparation = cms.Path(
-    #process.my_hlt *
-    #process.RawToDigi * #needed for RAW files
     process.CustomizedRawToDigi * 
-    #process.L1Reco *
-    #process.reconstruction * #needed for RAW files
-    #process.caloglobalreco *
     process.hcalLocalRecoSequence *
-    #
-    #process.horeco *
-    #process.hfreco *
-    #
-    #process.hbheprerecoMethod0 *
-    #process.hbheprerecoMethod2 *
-    #process.hbherecoMethod0 *
-    #process.hbherecoMethod2 *
-    #
-    #process.towerMakerMethod0 *
-    #process.towerMakerMethod2 *
-    #
-    #process.hcalnoiseMethod0 *
-    #process.hcalnoiseMethod2 *
-    #
-    #process.HBHENoiseFilterResultProducerMethod0 *
-    #process.HBHENoiseFilterResultProducerMethod2 *
-    #
-    #
-    #process.hcalCosmicDigis *
-    #process.hcalL1JetDigis *
-    #
-    process.hcalnoise *  #needed for RAW files
-    process.HBHENoiseFilterResultProducer *
-    process.ApplyBaselineHBHENoiseFilter *
-    #
+    #process.hcalnoise *  #needed for RAW files
+    #process.HBHENoiseFilterResultProducer *
+    #process.ApplyBaselineHBHENoiseFilter *
     process.tuple_step
 )

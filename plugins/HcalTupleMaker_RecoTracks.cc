@@ -19,12 +19,12 @@ HcalTupleMaker_RecoTracks::HcalTupleMaker_RecoTracks(const edm::ParameterSet& iC
 
 void HcalTupleMaker_RecoTracks::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   
-  std::auto_ptr<std::vector<double> > pt  ( new std::vector<double> () );
-  std::auto_ptr<std::vector<double> > eta ( new std::vector<double> () );
-  std::auto_ptr<std::vector<double> > phi ( new std::vector<double> () );
-  std::auto_ptr<std::vector<double> > d0  ( new std::vector<double> () );
-  std::auto_ptr<std::vector<double> > dz  ( new std::vector<double> () );
-  std::auto_ptr<std::vector<int> > nValidHits  ( new std::vector<int> () );
+  std::unique_ptr<std::vector<double> > pt  ( new std::vector<double> () );
+  std::unique_ptr<std::vector<double> > eta ( new std::vector<double> () );
+  std::unique_ptr<std::vector<double> > phi ( new std::vector<double> () );
+  std::unique_ptr<std::vector<double> > d0  ( new std::vector<double> () );
+  std::unique_ptr<std::vector<double> > dz  ( new std::vector<double> () );
+  std::unique_ptr<std::vector<int> > nValidHits  ( new std::vector<int> () );
   
   edm::Handle<reco::TrackCollection> recoTracks;
   iEvent.getByLabel(inputTag, recoTracks);  
@@ -41,11 +41,11 @@ void HcalTupleMaker_RecoTracks::produce(edm::Event& iEvent, const edm::EventSetu
     nValidHits  -> push_back ( recoTrack -> numberOfValidHits ());
   }
 
-  iEvent.put(pt  , prefix + "Pt"  + suffix );
-  iEvent.put(eta , prefix + "Eta" + suffix );
-  iEvent.put(phi , prefix + "Phi" + suffix );
-  iEvent.put(d0  , prefix + "D0"  + suffix );
-  iEvent.put(dz  , prefix + "DZ"  + suffix );
-  iEvent.put(nValidHits , prefix + "NValidHits" + suffix );
+  iEvent.put(move(pt  ), prefix + "Pt"  + suffix );
+  iEvent.put(move(eta ), prefix + "Eta" + suffix );
+  iEvent.put(move(phi ), prefix + "Phi" + suffix );
+  iEvent.put(move(d0  ), prefix + "D0"  + suffix );
+  iEvent.put(move(dz  ), prefix + "DZ"  + suffix );
+  iEvent.put(move(nValidHits), prefix + "NValidHits" + suffix );
   
 }

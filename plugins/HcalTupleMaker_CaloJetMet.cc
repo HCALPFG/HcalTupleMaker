@@ -43,35 +43,35 @@ HcalTupleMaker_CaloJetMet::HcalTupleMaker_CaloJetMet(const edm::ParameterSet& iC
 }
 
 void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
-  std::auto_ptr<std::vector<double> >            ebet         ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            eeet         ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            hbet         ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            heet         ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            hfet         ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            ebsume       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            eesume       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            hbsume       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            hesume       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            ebsumet      ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            eesumet      ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            hbsumet      ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            hesumet      ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            ebet         ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            eeet         ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            hbet         ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            heet         ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            hfet         ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            ebsume       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            eesume       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            hbsume       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            hesume       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            ebsumet      ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            eesumet      ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            hbsumet      ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            hesumet      ( new std::vector<double>           ());
   //
-  std::auto_ptr<std::vector<double> >            nominalmet   ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            nominalmet   ( new std::vector<double>           ());
   //
-  std::auto_ptr<std::vector<double> >            jeteta       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jetpt        ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jetphi       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jethadhb     ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jethadhe     ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jethadhf     ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jetemeb      ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jetemee      ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jetemhf      ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jetemfrac    ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            jethadfrac   ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<int> >               jetn90       ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<int> >               jetn60       ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<double> >            jeteta       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jetpt        ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jetphi       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jethadhb     ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jethadhe     ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jethadhf     ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jetemeb      ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jetemee      ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jetemhf      ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jetemfrac    ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            jethadfrac   ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<int> >               jetn90       ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<int> >               jetn60       ( new std::vector<int>              ());
  
   edm::Handle<HBHERecHitCollection> hRecHits;
   iEvent.getByToken(recoInputToken, hRecHits);
@@ -147,35 +147,35 @@ void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetu
   hbsumet -> push_back( HBSumET );
   hesumet -> push_back( HESumET );
 
-  iEvent.put(ebet       , prefix + "EBET"            + suffix );
-  iEvent.put(eeet       , prefix + "EEET"            + suffix );
-  iEvent.put(hbet       , prefix + "HBET"            + suffix );
-  iEvent.put(heet       , prefix + "HEET"            + suffix );
-  iEvent.put(hfet       , prefix + "HFET"            + suffix );
-  iEvent.put(ebsume     , prefix + "EBSumE"          + suffix );  
-  iEvent.put(eesume     , prefix + "EESumE"          + suffix );  
-  iEvent.put(hbsume     , prefix + "HBSumE"          + suffix );  
-  iEvent.put(hesume     , prefix + "HESumE"          + suffix );  
-  iEvent.put(ebsumet    , prefix + "EBSumET"         + suffix );  
-  iEvent.put(eesumet    , prefix + "EESumET"         + suffix );  
-  iEvent.put(hbsumet    , prefix + "HBSumET"         + suffix );  
-  iEvent.put(hesumet    , prefix + "HESumET"         + suffix );  
+  iEvent.put(move(ebet       ), prefix + "EBET"            + suffix );
+  iEvent.put(move(eeet       ), prefix + "EEET"            + suffix );
+  iEvent.put(move(hbet       ), prefix + "HBET"            + suffix );
+  iEvent.put(move(heet       ), prefix + "HEET"            + suffix );
+  iEvent.put(move(hfet       ), prefix + "HFET"            + suffix );
+  iEvent.put(move(ebsume     ), prefix + "EBSumE"          + suffix );
+  iEvent.put(move(eesume     ), prefix + "EESumE"          + suffix );
+  iEvent.put(move(hbsume     ), prefix + "HBSumE"          + suffix );
+  iEvent.put(move(hesume     ), prefix + "HESumE"          + suffix );
+  iEvent.put(move(ebsumet    ), prefix + "EBSumET"         + suffix );
+  iEvent.put(move(eesumet    ), prefix + "EESumET"         + suffix );
+  iEvent.put(move(hbsumet    ), prefix + "HBSumET"         + suffix );
+  iEvent.put(move(hesumet    ), prefix + "HESumET"         + suffix );
   //
-  iEvent.put(nominalmet , prefix + "NominalMET"      + suffix );  
+  iEvent.put(move(nominalmet ), prefix + "NominalMET"      + suffix );
   //
-  iEvent.put(jeteta     , prefix + "JetEta"         + suffix );  
-  iEvent.put(jetpt      , prefix + "JetPt"          + suffix );  
-  iEvent.put(jetphi     , prefix + "JetPhi"         + suffix );  
-  iEvent.put(jethadhb   , prefix + "JetHadHB"       + suffix );  
-  iEvent.put(jethadhe   , prefix + "JetHadHE"       + suffix );  
-  iEvent.put(jethadhf   , prefix + "JetHadHF"       + suffix );  
-  iEvent.put(jetemeb    , prefix + "JetEMEB"        + suffix );  
-  iEvent.put(jetemee    , prefix + "JetEMEE"        + suffix );  
-  iEvent.put(jetemhf    , prefix + "JetEMHF"        + suffix );  
-  iEvent.put(jetemfrac  , prefix + "JetEMFrac"      + suffix );
-  iEvent.put(jethadfrac , prefix + "JetHadFrac"     + suffix );
-  iEvent.put(jetn90     , prefix + "JetN90"         + suffix );
-  iEvent.put(jetn60     , prefix + "JetN60"         + suffix );
+  iEvent.put(move(jeteta     ), prefix + "JetEta"         + suffix );
+  iEvent.put(move(jetpt      ), prefix + "JetPt"          + suffix );
+  iEvent.put(move(jetphi     ), prefix + "JetPhi"         + suffix );
+  iEvent.put(move(jethadhb   ), prefix + "JetHadHB"       + suffix );
+  iEvent.put(move(jethadhe   ), prefix + "JetHadHE"       + suffix );
+  iEvent.put(move(jethadhf   ), prefix + "JetHadHF"       + suffix );
+  iEvent.put(move(jetemeb    ), prefix + "JetEMEB"        + suffix );
+  iEvent.put(move(jetemee    ), prefix + "JetEMEE"        + suffix );
+  iEvent.put(move(jetemhf    ), prefix + "JetEMHF"        + suffix );
+  iEvent.put(move(jetemfrac  ), prefix + "JetEMFrac"      + suffix );
+  iEvent.put(move(jethadfrac ), prefix + "JetHadFrac"     + suffix );
+  iEvent.put(move(jetn90     ), prefix + "JetN90"         + suffix );
+  iEvent.put(move(jetn60     ), prefix + "JetN60"         + suffix );
 }
 
 void HcalTupleMaker_CaloJetMet::CalculateTotalEnergiesHBHE(const HBHERecHitCollection &RecHits){

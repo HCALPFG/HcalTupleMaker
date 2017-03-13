@@ -32,16 +32,16 @@ HcalTupleMaker_HcalTriggerPrimitives::HcalTupleMaker_HcalTriggerPrimitives(const
 
 void HcalTupleMaker_HcalTriggerPrimitives::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
-  std::auto_ptr<std::vector<int   > >            ieta              ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<int   > >            iphi              ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<int   > >            SOI_compressedEt  ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<int   > >            SOI_fineGrain     ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<int   > >            size              ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<int   > >            presamples        ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<std::vector<int> > > compressedEt      ( new std::vector<std::vector<int> >());
-  std::auto_ptr<std::vector<std::vector<int> > > fineGrain         ( new std::vector<std::vector<int> >());
-  std::auto_ptr<std::vector<std::vector<int> > > hbheDigiIndex     ( new std::vector<std::vector<int> >());
-  std::auto_ptr<std::vector<std::vector<int> > > hfDigiIndex       ( new std::vector<std::vector<int> >());
+  std::unique_ptr<std::vector<int   > >            ieta              ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<int   > >            iphi              ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<int   > >            SOI_compressedEt  ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<int   > >            SOI_fineGrain     ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<int   > >            size              ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<int   > >            presamples        ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<std::vector<int> > > compressedEt      ( new std::vector<std::vector<int> >());
+  std::unique_ptr<std::vector<std::vector<int> > > fineGrain         ( new std::vector<std::vector<int> >());
+  std::unique_ptr<std::vector<std::vector<int> > > hbheDigiIndex     ( new std::vector<std::vector<int> >());
+  std::unique_ptr<std::vector<std::vector<int> > > hfDigiIndex       ( new std::vector<std::vector<int> >());
 
   edm::ESHandle<HcalTrigTowerGeometry> geometry;
   iSetup.get<CaloGeometryRecord>().get(geometry);
@@ -118,16 +118,16 @@ void HcalTupleMaker_HcalTriggerPrimitives::produce(edm::Event& iEvent, const edm
     }
   }
   
-  iEvent.put( ieta             , prefix + "IEta"            + suffix );
-  iEvent.put( iphi             , prefix + "IPhi"            + suffix );
-  iEvent.put( SOI_compressedEt , prefix + "CompressedEtSOI" + suffix );
-  iEvent.put( SOI_fineGrain    , prefix + "FineGrainSOI"    + suffix );
-  iEvent.put( presamples       , prefix + "Size"            + suffix );
-  iEvent.put( size             , prefix + "Presamples"      + suffix );
+  iEvent.put(move( ieta            )  , prefix + "IEta"            + suffix );
+  iEvent.put(move( iphi            ) , prefix + "IPhi"            + suffix );
+  iEvent.put(move( SOI_compressedEt) , prefix + "CompressedEtSOI" + suffix );
+  iEvent.put(move( SOI_fineGrain   ) , prefix + "FineGrainSOI"    + suffix );
+  iEvent.put(move( presamples      ) , prefix + "Size"            + suffix );
+  iEvent.put(move( size            ) , prefix + "Presamples"      + suffix );
   
-  iEvent.put( compressedEt     , prefix + "CompressedEt"    + suffix );
-  iEvent.put( fineGrain        , prefix + "FineGrain"       + suffix );
-  iEvent.put( hbheDigiIndex    , prefix + "HBHEDigiIndex"   + suffix );
-  iEvent.put( hfDigiIndex      , prefix + "HFDigiIndex"     + suffix );
+  iEvent.put(move( compressedEt    ) , prefix + "CompressedEt"    + suffix );
+  iEvent.put(move( fineGrain       ) , prefix + "FineGrain"       + suffix );
+  iEvent.put(move( hbheDigiIndex   ) , prefix + "HBHEDigiIndex"   + suffix );
+  iEvent.put(move( hfDigiIndex     ) , prefix + "HFDigiIndex"     + suffix );
   
 }

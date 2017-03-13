@@ -33,9 +33,9 @@ void HcalCosmicDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup&
   iEvent.getByToken(hoToken_,hoInputDigis);
   iEvent.getByToken(hfToken_,hfInputDigis);
 
-  std::auto_ptr<HBHEDigiCollection> hbheOutputDigis(new HBHEDigiCollection()); 
-  std::auto_ptr<HODigiCollection>   hoOutputDigis  (new HODigiCollection());
-  std::auto_ptr<HFDigiCollection>   hfOutputDigis  (new HFDigiCollection());
+  std::unique_ptr<HBHEDigiCollection> hbheOutputDigis(new HBHEDigiCollection());
+  std::unique_ptr<HODigiCollection>   hoOutputDigis  (new HODigiCollection());
+  std::unique_ptr<HFDigiCollection>   hfOutputDigis  (new HFDigiCollection());
 
   reco::TrackCollection::const_iterator recoTrack     = recoTracks -> begin();
   reco::TrackCollection::const_iterator recoTrack_end = recoTracks -> end();
@@ -74,9 +74,9 @@ void HcalCosmicDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup&
     }
   }
 
-  iEvent.put(hbheOutputDigis);
-  iEvent.put(hoOutputDigis  );
-  iEvent.put(hfOutputDigis  );
+  iEvent.put(move(hbheOutputDigis));
+  iEvent.put(move(hoOutputDigis  ));
+  iEvent.put(move(hfOutputDigis  ));
   
 }
 

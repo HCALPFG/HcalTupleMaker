@@ -21,17 +21,17 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
 
   void run ();
   
-  std::auto_ptr<std::vector<int  > > ieta;           
-  std::auto_ptr<std::vector<int  > > iphi;           
-  std::auto_ptr<std::vector<float> > eta;           
-  std::auto_ptr<std::vector<float> > phi;           
-  std::auto_ptr<std::vector<int  > > depth;          
-  std::auto_ptr<std::vector<int  > > rbxid;
-  std::auto_ptr<std::vector<int  > > hpdid;
-  std::auto_ptr<std::vector<float> > energy;    
-  std::auto_ptr<std::vector<float> > time;    
-  std::auto_ptr<std::vector<int  > > flags;           
-  std::auto_ptr<std::vector<int  > > aux;     
+  std::unique_ptr<std::vector<int  > > ieta;
+  std::unique_ptr<std::vector<int  > > iphi;
+  std::unique_ptr<std::vector<float> > eta;
+  std::unique_ptr<std::vector<float> > phi;
+  std::unique_ptr<std::vector<int  > > depth;
+  std::unique_ptr<std::vector<int  > > rbxid;
+  std::unique_ptr<std::vector<int  > > hpdid;
+  std::unique_ptr<std::vector<float> > energy;
+  std::unique_ptr<std::vector<float> > time;
+  std::unique_ptr<std::vector<int  > > flags;
+  std::unique_ptr<std::vector<int  > > aux;
   
   template <class RecoCollection > 
     void run ( const RecoCollection & recos, const CaloGeometry & geometry ){

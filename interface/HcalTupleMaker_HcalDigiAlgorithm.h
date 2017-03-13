@@ -31,37 +31,37 @@ public:
   void setFilterChannels (bool b ) { m_filterChannels = b; }
   void setChannelFilterList ( std::vector<edm::ParameterSet> vps ) { m_channelFilterList = vps; }
   
-  std::auto_ptr<std::vector<int> > ieta;           
-  std::auto_ptr<std::vector<int> > iphi;           
-  std::auto_ptr<std::vector<float> > eta;           
-  std::auto_ptr<std::vector<float> > phi;          
-  std::auto_ptr<std::vector<int> > subdet;          
-  std::auto_ptr<std::vector<int> > depth;          
-  std::auto_ptr<std::vector<int> > presamples;     
-  std::auto_ptr<std::vector<int> > size;           
-  std::auto_ptr<std::vector<int> > fiberIdleOffset;
-  std::auto_ptr<std::vector<int> > electronicsId;
-  std::auto_ptr<std::vector<int> > rawId;
+  std::unique_ptr<std::vector<int> > ieta;
+  std::unique_ptr<std::vector<int> > iphi;
+  std::unique_ptr<std::vector<float> > eta;
+  std::unique_ptr<std::vector<float> > phi;
+  std::unique_ptr<std::vector<int> > subdet;
+  std::unique_ptr<std::vector<int> > depth;
+  std::unique_ptr<std::vector<int> > presamples;
+  std::unique_ptr<std::vector<int> > size;
+  std::unique_ptr<std::vector<int> > fiberIdleOffset;
+  std::unique_ptr<std::vector<int> > electronicsId;
+  std::unique_ptr<std::vector<int> > rawId;
 
-  std::auto_ptr<std::vector<std::vector<int  > > > dv;	     	
-  std::auto_ptr<std::vector<std::vector<int  > > > er;	     	
-  std::auto_ptr<std::vector<std::vector<int  > > > raw;	     	
-  std::auto_ptr<std::vector<std::vector<int  > > > adc;	     	
-  std::auto_ptr<std::vector<std::vector<float> > > nomFC;    	
-  std::auto_ptr<std::vector<std::vector<int  > > > fiber;    	
-  std::auto_ptr<std::vector<std::vector<int  > > > fiberChan;	
-  std::auto_ptr<std::vector<std::vector<int  > > > capid;   
-  std::auto_ptr<std::vector<std::vector<int  > > > ladc;   
+  std::unique_ptr<std::vector<std::vector<int  > > > dv;
+  std::unique_ptr<std::vector<std::vector<int  > > > er;
+  std::unique_ptr<std::vector<std::vector<int  > > > raw;
+  std::unique_ptr<std::vector<std::vector<int  > > > adc;
+  std::unique_ptr<std::vector<std::vector<float> > > nomFC;
+  std::unique_ptr<std::vector<std::vector<int  > > > fiber;
+  std::unique_ptr<std::vector<std::vector<int  > > > fiberChan;
+  std::unique_ptr<std::vector<std::vector<int  > > > capid;
+  std::unique_ptr<std::vector<std::vector<int  > > > ladc;
 						                
-  std::auto_ptr<std::vector<std::vector<float> > > allFC;    	
-  std::auto_ptr<std::vector<std::vector<float> > > pedFC;    	
-  std::auto_ptr<std::vector<std::vector<float> > > gain;    	
-  std::auto_ptr<std::vector<std::vector<float> > > rcgain;    	
-  std::auto_ptr<std::vector<std::vector<float> > > FC;		
-  std::auto_ptr<std::vector<std::vector<float> > > energy;    	
+  std::unique_ptr<std::vector<std::vector<float> > > allFC;
+  std::unique_ptr<std::vector<std::vector<float> > > pedFC;
+  std::unique_ptr<std::vector<std::vector<float> > > gain;
+  std::unique_ptr<std::vector<std::vector<float> > > rcgain;
+  std::unique_ptr<std::vector<std::vector<float> > > FC;
+  std::unique_ptr<std::vector<std::vector<float> > > energy;
 						                
-  std::auto_ptr<std::vector<float> > rec_energy;    
-  std::auto_ptr<std::vector<float> > rec_time;    
+  std::unique_ptr<std::vector<float> > rec_energy;
+  std::unique_ptr<std::vector<float> > rec_time;
   
   template <class DigiCollection, class RecoCollection, class DetIdClass, class DetIdClassWrapper > 
   void run ( const HcalDbService    & conditions,  

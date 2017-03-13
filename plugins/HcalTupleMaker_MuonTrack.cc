@@ -64,24 +64,24 @@ HcalTupleMaker_MuonTrack::HcalTupleMaker_MuonTrack(const edm::ParameterSet& iCon
 }
 
 void HcalTupleMaker_MuonTrack::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
-  std::auto_ptr<std::vector<double> >            muoneta       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            muonpt        ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            muonphi       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            muoncalenergyhads9     ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            muoncalenergyhad       ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            muoncalenergyems25     ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            muoncalenergyem        ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<int> >               muonnumberofchambers         ( new std::vector<int>               ());
-  std::auto_ptr<std::vector<int> >               muonnumberofmatchedstations  ( new std::vector<int>               ());
-  std::auto_ptr<std::vector<int> >               muonnumberofmatchedrpclayers ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<double> >            muoneta       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            muonpt        ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            muonphi       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            muoncalenergyhads9     ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            muoncalenergyhad       ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            muoncalenergyems25     ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            muoncalenergyem        ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<int> >               muonnumberofchambers         ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muonnumberofmatchedstations  ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muonnumberofmatchedrpclayers ( new std::vector<int>               ());
   //
-  std::auto_ptr<std::vector<int> >               muoncsc2drechitssize         ( new std::vector<int>               ());
-  std::auto_ptr<std::vector<int> >               muonrpcrechitssize           ( new std::vector<int>               ());
-  std::auto_ptr<std::vector<int> >               muondt1drechitssize          ( new std::vector<int>               ());
-  std::auto_ptr<std::vector<int> >               muondt1dcosmicrechitssize    ( new std::vector<int>               ());
-  std::auto_ptr<std::vector<int> >               muoncscsegmentssize          ( new std::vector<int>               ());
-  std::auto_ptr<std::vector<int> >               muondtrecsegmentssize        ( new std::vector<int>               ());
-  std::auto_ptr<std::vector<int> >               muondtreccosmicsegmentssize  ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muoncsc2drechitssize         ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muonrpcrechitssize           ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muondt1drechitssize          ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muondt1dcosmicrechitssize    ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muoncscsegmentssize          ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muondtrecsegmentssize        ( new std::vector<int>               ());
+  std::unique_ptr<std::vector<int> >               muondtreccosmicsegmentssize  ( new std::vector<int>               ());
 
   //Get Muon DT, CSC, RPC rechits, segments:
   edm::Handle<CSCSegmentCollection> hCSCSegments;
@@ -164,23 +164,23 @@ void HcalTupleMaker_MuonTrack::produce(edm::Event& iEvent, const edm::EventSetup
     //std::cout<<"       hMuons.isolationR05.emEt: "<<(*mu).isolationR05().emEt<<std::endl;
   }
   
-  iEvent.put(muoneta    , prefix + "MuonEta"                        + suffix );
-  iEvent.put(muonpt     , prefix + "MuonPt"                         + suffix );
-  iEvent.put(muonphi    , prefix + "MuonPhi"                        + suffix );
+  iEvent.put(move(muoneta)    , prefix + "MuonEta"                        + suffix );
+  iEvent.put(move(muonpt)     , prefix + "MuonPt"                         + suffix );
+  iEvent.put(move(muonphi)    , prefix + "MuonPhi"                        + suffix );
   //
-  iEvent.put(muoncalenergyhads9 ,           prefix + "MuonCalEnergyHadS9"             + suffix );
-  iEvent.put(muoncalenergyhad   ,           prefix + "MuonCalEnergyHad"               + suffix );
-  iEvent.put(muoncalenergyems25 ,           prefix + "MuonCalEnergyEmS25"             + suffix );
-  iEvent.put(muoncalenergyem    ,           prefix + "MuonCalEnergyEm"                + suffix );
-  iEvent.put(muonnumberofchambers         , prefix + "MuonNumberOfChambers"           + suffix );
-  iEvent.put(muonnumberofmatchedstations  , prefix + "MuonNumberOfMatchedStations"    + suffix );
-  iEvent.put(muonnumberofmatchedrpclayers , prefix + "MuonNumberOfMatchedRPCLayers"   + suffix );
+  iEvent.put(move(muoncalenergyhads9) ,           prefix + "MuonCalEnergyHadS9"             + suffix );
+  iEvent.put(move(muoncalenergyhad)   ,           prefix + "MuonCalEnergyHad"               + suffix );
+  iEvent.put(move(muoncalenergyems25) ,           prefix + "MuonCalEnergyEmS25"             + suffix );
+  iEvent.put(move(muoncalenergyem)    ,           prefix + "MuonCalEnergyEm"                + suffix );
+  iEvent.put(move(muonnumberofchambers)         , prefix + "MuonNumberOfChambers"           + suffix );
+  iEvent.put(move(muonnumberofmatchedstations)  , prefix + "MuonNumberOfMatchedStations"    + suffix );
+  iEvent.put(move(muonnumberofmatchedrpclayers) , prefix + "MuonNumberOfMatchedRPCLayers"   + suffix );
   //
-  iEvent.put(muoncsc2drechitssize,          prefix + "MuonCSC2DRecHitsSize"           + suffix );
-  iEvent.put(muonrpcrechitssize  ,          prefix + "MuonRPCRecHitsSize"             + suffix );
-  iEvent.put(muondt1drechitssize ,          prefix + "MuonDT1DRecHitsSize"            + suffix );
-  iEvent.put(muondt1dcosmicrechitssize  ,   prefix + "MuonDT1DCosmicRecHitsSize"      + suffix );
-  iEvent.put(muoncscsegmentssize        ,   prefix + "MuonCSCSegmentsSize"            + suffix );
-  iEvent.put(muondtrecsegmentssize      ,   prefix + "MuonDTRecSegmentsSize"          + suffix );
-  iEvent.put(muondtreccosmicsegmentssize,   prefix + "MuonDTRecCosmicSegmentsSize"    + suffix );
+  iEvent.put(move(muoncsc2drechitssize),          prefix + "MuonCSC2DRecHitsSize"           + suffix );
+  iEvent.put(move(muonrpcrechitssize)  ,          prefix + "MuonRPCRecHitsSize"             + suffix );
+  iEvent.put(move(muondt1drechitssize) ,          prefix + "MuonDT1DRecHitsSize"            + suffix );
+  iEvent.put(move(muondt1dcosmicrechitssize)  ,   prefix + "MuonDT1DCosmicRecHitsSize"      + suffix );
+  iEvent.put(move(muoncscsegmentssize)        ,   prefix + "MuonCSCSegmentsSize"            + suffix );
+  iEvent.put(move(muondtrecsegmentssize)      ,   prefix + "MuonDTRecSegmentsSize"          + suffix );
+  iEvent.put(move(muondtreccosmicsegmentssize),   prefix + "MuonDTRecCosmicSegmentsSize"    + suffix );
 }

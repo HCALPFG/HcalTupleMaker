@@ -29,11 +29,11 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   // Declare items to push into the event
   //------------------------------------------------------------------------
   
-  std::auto_ptr<std::vector < std::string          > > v_filter_names( new std::vector< std::string          > ());
-  std::auto_ptr<std::vector < std::vector< int   > > > v_filter_ids  ( new std::vector< std::vector< int   > > ());
-  std::auto_ptr<std::vector < std::vector< float > > > v_filter_pts  ( new std::vector< std::vector< float > > ());
-  std::auto_ptr<std::vector < std::vector< float > > > v_filter_etas ( new std::vector< std::vector< float > > ());
-  std::auto_ptr<std::vector < std::vector< float > > > v_filter_phis ( new std::vector< std::vector< float > > ());
+  std::unique_ptr<std::vector < std::string          > > v_filter_names( new std::vector< std::string          > ());
+  std::unique_ptr<std::vector < std::vector< int   > > > v_filter_ids  ( new std::vector< std::vector< int   > > ());
+  std::unique_ptr<std::vector < std::vector< float > > > v_filter_pts  ( new std::vector< std::vector< float > > ());
+  std::unique_ptr<std::vector < std::vector< float > > > v_filter_etas ( new std::vector< std::vector< float > > ());
+  std::unique_ptr<std::vector < std::vector< float > > > v_filter_phis ( new std::vector< std::vector< float > > ());
   
   //------------------------------------------------------------------------
   // Get the trigger event and make sure it's valid
@@ -158,11 +158,11 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   // Push the information into the event
   //------------------------------------------------------------------------
 
-  iEvent.put ( v_filter_names, prefix + "FilterName"    + suffix ) ;
-  iEvent.put ( v_filter_ids  , prefix + "FilterObjId"   + suffix ) ;
-  iEvent.put ( v_filter_pts  , prefix + "FilterObjPt"   + suffix ) ;
-  iEvent.put ( v_filter_etas , prefix + "FilterObjEta"  + suffix ) ;
-  iEvent.put ( v_filter_phis , prefix + "FilterObjPhi"  + suffix ) ;
+  iEvent.put ( move( v_filter_names), prefix + "FilterName"    + suffix ) ;
+  iEvent.put ( move( v_filter_ids ) , prefix + "FilterObjId"   + suffix ) ;
+  iEvent.put ( move( v_filter_pts ) , prefix + "FilterObjPt"   + suffix ) ;
+  iEvent.put ( move( v_filter_etas ), prefix + "FilterObjEta"  + suffix ) ;
+  iEvent.put ( move( v_filter_phis ), prefix + "FilterObjPhi"  + suffix ) ;
 	      
 
 }

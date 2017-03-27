@@ -84,7 +84,8 @@ HcalTupleMaker_Tree::HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) {
   leafmap["String"]     = STRING;     leafmap["Strings"]    = STRING_V;
 
   edm::Service<edm::ConstProductRegistry> reg;
-  edm::SelectedProducts allBranches = reg->allBranchDescriptions();
+  //edm::SelectedProducts allBranches = reg->allBranchDescriptions(); 
+  std::vector< edm::BranchDescription const * > allBranches = reg->allBranchDescriptions();
   //edm::ProductSelectorRules productSelectorRules_(pset, "outputCommands", "HcalTupleMaker_Tree");
   edm::ProductSelectorRules productSelectorRules_(iConfig, "outputCommands", "HcalTupleMaker_Tree");
   edm::ProductSelector productSelector_;
@@ -92,7 +93,8 @@ HcalTupleMaker_Tree::HcalTupleMaker_Tree(const edm::ParameterSet& iConfig) {
 
   std::set<std::string> branchnames;
 
-  BOOST_FOREACH( const edm::SelectedProducts::value_type& selection, allBranches) {
+  //BOOST_FOREACH( const edm::SelectedProducts::value_type& selection, allBranches) {
+  for ( auto selection : allBranches ) {
     if(productSelector_.selected(*selection)) {
 
       //Check for duplicate branch names

@@ -136,76 +136,76 @@ class HcalTupleMaker_HcalDigis : public edm::EDProducer {
  protected:
   
   void loadAlgo(){
-    algo.ieta            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.iphi            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.eta             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
-    algo.phi             = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());
-    algo.depth           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.rbxid           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.hpdid           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.subdet          = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.presamples      = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.size            = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.fiberIdleOffset = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.electronicsId   = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.rawId           = std::auto_ptr<std::vector<int> >                 ( new std::vector<int>   ());
-    algo.rec_energy      = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());  
-    algo.rec_time        = std::auto_ptr<std::vector<float> >               ( new std::vector<float> ());  
+    algo.ieta            = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.iphi            = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.eta             = std::unique_ptr<std::vector<float> >               ( new std::vector<float> ());
+    algo.phi             = std::unique_ptr<std::vector<float> >               ( new std::vector<float> ());
+    algo.depth           = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.rbxid           = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.hpdid           = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.subdet          = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.presamples      = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.size            = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.fiberIdleOffset = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.electronicsId   = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.rawId           = std::unique_ptr<std::vector<int> >                 ( new std::vector<int>   ());
+    algo.rec_energy      = std::unique_ptr<std::vector<float> >               ( new std::vector<float> ());  
+    algo.rec_time        = std::unique_ptr<std::vector<float> >               ( new std::vector<float> ());  
     
-    algo.dv 	         = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
-    algo.er 	         = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
-    algo.raw 	         = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
-    algo.adc 	         = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
-    algo.nomFC           = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
-    algo.fiber           = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
-    algo.fiberChan       = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
-    algo.capid           = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
-    algo.ladc            = std::auto_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.dv 	         = std::unique_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.er 	         = std::unique_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.raw 	         = std::unique_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.adc 	         = std::unique_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.nomFC           = std::unique_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
+    algo.fiber           = std::unique_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.fiberChan       = std::unique_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.capid           = std::unique_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
+    algo.ladc            = std::unique_ptr<std::vector<std::vector<int  > > > ( new std::vector<std::vector<int  > > ());  
     
-    algo.allFC           = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
-    algo.pedFC           = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
-    algo.gain            = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
-    algo.rcgain          = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
-    algo.FC 	         = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
-    algo.energy          = std::auto_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
+    algo.allFC           = std::unique_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
+    algo.pedFC           = std::unique_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
+    algo.gain            = std::unique_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
+    algo.rcgain          = std::unique_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
+    algo.FC 	         = std::unique_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
+    algo.energy          = std::unique_ptr<std::vector<std::vector<float> > > ( new std::vector<std::vector<float> > ());  
     
   }
 
  void dumpAlgo ( edm::Event & iEvent ){
 
-   iEvent.put ( algo.ieta            , m_prefix + "IEta"            + m_suffix );
-   iEvent.put ( algo.iphi            , m_prefix + "IPhi"            + m_suffix );
-   iEvent.put ( algo.eta             , m_prefix + "Eta"             + m_suffix );
-   iEvent.put ( algo.phi             , m_prefix + "Phi"             + m_suffix );
-   iEvent.put ( algo.depth           , m_prefix + "Depth"           + m_suffix );
-   iEvent.put ( algo.rbxid           , m_prefix + "RBXid"           + m_suffix );
-   iEvent.put ( algo.hpdid           , m_prefix + "HPDid"           + m_suffix );
-   iEvent.put ( algo.subdet          , m_prefix + "Subdet"          + m_suffix );
-   iEvent.put ( algo.presamples      , m_prefix + "Presamples"      + m_suffix );
-   iEvent.put ( algo.size            , m_prefix + "Size"            + m_suffix );
-   iEvent.put ( algo.fiberIdleOffset , m_prefix + "FiberIdleOffset" + m_suffix );
-   iEvent.put ( algo.electronicsId   , m_prefix + "ElectronicsID"   + m_suffix );
-   iEvent.put ( algo.rawId           , m_prefix + "RawID"           + m_suffix );
+   iEvent.put ( move( algo.ieta            ), m_prefix + "IEta"            + m_suffix );
+   iEvent.put ( move( algo.iphi            ), m_prefix + "IPhi"            + m_suffix );
+   iEvent.put ( move( algo.eta             ), m_prefix + "Eta"             + m_suffix );
+   iEvent.put ( move( algo.phi             ), m_prefix + "Phi"             + m_suffix );
+   iEvent.put ( move( algo.depth           ), m_prefix + "Depth"           + m_suffix );
+   iEvent.put ( move( algo.rbxid           ), m_prefix + "RBXid"           + m_suffix );
+   iEvent.put ( move( algo.hpdid           ), m_prefix + "HPDid"           + m_suffix );
+   iEvent.put ( move( algo.subdet          ), m_prefix + "Subdet"          + m_suffix );
+   iEvent.put ( move( algo.presamples      ), m_prefix + "Presamples"      + m_suffix );
+   iEvent.put ( move( algo.size            ), m_prefix + "Size"            + m_suffix );
+   iEvent.put ( move( algo.fiberIdleOffset ), m_prefix + "FiberIdleOffset" + m_suffix );
+   iEvent.put ( move( algo.electronicsId   ), m_prefix + "ElectronicsID"   + m_suffix );
+   iEvent.put ( move( algo.rawId           ), m_prefix + "RawID"           + m_suffix );
    
-   iEvent.put ( algo.dv              , m_prefix + "DV"              + m_suffix );	     	
-   iEvent.put ( algo.er              , m_prefix + "ER"              + m_suffix );	     	
-   iEvent.put ( algo.raw  	     , m_prefix + "Raw"             + m_suffix );	     	
-   iEvent.put ( algo.adc   	     , m_prefix + "ADC"             + m_suffix );	     	
-   iEvent.put ( algo.nomFC           , m_prefix + "NomFC"           + m_suffix );    	
-   iEvent.put ( algo.fiber           , m_prefix + "Fiber"           + m_suffix );    	
-   iEvent.put ( algo.fiberChan       , m_prefix + "FiberChan"       + m_suffix );	
-   iEvent.put ( algo.capid           , m_prefix + "CapID"           + m_suffix );    	
-   iEvent.put ( algo.ladc   	     , m_prefix + "LADC"            + m_suffix );	     	
+   iEvent.put ( move( algo.dv              ), m_prefix + "DV"              + m_suffix );	     	
+   iEvent.put ( move( algo.er              ), m_prefix + "ER"              + m_suffix );	     	
+   iEvent.put ( move( algo.raw  	       ), m_prefix + "Raw"             + m_suffix );	     	
+   iEvent.put ( move( algo.adc   	       ), m_prefix + "ADC"             + m_suffix );	     	
+   iEvent.put ( move( algo.nomFC           ), m_prefix + "NomFC"           + m_suffix );    	
+   iEvent.put ( move( algo.fiber           ), m_prefix + "Fiber"           + m_suffix );    	
+   iEvent.put ( move( algo.fiberChan       ), m_prefix + "FiberChan"       + m_suffix );	
+   iEvent.put ( move( algo.capid           ), m_prefix + "CapID"           + m_suffix );    	
+   iEvent.put ( move( algo.ladc   	       ), m_prefix + "LADC"            + m_suffix );	     	
    
-   iEvent.put ( algo.allFC           , m_prefix + "AllFC"           + m_suffix );    	
-   iEvent.put ( algo.pedFC           , m_prefix + "PedFC"           + m_suffix );    	
-   iEvent.put ( algo.gain            , m_prefix + "Gain"            + m_suffix );    	
-   iEvent.put ( algo.rcgain          , m_prefix + "RCGain"          + m_suffix );    	
-   iEvent.put ( algo.FC 	     , m_prefix + "FC"              + m_suffix );		
-   iEvent.put ( algo.energy          , m_prefix + "Energy"          + m_suffix );    	
+   iEvent.put ( move( algo.allFC           ), m_prefix + "AllFC"           + m_suffix );    	
+   iEvent.put ( move( algo.pedFC           ), m_prefix + "PedFC"           + m_suffix );    	
+   iEvent.put ( move( algo.gain            ), m_prefix + "Gain"            + m_suffix );    	
+   iEvent.put ( move( algo.rcgain          ), m_prefix + "RCGain"          + m_suffix );    	
+   iEvent.put ( move( algo.FC 	           ), m_prefix + "FC"              + m_suffix );		
+   iEvent.put ( move( algo.energy          ), m_prefix + "Energy"          + m_suffix );    	
    
-   iEvent.put ( algo.rec_energy      , m_prefix + "RecEnergy"       + m_suffix );    	
-   iEvent.put ( algo.rec_time        , m_prefix + "RecTime"         + m_suffix );      
+   iEvent.put ( move( algo.rec_energy      ), m_prefix + "RecEnergy"       + m_suffix );    	
+   iEvent.put ( move( algo.rec_time        ), m_prefix + "RecTime"         + m_suffix );      
    
  }
 };

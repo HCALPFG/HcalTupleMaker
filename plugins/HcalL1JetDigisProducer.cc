@@ -45,9 +45,9 @@ void HcalL1JetDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   iEvent.getByLabel(m_tpsTag      , hcalInputTPs  );
 
   // Declare output collections
-  std::auto_ptr<HBHEDigiCollection>         hbheOutputDigis(new HBHEDigiCollection()); 
-  std::auto_ptr<HFDigiCollection>           hfOutputDigis  (new HFDigiCollection());
-  std::auto_ptr<HcalTrigPrimDigiCollection> hcalOutputTPs  (new HcalTrigPrimDigiCollection());
+  std::unique_ptr<HBHEDigiCollection>         hbheOutputDigis(new HBHEDigiCollection()); 
+  std::unique_ptr<HFDigiCollection>           hfOutputDigis  (new HFDigiCollection());
+  std::unique_ptr<HcalTrigPrimDigiCollection> hcalOutputTPs  (new HcalTrigPrimDigiCollection());
 
   // Get iterators for various input collections
   HcalTrigPrimDigiCollection::const_iterator iTP;
@@ -133,9 +133,9 @@ void HcalL1JetDigisProducer::produce(edm::Event& iEvent, const edm::EventSetup& 
   } // End loop over jet collections
 
   // Put new collections into the event
-  iEvent.put(hcalOutputTPs  );
-  iEvent.put(hbheOutputDigis);
-  iEvent.put(hfOutputDigis  );
+  iEvent.put( move(hcalOutputTPs  ));
+  iEvent.put( move(hbheOutputDigis));
+  iEvent.put( move(hfOutputDigis  ));
   
 }
 

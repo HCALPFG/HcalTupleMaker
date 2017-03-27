@@ -20,10 +20,10 @@ HcalTupleMaker_HcalLaserDigis::HcalTupleMaker_HcalLaserDigis(const edm::Paramete
 
 void HcalTupleMaker_HcalLaserDigis::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   
-  std::auto_ptr<std::vector<int   > > qadc          ( new std::vector<int>    ());
-  std::auto_ptr<std::vector<int   > > tdcHitChannel ( new std::vector<int>    ());
-  std::auto_ptr<std::vector<int   > > tdcHitRaw     ( new std::vector<int>    ());
-  std::auto_ptr<std::vector<double> > tdcHitNS      ( new std::vector<double> ());
+  std::unique_ptr<std::vector<int   > > qadc          ( new std::vector<int>    ());
+  std::unique_ptr<std::vector<int   > > tdcHitChannel ( new std::vector<int>    ());
+  std::unique_ptr<std::vector<int   > > tdcHitRaw     ( new std::vector<int>    ());
+  std::unique_ptr<std::vector<double> > tdcHitNS      ( new std::vector<double> ());
 
   edm::Handle <HcalLaserDigi> digi;
   iEvent.getByLabel(inputTag, digi);
@@ -38,16 +38,16 @@ void HcalTupleMaker_HcalLaserDigis::produce(edm::Event& iEvent, const edm::Event
     tdcHitNS      -> push_back ( digi -> hitNS      ( iTDC ) );
   }
 
-  std::auto_ptr<int> attenuator1 ( new int(digi -> attenuator1()) );
-  std::auto_ptr<int> attenuator2 ( new int(digi -> attenuator2()) );
-  std::auto_ptr<int> selector    ( new int(digi -> selector   ()) );
+  std::unique_ptr<int> attenuator1 ( new int(digi -> attenuator1()) );
+  std::unique_ptr<int> attenuator2 ( new int(digi -> attenuator2()) );
+  std::unique_ptr<int> selector    ( new int(digi -> selector   ()) );
 
-  iEvent.put( qadc          , prefix + "QADC"          + suffix ); 
-  iEvent.put( tdcHitChannel , prefix + "TDCHitChannel" + suffix ); 
-  iEvent.put( tdcHitRaw     , prefix + "TDCHitRaw"     + suffix );  
-  iEvent.put( tdcHitNS      , prefix + "TDCHitNS"      + suffix );  
-  iEvent.put( attenuator1   , prefix + "Attenuator1"   + suffix );
-  iEvent.put( attenuator2   , prefix + "Attenuator2"   + suffix );
-  iEvent.put( selector      , prefix + "Selector"      + suffix );
+  iEvent.put ( move( qadc          ), prefix + "QADC"          + suffix ); 
+  iEvent.put ( move( tdcHitChannel ), prefix + "TDCHitChannel" + suffix ); 
+  iEvent.put ( move( tdcHitRaw     ), prefix + "TDCHitRaw"     + suffix );  
+  iEvent.put ( move( tdcHitNS      ), prefix + "TDCHitNS"      + suffix );  
+  iEvent.put ( move( attenuator1   ), prefix + "Attenuator1"   + suffix );
+  iEvent.put ( move( attenuator2   ), prefix + "Attenuator2"   + suffix );
+  iEvent.put ( move( selector      ), prefix + "Selector"      + suffix );
   
 }

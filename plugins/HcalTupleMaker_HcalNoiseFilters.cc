@@ -83,44 +83,44 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
 
 void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   
-  std::auto_ptr<std::vector<int> >                  officialdecision           ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  officialdecisionrun1       ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  officialdecisionrun2l      ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  officialdecisionrun2t      ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  isonoisefilterdecision     ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  hpdhits                    ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  hpdnootherhits             ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  maxzeros                   ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<double> >               mine2e10                   ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<double> >               maxe2e10                   ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<int> >                  hasbadrbxr45               ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  hasbadrbxrechitr45loose    ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  hasbadrbxrechitr45tight    ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<int> >                  numisolatednoisechannels   ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<double> >               isolatednoisesume          ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<double> >               isolatednoisesumet         ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<int> >                  numnegativenoisechannels   ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<double> >               negativenoisesume          ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<double> >               negativenoisesumet         ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<int> >                  numspikenoisechannels      ( new std::vector<int>                  ());
-  std::auto_ptr<std::vector<double> >               spikenoisesume             ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<double> >               spikenoisesumet            ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<int> >                  officialdecision           ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  officialdecisionrun1       ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  officialdecisionrun2l      ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  officialdecisionrun2t      ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  isonoisefilterdecision     ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  hpdhits                    ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  hpdnootherhits             ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  maxzeros                   ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<double> >               mine2e10                   ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<double> >               maxe2e10                   ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<int> >                  hasbadrbxr45               ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  hasbadrbxrechitr45loose    ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  hasbadrbxrechitr45tight    ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<int> >                  numisolatednoisechannels   ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<double> >               isolatednoisesume          ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<double> >               isolatednoisesumet         ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<int> >                  numnegativenoisechannels   ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<double> >               negativenoisesume          ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<double> >               negativenoisesumet         ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<int> >                  numspikenoisechannels      ( new std::vector<int>                  ());
+  std::unique_ptr<std::vector<double> >               spikenoisesume             ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<double> >               spikenoisesumet            ( new std::vector<double>               ());
   //
-  std::auto_ptr<std::vector<std::vector<double> > > rbxcharge                  ( new std::vector<std::vector<double> > ());
-  std::auto_ptr<std::vector<std::vector<double> > > rbxcharge15                ( new std::vector<std::vector<double> > ());
-  std::auto_ptr<std::vector<double> >               rbxenergy                  ( new std::vector<double>               ());
-  std::auto_ptr<std::vector<double> >               rbxenergy15                ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<std::vector<double> > > rbxcharge                  ( new std::vector<std::vector<double> > ());
+  std::unique_ptr<std::vector<std::vector<double> > > rbxcharge15                ( new std::vector<std::vector<double> > ());
+  std::unique_ptr<std::vector<double> >               rbxenergy                  ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<double> >               rbxenergy15                ( new std::vector<double>               ());
   //
-  std::auto_ptr<std::vector<double> >               hbherechitenergyraw        ( new std::vector<double>               ());
+  std::unique_ptr<std::vector<double> >               hbherechitenergyraw        ( new std::vector<double>               ());
   //
-  std::auto_ptr<std::vector<std::vector<int> > >    hbherechitauxcapid         ( new std::vector<std::vector<int> >    ());   
-  std::auto_ptr<std::vector<std::vector<int> > >    hbherechitauxadc           ( new std::vector<std::vector<int> >    ());   
-  std::auto_ptr<std::vector<std::vector<double> > > hbherechitauxallfc         ( new std::vector<std::vector<double> > ());   
-  std::auto_ptr<std::vector<std::vector<double> > > hbherechitauxpedfc         ( new std::vector<std::vector<double> > ());
-  std::auto_ptr<std::vector<std::vector<double> > > hbherechitauxgain          ( new std::vector<std::vector<double> > ());
-  std::auto_ptr<std::vector<std::vector<double> > > hbherechitauxrcgain        ( new std::vector<std::vector<double> > ());
-  std::auto_ptr<std::vector<std::vector<double> > > hbherechitauxfc            ( new std::vector<std::vector<double> > ());
-  std::auto_ptr<std::vector<std::vector<double> > > hbherechitauxenergy        ( new std::vector<std::vector<double> > ());
+  std::unique_ptr<std::vector<std::vector<int> > >    hbherechitauxcapid         ( new std::vector<std::vector<int> >    ());   
+  std::unique_ptr<std::vector<std::vector<int> > >    hbherechitauxadc           ( new std::vector<std::vector<int> >    ());   
+  std::unique_ptr<std::vector<std::vector<double> > > hbherechitauxallfc         ( new std::vector<std::vector<double> > ());   
+  std::unique_ptr<std::vector<std::vector<double> > > hbherechitauxpedfc         ( new std::vector<std::vector<double> > ());
+  std::unique_ptr<std::vector<std::vector<double> > > hbherechitauxgain          ( new std::vector<std::vector<double> > ());
+  std::unique_ptr<std::vector<std::vector<double> > > hbherechitauxrcgain        ( new std::vector<std::vector<double> > ());
+  std::unique_ptr<std::vector<std::vector<double> > > hbherechitauxfc            ( new std::vector<std::vector<double> > ());
+  std::unique_ptr<std::vector<std::vector<double> > > hbherechitauxenergy        ( new std::vector<std::vector<double> > ());
 
 
   edm::Handle<bool> hNoiseResult;
@@ -432,42 +432,42 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
   }
   */
 
-  iEvent.put( officialdecision         , prefix + "OfficialDecision"         + suffix );
-  iEvent.put( officialdecisionrun1     , prefix + "OfficialDecisionRun1"     + suffix );
-  iEvent.put( officialdecisionrun2l    , prefix + "OfficialDecisionRun2L"    + suffix );
-  iEvent.put( officialdecisionrun2t    , prefix + "OfficialDecisionRun2T"    + suffix );
-  iEvent.put( isonoisefilterdecision   , prefix + "IsoNoiseFilterDecision"   + suffix );
-  iEvent.put( hpdhits                  , prefix + "HPDHits"                  + suffix );
-  iEvent.put( hpdnootherhits           , prefix + "HPDNoOtherHits"           + suffix );
-  iEvent.put( maxzeros                 , prefix + "MaxZeros"                 + suffix );
-  iEvent.put( mine2e10                 , prefix + "MinE2E10"                 + suffix );
-  iEvent.put( maxe2e10                 , prefix + "MaxE2E10"                 + suffix );
-  iEvent.put( hasbadrbxr45             , prefix + "HasBadRBXR45"             + suffix );
-  iEvent.put( hasbadrbxrechitr45loose  , prefix + "HasBadRBXRechitR45Loose"  + suffix );
-  iEvent.put( hasbadrbxrechitr45tight  , prefix + "HasBadRBXRechitR45Tight"  + suffix );
-  iEvent.put( numisolatednoisechannels , prefix + "NumIsolatedNoiseChannels" + suffix );
-  iEvent.put( isolatednoisesume        , prefix + "IsolatedNoiseSumE"        + suffix );
-  iEvent.put( isolatednoisesumet       , prefix + "IsolatedNoiseSumEt"       + suffix );
-  iEvent.put( numnegativenoisechannels , prefix + "NumNegativeNoiseChannels" + suffix );
-  iEvent.put( negativenoisesume        , prefix + "NegativeNoiseSumE"        + suffix );
-  iEvent.put( negativenoisesumet       , prefix + "NegativeNoiseSumEt"       + suffix );
-  iEvent.put( numspikenoisechannels    , prefix + "NumSpikeNoiseChannels"    + suffix );
-  iEvent.put( spikenoisesume           , prefix + "SpikeNoiseSumE"           + suffix );
-  iEvent.put( spikenoisesumet          , prefix + "SpikeNoiseSumEt"          + suffix );
+  iEvent.put ( move( officialdecision         ), prefix + "OfficialDecision"         + suffix );
+  iEvent.put ( move( officialdecisionrun1     ), prefix + "OfficialDecisionRun1"     + suffix );
+  iEvent.put ( move( officialdecisionrun2l    ), prefix + "OfficialDecisionRun2L"    + suffix );
+  iEvent.put ( move( officialdecisionrun2t    ), prefix + "OfficialDecisionRun2T"    + suffix );
+  iEvent.put ( move( isonoisefilterdecision   ), prefix + "IsoNoiseFilterDecision"   + suffix );
+  iEvent.put ( move( hpdhits                  ), prefix + "HPDHits"                  + suffix );
+  iEvent.put ( move( hpdnootherhits           ), prefix + "HPDNoOtherHits"           + suffix );
+  iEvent.put ( move( maxzeros                 ), prefix + "MaxZeros"                 + suffix );
+  iEvent.put ( move( mine2e10                 ), prefix + "MinE2E10"                 + suffix );
+  iEvent.put ( move( maxe2e10                 ), prefix + "MaxE2E10"                 + suffix );
+  iEvent.put ( move( hasbadrbxr45             ), prefix + "HasBadRBXR45"             + suffix );
+  iEvent.put ( move( hasbadrbxrechitr45loose  ), prefix + "HasBadRBXRechitR45Loose"  + suffix );
+  iEvent.put ( move( hasbadrbxrechitr45tight  ), prefix + "HasBadRBXRechitR45Tight"  + suffix );
+  iEvent.put ( move( numisolatednoisechannels ), prefix + "NumIsolatedNoiseChannels" + suffix );
+  iEvent.put ( move( isolatednoisesume        ), prefix + "IsolatedNoiseSumE"        + suffix );
+  iEvent.put ( move( isolatednoisesumet       ), prefix + "IsolatedNoiseSumEt"       + suffix );
+  iEvent.put ( move( numnegativenoisechannels ), prefix + "NumNegativeNoiseChannels" + suffix );
+  iEvent.put ( move( negativenoisesume        ), prefix + "NegativeNoiseSumE"        + suffix );
+  iEvent.put ( move( negativenoisesumet       ), prefix + "NegativeNoiseSumEt"       + suffix );
+  iEvent.put ( move( numspikenoisechannels    ), prefix + "NumSpikeNoiseChannels"    + suffix );
+  iEvent.put ( move( spikenoisesume           ), prefix + "SpikeNoiseSumE"           + suffix );
+  iEvent.put ( move( spikenoisesumet          ), prefix + "SpikeNoiseSumEt"          + suffix );
   //
-  iEvent.put( rbxcharge                , prefix + "RBXCharge"                + suffix );
-  iEvent.put( rbxcharge15              , prefix + "RBXCharge15"              + suffix );
-  iEvent.put( rbxenergy                , prefix + "RBXEnergy"                + suffix );
-  iEvent.put( rbxenergy15              , prefix + "RBXEnergy15"              + suffix );
+  iEvent.put ( move( rbxcharge                ), prefix + "RBXCharge"                + suffix );
+  iEvent.put ( move( rbxcharge15              ), prefix + "RBXCharge15"              + suffix );
+  iEvent.put ( move( rbxenergy                ), prefix + "RBXEnergy"                + suffix );
+  iEvent.put ( move( rbxenergy15              ), prefix + "RBXEnergy15"              + suffix );
   //
-  iEvent.put( hbherechitenergyraw      , prefix + "HBHERecHitEnergyRaw"      + suffix );
+  iEvent.put ( move( hbherechitenergyraw      ), prefix + "HBHERecHitEnergyRaw"      + suffix );
   //
-  iEvent.put( hbherechitauxcapid       , prefix + "HBHERecHitAuxCapID"       + suffix ); 
-  iEvent.put( hbherechitauxadc         , prefix + "HBHERecHitAuxADC"         + suffix ); 
-  iEvent.put( hbherechitauxallfc       , prefix + "HBHERecHitAuxAllfC"       + suffix ); 
-  iEvent.put( hbherechitauxpedfc       , prefix + "HBHERecHitAuxPedFC"       + suffix );
-  iEvent.put( hbherechitauxgain        , prefix + "HBHERecHitAuxGain"        + suffix );
-  iEvent.put( hbherechitauxrcgain      , prefix + "HBHERecHitAuxRCGain"      + suffix );
-  iEvent.put( hbherechitauxfc          , prefix + "HBHERecHitAuxFC"          + suffix );  
-  iEvent.put( hbherechitauxenergy      , prefix + "HBHERecHitAuxEnergy"      + suffix );
+  iEvent.put ( move( hbherechitauxcapid       ), prefix + "HBHERecHitAuxCapID"       + suffix ); 
+  iEvent.put ( move( hbherechitauxadc         ), prefix + "HBHERecHitAuxADC"         + suffix ); 
+  iEvent.put ( move( hbherechitauxallfc       ), prefix + "HBHERecHitAuxAllfC"       + suffix ); 
+  iEvent.put ( move( hbherechitauxpedfc       ), prefix + "HBHERecHitAuxPedFC"       + suffix );
+  iEvent.put ( move( hbherechitauxgain        ), prefix + "HBHERecHitAuxGain"        + suffix );
+  iEvent.put ( move( hbherechitauxrcgain      ), prefix + "HBHERecHitAuxRCGain"      + suffix );
+  iEvent.put ( move( hbherechitauxfc          ), prefix + "HBHERecHitAuxFC"          + suffix );  
+  iEvent.put ( move( hbherechitauxenergy      ), prefix + "HBHERecHitAuxEnergy"      + suffix );
 }

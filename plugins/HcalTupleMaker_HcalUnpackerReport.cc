@@ -32,22 +32,22 @@ HcalTupleMaker_HcalUnpackerReport::HcalTupleMaker_HcalUnpackerReport(const edm::
 void HcalTupleMaker_HcalUnpackerReport::
 produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
-  std::auto_ptr<unsigned int>      errorFree          ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      anyValid           ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      spigotFormatErrors ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      badDigis           ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      totalDigis         ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      totalTPDigis       ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      totalHOTPDigis     ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      emptySpigots       ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      OFWSpigots         ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      BSYSpigots         ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      unsuppressed       ( new unsigned int()      );
-  std::auto_ptr<unsigned int>      calibrationPresent ( new unsigned int()      );
-  std::auto_ptr<std::vector<int> > badDigiIEta        ( new std::vector<int> () );
-  std::auto_ptr<std::vector<int> > badDigiIPhi        ( new std::vector<int> () );
-  std::auto_ptr<std::vector<int> > badDigiDepth       ( new std::vector<int> () );
-  std::auto_ptr<std::vector<int> > badDigiSubdet      ( new std::vector<int> () );
+  std::unique_ptr<unsigned int>      errorFree          ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      anyValid           ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      spigotFormatErrors ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      badDigis           ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      totalDigis         ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      totalTPDigis       ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      totalHOTPDigis     ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      emptySpigots       ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      OFWSpigots         ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      BSYSpigots         ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      unsuppressed       ( new unsigned int()      );
+  std::unique_ptr<unsigned int>      calibrationPresent ( new unsigned int()      );
+  std::unique_ptr<std::vector<int> > badDigiIEta        ( new std::vector<int> () );
+  std::unique_ptr<std::vector<int> > badDigiIPhi        ( new std::vector<int> () );
+  std::unique_ptr<std::vector<int> > badDigiDepth       ( new std::vector<int> () );
+  std::unique_ptr<std::vector<int> > badDigiSubdet      ( new std::vector<int> () );
   
   edm::Handle<HcalUnpackerReport> report;
   bool gotReport = iEvent.getByLabel(inputTag, report);
@@ -86,21 +86,21 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     return;
   }
   
-  iEvent.put ( errorFree          , prefix + "ErrorFree"           + suffix );
-  iEvent.put ( anyValid           , prefix + "AnyValid"            + suffix );
-  iEvent.put ( spigotFormatErrors , prefix + "SpigotFormatErrors"  + suffix );
-  iEvent.put ( badDigis           , prefix + "BadQualityDigis"     + suffix );
-  iEvent.put ( totalDigis         , prefix + "TotalDigis"          + suffix );
-  iEvent.put ( totalTPDigis       , prefix + "TotalTPDigis"        + suffix );
-  iEvent.put ( totalHOTPDigis     , prefix + "TotalHOTPDigis"      + suffix );
-  iEvent.put ( emptySpigots       , prefix + "EmptySpigots"        + suffix );
-  iEvent.put ( OFWSpigots         , prefix + "OFWSpigots"          + suffix );
-  iEvent.put ( BSYSpigots         , prefix + "BSYSpigots"          + suffix );
-  iEvent.put ( unsuppressed       , prefix + "NZS"                 + suffix );
-  iEvent.put ( calibrationPresent , prefix + "HasCalib"            + suffix );
-  iEvent.put ( badDigiIEta        , prefix + "BadDigiIEta"         + suffix );
-  iEvent.put ( badDigiIPhi        , prefix + "BadDigiIPhi"         + suffix );
-  iEvent.put ( badDigiDepth       , prefix + "BadDigiDepth"        + suffix );
-  iEvent.put ( badDigiSubdet      , prefix + "BadDigiSubdet"       + suffix );
+  iEvent.put ( move( errorFree          ), prefix + "ErrorFree"           + suffix );
+  iEvent.put ( move( anyValid           ), prefix + "AnyValid"            + suffix );
+  iEvent.put ( move( spigotFormatErrors ), prefix + "SpigotFormatErrors"  + suffix );
+  iEvent.put ( move( badDigis           ), prefix + "BadQualityDigis"     + suffix );
+  iEvent.put ( move( totalDigis         ), prefix + "TotalDigis"          + suffix );
+  iEvent.put ( move( totalTPDigis       ), prefix + "TotalTPDigis"        + suffix );
+  iEvent.put ( move( totalHOTPDigis     ), prefix + "TotalHOTPDigis"      + suffix );
+  iEvent.put ( move( emptySpigots       ), prefix + "EmptySpigots"        + suffix );
+  iEvent.put ( move( OFWSpigots         ), prefix + "OFWSpigots"          + suffix );
+  iEvent.put ( move( BSYSpigots         ), prefix + "BSYSpigots"          + suffix );
+  iEvent.put ( move( unsuppressed       ), prefix + "NZS"                 + suffix );
+  iEvent.put ( move( calibrationPresent ), prefix + "HasCalib"            + suffix );
+  iEvent.put ( move( badDigiIEta        ), prefix + "BadDigiIEta"         + suffix );
+  iEvent.put ( move( badDigiIPhi        ), prefix + "BadDigiIPhi"         + suffix );
+  iEvent.put ( move( badDigiDepth       ), prefix + "BadDigiDepth"        + suffix );
+  iEvent.put ( move( badDigiSubdet      ), prefix + "BadDigiSubdet"       + suffix );
 
 }

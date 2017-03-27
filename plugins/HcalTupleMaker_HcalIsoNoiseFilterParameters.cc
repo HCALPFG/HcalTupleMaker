@@ -59,46 +59,46 @@ HcalTupleMaker_HcalIsoNoiseFilterParameters::HcalTupleMaker_HcalIsoNoiseFilterPa
 void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   
   // iso noise filter params
-  //std::auto_ptr<std::vector<int> >     numisolatednoisechannels  ( new std::vector<int>    ());
-  //std::auto_ptr<std::vector<double> >  isolatednoisesume         ( new std::vector<double> ());
-  //std::auto_ptr<std::vector<double> >  isolatednoisesumet        ( new std::vector<double> ());
+  //std::unique_ptr<std::vector<int> >     numisolatednoisechannels  ( new std::vector<int>    ());
+  //std::unique_ptr<std::vector<double> >  isolatednoisesume         ( new std::vector<double> ());
+  //std::unique_ptr<std::vector<double> >  isolatednoisesumet        ( new std::vector<double> ());
   // rbx clusters
-  std::auto_ptr<std::vector<int> >     crbxid           ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     crbxnhits        ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     crbxistagged     ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     crbxisiso        ( new std::vector<int> ());
-  std::auto_ptr<std::vector<double> >  crbxisolhcale    ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  crbxisolecale    ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  crbxisoltrke     ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  crbxtrkfide      ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  crbxclue         ( new std::vector<double> ());
+  std::unique_ptr<std::vector<int> >     crbxid           ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     crbxnhits        ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     crbxistagged     ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     crbxisiso        ( new std::vector<int> ());
+  std::unique_ptr<std::vector<double> >  crbxisolhcale    ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  crbxisolecale    ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  crbxisoltrke     ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  crbxtrkfide      ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  crbxclue         ( new std::vector<double> ());
   // hpd clusters
-  std::auto_ptr<std::vector<int> >     chpdid           ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     chpdrbxid        ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     chpdistagged     ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     chpdnhits        ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     chpdisiso        ( new std::vector<int> ());
-  std::auto_ptr<std::vector<double> >  chpdisolhcale    ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  chpdisolecale    ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  chpdisoltrke     ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  chpdtrkfide      ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  chpdclue         ( new std::vector<double> ());
+  std::unique_ptr<std::vector<int> >     chpdid           ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     chpdrbxid        ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     chpdistagged     ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     chpdnhits        ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     chpdisiso        ( new std::vector<int> ());
+  std::unique_ptr<std::vector<double> >  chpdisolhcale    ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  chpdisolecale    ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  chpdisoltrke     ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  chpdtrkfide      ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  chpdclue         ( new std::vector<double> ());
   // dihit clusters
-  std::auto_ptr<std::vector<int> >     cdihitistagged   ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     cdihitisiso      ( new std::vector<int> ());
-  std::auto_ptr<std::vector<double> >  cdihitisolhcale  ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  cdihitisolecale  ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  cdihitisoltrke   ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  cdihittrkfide    ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  cdihitclue       ( new std::vector<double> ());
+  std::unique_ptr<std::vector<int> >     cdihitistagged   ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     cdihitisiso      ( new std::vector<int> ());
+  std::unique_ptr<std::vector<double> >  cdihitisolhcale  ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  cdihitisolecale  ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  cdihitisoltrke   ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  cdihittrkfide    ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  cdihitclue       ( new std::vector<double> ());
   // monohit clusters
-  std::auto_ptr<std::vector<int> >     cmonohitistagged  ( new std::vector<int> ());
-  std::auto_ptr<std::vector<int> >     cmonohitisiso     ( new std::vector<int> ());
-  std::auto_ptr<std::vector<double> >  cmonohitisolhcale ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  cmonohitisolecale ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  cmonohitisoltrke  ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  cmonohittrkfide   ( new std::vector<double> ());
-  std::auto_ptr<std::vector<double> >  cmonohitclue      ( new std::vector<double> ());
+  std::unique_ptr<std::vector<int> >     cmonohitistagged  ( new std::vector<int> ());
+  std::unique_ptr<std::vector<int> >     cmonohitisiso     ( new std::vector<int> ());
+  std::unique_ptr<std::vector<double> >  cmonohitisolhcale ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  cmonohitisolecale ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  cmonohitisoltrke  ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  cmonohittrkfide   ( new std::vector<double> ());
+  std::unique_ptr<std::vector<double> >  cmonohitclue      ( new std::vector<double> ());
 
   // Isolation Filter code
   // Reproduced from: http://cmslxr.fnal.gov/lxr/source/RecoLocalCalo/HcalRecProducers/src/HBHEIsolatedNoiseReflagger.cc?v=CMSSW_7_5_0_pre5
@@ -155,7 +155,13 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
   edm::Handle<std::vector<reco::TrackExtrapolation> > trackextraps_h;
   //iEvent.getByLabel("trackExtrapolator", trackextraps_h);
   iEvent.getByToken(trackExtrapolatorToken, trackextraps_h);
-  
+ 
+  // get the emap
+  const HcalFrontEndMap *emap;
+  edm::ESHandle<HcalFrontEndMap> emapHndl;
+  iSetup.get<HcalFrontEndMapRcd>().get(emapHndl);
+  emap = emapHndl.product();
+
   objvalidator_.setHcalChannelQuality(dbHcalChStatus);
   objvalidator_.setEcalChannelStatus(dbEcalChStatus);
   objvalidator_.setHcalSeverityLevelComputer(hcalSevLvlComputer);
@@ -204,7 +210,7 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
   
   // organizer the hits
   PhysicsTowerOrganizer pto(iEvent, iSetup, hbhehits_h, ebhits_h, eehits_h, trackextraps_h, objvalidator_, *(ctcm.product()));
-  HBHEHitMapOrganizer organizer(hbhehits_h, objvalidator_, pto);
+  HBHEHitMapOrganizer organizer(hbhehits_h, objvalidator_, pto, emap);
 
   organizer.getRBXs(rbxs, LooseRBXEne1_<TightRBXEne1_ ? LooseRBXEne1_ : TightRBXEne1_);
   organizer.getHPDs(hpds, LooseHPDEne1_<TightHPDEne1_ ? LooseHPDEne1_ : TightHPDEne1_);
@@ -434,45 +440,45 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
   //isolatednoisesumet       -> push_back ( hSummary->isolatedNoiseSumEt() );
 
   // iso noise filter params
-  //iEvent.put( numisolatednoisechannels , prefix + "NumIsolatedNoiseChannels" + suffix );
-  //iEvent.put( isolatednoisesume        , prefix + "IsolatedNoiseSumE"        + suffix );
-  //iEvent.put( isolatednoisesumet       , prefix + "IsolatedNoiseSumEt"       + suffix );
+  //iEvent.put ( move( numisolatednoisechannels ), prefix + "NumIsolatedNoiseChannels" + suffix );
+  //iEvent.put ( move( isolatednoisesume        ), prefix + "IsolatedNoiseSumE"        + suffix );
+  //iEvent.put ( move( isolatednoisesumet       ), prefix + "IsolatedNoiseSumEt"       + suffix );
   //
   // rbx clusters
-  iEvent.put(  crbxid           , prefix + "CRBXId"           + suffix );
-  iEvent.put(  crbxnhits        , prefix + "CRBXNHits"        + suffix );
-  iEvent.put(  crbxistagged     , prefix + "CRBXIsTagged"     + suffix );
-  iEvent.put(  crbxisiso        , prefix + "CRBXIsIso"        + suffix );
-  iEvent.put(  crbxisolhcale    , prefix + "CRBXIsolHcalE"    + suffix );
-  iEvent.put(  crbxisolecale    , prefix + "CRBXIsolEcalE"    + suffix );
-  iEvent.put(  crbxisoltrke     , prefix + "CRBXIsolTrkE"     + suffix );
-  iEvent.put(  crbxtrkfide      , prefix + "CRBXTrkFidE"      + suffix );
-  iEvent.put(  crbxclue         , prefix + "CRBXCluE"         + suffix );
+  iEvent.put ( move(  crbxid           ), prefix + "CRBXId"           + suffix );
+  iEvent.put ( move(  crbxnhits        ), prefix + "CRBXNHits"        + suffix );
+  iEvent.put ( move(  crbxistagged     ), prefix + "CRBXIsTagged"     + suffix );
+  iEvent.put ( move(  crbxisiso        ), prefix + "CRBXIsIso"        + suffix );
+  iEvent.put ( move(  crbxisolhcale    ), prefix + "CRBXIsolHcalE"    + suffix );
+  iEvent.put ( move(  crbxisolecale    ), prefix + "CRBXIsolEcalE"    + suffix );
+  iEvent.put ( move(  crbxisoltrke     ), prefix + "CRBXIsolTrkE"     + suffix );
+  iEvent.put ( move(  crbxtrkfide      ), prefix + "CRBXTrkFidE"      + suffix );
+  iEvent.put ( move(  crbxclue         ), prefix + "CRBXCluE"         + suffix );
   // hpd clusters
-  iEvent.put(  chpdid           , prefix + "CHPDId"           + suffix );
-  iEvent.put(  chpdrbxid        , prefix + "CHPDRBXId"        + suffix );
-  iEvent.put(  chpdistagged     , prefix + "CHPDIsTagged"     + suffix );
-  iEvent.put(  chpdisiso        , prefix + "CHPDIsIso"        + suffix );
-  iEvent.put(  chpdnhits        , prefix + "CHPDNHits"        + suffix );
-  iEvent.put(  chpdisolhcale    , prefix + "CHPDIsolHcalE"    + suffix );
-  iEvent.put(  chpdisolecale    , prefix + "CHPDIsolEcalE"    + suffix );
-  iEvent.put(  chpdisoltrke     , prefix + "CHPDIsolTrkE"     + suffix );
-  iEvent.put(  chpdtrkfide      , prefix + "CHPDTrkFidE"      + suffix );
-  iEvent.put(  chpdclue         , prefix + "CHPDCluE"         + suffix );
+  iEvent.put ( move(  chpdid           ), prefix + "CHPDId"           + suffix );
+  iEvent.put ( move(  chpdrbxid        ), prefix + "CHPDRBXId"        + suffix );
+  iEvent.put ( move(  chpdistagged     ), prefix + "CHPDIsTagged"     + suffix );
+  iEvent.put ( move(  chpdisiso        ), prefix + "CHPDIsIso"        + suffix );
+  iEvent.put ( move(  chpdnhits        ), prefix + "CHPDNHits"        + suffix );
+  iEvent.put ( move(  chpdisolhcale    ), prefix + "CHPDIsolHcalE"    + suffix );
+  iEvent.put ( move(  chpdisolecale    ), prefix + "CHPDIsolEcalE"    + suffix );
+  iEvent.put ( move(  chpdisoltrke     ), prefix + "CHPDIsolTrkE"     + suffix );
+  iEvent.put ( move(  chpdtrkfide      ), prefix + "CHPDTrkFidE"      + suffix );
+  iEvent.put ( move(  chpdclue         ), prefix + "CHPDCluE"         + suffix );
   // dihit clusters
-  iEvent.put(  cdihitistagged   , prefix + "CDihitIsTagged"   + suffix );
-  iEvent.put(  cdihitisiso      , prefix + "CDihitIsIso"      + suffix );
-  iEvent.put(  cdihitisolhcale  , prefix + "CDihitIsolHcalE"  + suffix );
-  iEvent.put(  cdihitisolecale  , prefix + "CDihitIsolEcalE"  + suffix );
-  iEvent.put(  cdihitisoltrke   , prefix + "CDihitIsolTrkE"   + suffix );
-  iEvent.put(  cdihittrkfide    , prefix + "CDihitTrkFidE"    + suffix );
-  iEvent.put(  cdihitclue       , prefix + "CDihitCluE"       + suffix );
+  iEvent.put ( move(  cdihitistagged   ), prefix + "CDihitIsTagged"   + suffix );
+  iEvent.put ( move(  cdihitisiso      ), prefix + "CDihitIsIso"      + suffix );
+  iEvent.put ( move(  cdihitisolhcale  ), prefix + "CDihitIsolHcalE"  + suffix );
+  iEvent.put ( move(  cdihitisolecale  ), prefix + "CDihitIsolEcalE"  + suffix );
+  iEvent.put ( move(  cdihitisoltrke   ), prefix + "CDihitIsolTrkE"   + suffix );
+  iEvent.put ( move(  cdihittrkfide    ), prefix + "CDihitTrkFidE"    + suffix );
+  iEvent.put ( move(  cdihitclue       ), prefix + "CDihitCluE"       + suffix );
   // monohit clusters
-  iEvent.put(  cmonohitistagged , prefix + "CMonohitIsTagged" + suffix );
-  iEvent.put(  cmonohitisiso    , prefix + "CMonohitIsIso"    + suffix );
-  iEvent.put(  cmonohitisolhcale, prefix + "CMonohitIsolHcalE"+ suffix );
-  iEvent.put(  cmonohitisolecale, prefix + "CMonohitIsolEcalE"+ suffix );
-  iEvent.put(  cmonohitisoltrke , prefix + "CMonohitIsolTrkE" + suffix );
-  iEvent.put(  cmonohittrkfide  , prefix + "CMonohitTrkFidE"  + suffix );
-  iEvent.put(  cmonohitclue     , prefix + "CMonohitCluE"     + suffix );
+  iEvent.put ( move(  cmonohitistagged ), prefix + "CMonohitIsTagged" + suffix );
+  iEvent.put ( move(  cmonohitisiso    ), prefix + "CMonohitIsIso"    + suffix );
+  iEvent.put ( move(  cmonohitisolhcale), prefix + "CMonohitIsolHcalE"+ suffix );
+  iEvent.put ( move(  cmonohitisolecale), prefix + "CMonohitIsolEcalE"+ suffix );
+  iEvent.put ( move(  cmonohitisoltrke ), prefix + "CMonohitIsolTrkE" + suffix );
+  iEvent.put ( move(  cmonohittrkfide  ), prefix + "CMonohitTrkFidE"  + suffix );
+  iEvent.put ( move(  cmonohitclue     ), prefix + "CMonohitCluE"     + suffix );
 }

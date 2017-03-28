@@ -3,7 +3,7 @@ HcalTupleMaker
 
 EDM analyzer for making ntuples from HCAL DIGIs and RecHits:
 
-# How to build it 
+## How to build it 
 ``` 
 cmsrel CMSSW_9_0_0_pre5
 cd CMSSW_9_0_0_pre5/src/
@@ -17,7 +17,7 @@ cd -
 scram b clean; scram b -j9
 ``` 
 
-# How to run
+## How to run
 ``` 
 cd test
 cmsRun noiseAnalysis_CommissioningData_RECO_cfg.py

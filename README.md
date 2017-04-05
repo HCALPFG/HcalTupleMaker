@@ -20,7 +20,7 @@ scram b clean; scram b -j9
 ## How to run
 ``` 
 cd test
-cmsRun noiseAnalysis_CommissioningData_RECO_cfg.py
+cmsRun noiseAnalysis_CollisionData_RECO_cfg.py
 ``` 
 At this moment, only the `noiseAnalysis_CollisionData_RECO_cfg.py` has been validated in `CMSSW_9_0_0_pre5`.  
 

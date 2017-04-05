@@ -22,7 +22,7 @@ scram b clean; scram b -j9
 cd test
 cmsRun noiseAnalysis_CommissioningData_RECO_cfg.py
 ``` 
-At this moment, only the `noiseAnalysis_CommissioningData_RECO_cfg.py` has been validated in `CMSSW_9_0_0_pre5`.  
+At this moment, only the `noiseAnalysis_CollisionData_RECO_cfg.py` has been validated in `CMSSW_9_0_0_pre5`.  
 
 Contact: Jae Hyeok Yoo (jae.hyeok.yoo@cern.ch) 
 

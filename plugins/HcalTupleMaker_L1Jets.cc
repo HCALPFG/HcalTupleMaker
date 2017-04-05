@@ -24,12 +24,12 @@ HcalTupleMaker_L1Jets::HcalTupleMaker_L1Jets(const edm::ParameterSet& iConfig):
 
 void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
   
-  std::auto_ptr<std::vector<double> >            pt      ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            eta     ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<double> >            phi     ( new std::vector<double>           ());
-  std::auto_ptr<std::vector<int   > >            type    ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<int   > >            bx      ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<std::vector<int> > > tpIndex ( new std::vector<std::vector<int> >());
+  std::unique_ptr<std::vector<double> >            pt      ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            eta     ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<double> >            phi     ( new std::vector<double>           ());
+  std::unique_ptr<std::vector<int   > >            type    ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<int   > >            bx      ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<std::vector<int> > > tpIndex ( new std::vector<std::vector<int> >());
 
   int nL1JetCollections = inputTags.size();
   std::vector<edm::Handle<l1extra::L1JetParticleCollection> > l1Jets ( nL1JetCollections );
@@ -73,11 +73,11 @@ void HcalTupleMaker_L1Jets::produce(edm::Event& iEvent, const edm::EventSetup& i
     }
   }
 
-  iEvent.put(pt     , prefix + "Pt"            + suffix );
-  iEvent.put(eta    , prefix + "Eta"           + suffix );
-  iEvent.put(phi    , prefix + "Phi"           + suffix );
-  iEvent.put(bx     , prefix + "BX"            + suffix );
-  iEvent.put(type   , prefix + "Type"           + suffix );
-  iEvent.put(tpIndex, prefix + "TrigPrimIndex" + suffix );
+  iEvent.put(move(pt)     , prefix + "Pt"            + suffix );
+  iEvent.put(move(eta)    , prefix + "Eta"           + suffix );
+  iEvent.put(move(phi)    , prefix + "Phi"           + suffix );
+  iEvent.put(move(bx)     , prefix + "BX"            + suffix );
+  iEvent.put(move(type)   , prefix + "Type"           + suffix );
+  iEvent.put(move(tpIndex), prefix + "TrigPrimIndex" + suffix );
   
 }

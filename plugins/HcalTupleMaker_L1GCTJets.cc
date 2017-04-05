@@ -24,8 +24,8 @@ HcalTupleMaker_L1GCTJets::HcalTupleMaker_L1GCTJets(const edm::ParameterSet& iCon
 
 void HcalTupleMaker_L1GCTJets::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
 
-  std::auto_ptr<std::vector<int   > >            bx      ( new std::vector<int>              ());
-  std::auto_ptr<std::vector<std::vector<int> > > tpIndex ( new std::vector<std::vector<int> >());
+  std::unique_ptr<std::vector<int   > >            bx      ( new std::vector<int>              ());
+  std::unique_ptr<std::vector<std::vector<int> > > tpIndex ( new std::vector<std::vector<int> >());
   
   
   edm::ESHandle< L1CaloEtScale > jetScale ;
@@ -72,7 +72,7 @@ void HcalTupleMaker_L1GCTJets::produce(edm::Event& iEvent, const edm::EventSetup
     }
   }
 
-  iEvent.put(bx     , prefix + "BX"            + suffix );
-  iEvent.put(tpIndex, prefix + "TrigPrimIndex" + suffix );
+  iEvent.put(move(bx)     , prefix + "BX"            + suffix );
+  iEvent.put(move(tpIndex), prefix + "TrigPrimIndex" + suffix );
   
 }

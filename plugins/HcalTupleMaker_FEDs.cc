@@ -24,10 +24,10 @@ HcalTupleMaker_FEDs::HcalTupleMaker_FEDs(const edm::ParameterSet& iConfig) :
 void HcalTupleMaker_FEDs::
 produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
-  std::auto_ptr<std::vector<int> > number ( new std::vector<int> () );
-  std::auto_ptr<std::vector<int> > my_size( new std::vector<int> () );
-  std::auto_ptr<std::vector<int> > bcn    ( new std::vector<int> () );
-  std::auto_ptr<std::vector<int> > orn    ( new std::vector<int> () );
+  std::unique_ptr<std::vector<int> > number ( new std::vector<int> () );
+  std::unique_ptr<std::vector<int> > my_size( new std::vector<int> () );
+  std::unique_ptr<std::vector<int> > bcn    ( new std::vector<int> () );
+  std::unique_ptr<std::vector<int> > orn    ( new std::vector<int> () );
   
   edm::Handle<FEDRawDataCollection> rawData;
   if (iEvent.getByToken(m_FEDRawDataToken, rawData)) {
@@ -62,9 +62,9 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     return;
   }
   
-  iEvent.put(number , prefix + "Number" + suffix );
-  iEvent.put(my_size, prefix + "Size"   + suffix );
-  iEvent.put(orn    , prefix + "ORN"    + suffix );
-  iEvent.put(bcn    , prefix + "BCN"    + suffix );
+  iEvent.put(move(number ), prefix + "Number" + suffix );
+  iEvent.put(move(my_size), prefix + "Size"   + suffix );
+  iEvent.put(move(orn    ), prefix + "ORN"    + suffix );
+  iEvent.put(move(bcn    ), prefix + "BCN"    + suffix );
  
 }

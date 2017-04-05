@@ -87,31 +87,31 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
  protected:
 
   void loadAlgo(){
-    algo.ieta   = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
-    algo.iphi   = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
-    algo.eta    = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
-    algo.phi    = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
-    algo.depth  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
-    algo.rbxid  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
-    algo.hpdid  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
-    algo.flags  = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
-    algo.aux    = std::auto_ptr<std::vector<int  > > ( new std::vector<int  > ());
-    algo.energy = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
-    algo.time   = std::auto_ptr<std::vector<float> > ( new std::vector<float> ());
+    algo.ieta   = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.iphi   = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.eta    = std::unique_ptr<std::vector<float> > ( new std::vector<float> ());
+    algo.phi    = std::unique_ptr<std::vector<float> > ( new std::vector<float> ());
+    algo.depth  = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.rbxid  = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.hpdid  = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.flags  = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.aux    = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
+    algo.energy = std::unique_ptr<std::vector<float> > ( new std::vector<float> ());
+    algo.time   = std::unique_ptr<std::vector<float> > ( new std::vector<float> ());
   }
   
   void dumpAlgo( edm::Event & iEvent ){
-    iEvent.put ( algo.ieta   , m_prefix + "IEta"   + m_suffix );
-    iEvent.put ( algo.iphi   , m_prefix + "IPhi"   + m_suffix );
-    iEvent.put ( algo.eta    , m_prefix + "Eta"    + m_suffix );
-    iEvent.put ( algo.phi    , m_prefix + "Phi"    + m_suffix );
-    iEvent.put ( algo.depth  , m_prefix + "Depth"  + m_suffix );
-    iEvent.put ( algo.rbxid  , m_prefix + "RBXid"  + m_suffix );
-    iEvent.put ( algo.hpdid  , m_prefix + "HPDid"  + m_suffix );
-    iEvent.put ( algo.flags  , m_prefix + "Flags"  + m_suffix );
-    iEvent.put ( algo.aux    , m_prefix + "Aux"    + m_suffix );
-    iEvent.put ( algo.energy , m_prefix + "Energy" + m_suffix );
-    iEvent.put ( algo.time   , m_prefix + "Time"   + m_suffix );
+    iEvent.put( move(algo.ieta   ), m_prefix + "IEta"   + m_suffix );
+    iEvent.put( move(algo.iphi   ), m_prefix + "IPhi"   + m_suffix );
+    iEvent.put( move(algo.eta    ), m_prefix + "Eta"    + m_suffix );
+    iEvent.put( move(algo.phi    ), m_prefix + "Phi"    + m_suffix );
+    iEvent.put( move(algo.depth  ), m_prefix + "Depth"  + m_suffix );
+    iEvent.put( move(algo.rbxid  ), m_prefix + "RBXid"  + m_suffix );
+    iEvent.put( move(algo.hpdid  ), m_prefix + "HPDid"  + m_suffix );
+    iEvent.put( move(algo.flags  ), m_prefix + "Flags"  + m_suffix );
+    iEvent.put( move(algo.aux    ), m_prefix + "Aux"    + m_suffix );
+    iEvent.put( move(algo.energy ), m_prefix + "Energy" + m_suffix );
+    iEvent.put( move(algo.time   ), m_prefix + "Time"   + m_suffix );
   }
   
   

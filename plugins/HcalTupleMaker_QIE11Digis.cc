@@ -106,26 +106,26 @@ HcalTupleMaker_QIE11Digis::HcalTupleMaker_QIE11Digis(const edm::ParameterSet& iC
 
 void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
-  std::auto_ptr<std::vector<int> >                    ieta   ( new std::vector<int>   ());
-  std::auto_ptr<std::vector<int> >                    iphi   ( new std::vector<int>   ());
-  std::auto_ptr<std::vector<int> >                    subdet ( new std::vector<int>   ());
-  std::auto_ptr<std::vector<int> >                    depth  ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    ieta   ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    iphi   ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    subdet ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    depth  ( new std::vector<int>   ());
 
-  std::auto_ptr<std::vector<int> >                    iRM   ( new std::vector<int>   ());
-  std::auto_ptr<std::vector<int> >                    iRMFib   ( new std::vector<int>   ());
-  std::auto_ptr<std::vector<int> >                    iFibCh   ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    iRM   ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    iRMFib   ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    iFibCh   ( new std::vector<int>   ());
 
-  std::auto_ptr<std::vector<int> >                    rawId  ( new std::vector<int>   ());
-  std::auto_ptr<std::vector<int> >                    linkEr ( new std::vector<int>   ());
-  std::auto_ptr<std::vector<int> >                    capidEr ( new std::vector<int>   ());
-  std::auto_ptr<std::vector<int> >                    flags  ( new std::vector<int>   ());
-  // std::auto_ptr<int>                                  lasertype (new int() );
-  std::auto_ptr<std::vector<std::vector<int  > > >    soi    ( new std::vector<std::vector<int  > >   ());
-  std::auto_ptr<std::vector<std::vector<int  > > >    ok     ( new std::vector<std::vector<int  > >   ());
-  std::auto_ptr<std::vector<std::vector<int  > > >    adc    ( new std::vector<std::vector<int  > >    ());
-  std::auto_ptr<std::vector<std::vector<double  > > > fc     ( new std::vector<std::vector<double  > > ());
-  std::auto_ptr<std::vector<std::vector<int  > > >    tdc ( new std::vector<std::vector<int  > >    ());
-  std::auto_ptr<std::vector<std::vector<int  > > >    capid  ( new std::vector<std::vector<int  > >    ());
+  std::unique_ptr<std::vector<int> >                    rawId  ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    linkEr ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    capidEr ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    flags  ( new std::vector<int>   ());
+  // std::unique_ptr<int>                                  lasertype (new int() );
+  std::unique_ptr<std::vector<std::vector<int  > > >    soi    ( new std::vector<std::vector<int  > >   ());
+  std::unique_ptr<std::vector<std::vector<int  > > >    ok     ( new std::vector<std::vector<int  > >   ());
+  std::unique_ptr<std::vector<std::vector<int  > > >    adc    ( new std::vector<std::vector<int  > >    ());
+  std::unique_ptr<std::vector<std::vector<double  > > > fc     ( new std::vector<std::vector<double  > > ());
+  std::unique_ptr<std::vector<std::vector<int  > > >    tdc ( new std::vector<std::vector<int  > >    ());
+  std::unique_ptr<std::vector<std::vector<int  > > >    capid  ( new std::vector<std::vector<int  > >    ());
     
   //
   bool use_event=true;
@@ -149,13 +149,13 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
 	std::cout << "Could not find uMNio " << _taguMNio<< std::endl;
 	use_event = false;
       }
-      std::auto_ptr<int> lasertype (new int(cumnio -> valueUserWord(0)));
-      iEvent.put( lasertype          , "laserType"      ); 
+      std::unique_ptr<int> lasertype (new int(cumnio -> valueUserWord(0)));
+      iEvent.put(move( lasertype )         , "laserType"      );
       //std::cout << "Laser type is " << lasertype<<std::endl;
     }
     else{
-      std::auto_ptr<int> lasertype (new int());
-      iEvent.put( lasertype          , "laserType"      ); 
+      std::unique_ptr<int> lasertype (new int());
+      iEvent.put(move( lasertype )         , "laserType"      );
     }
     //
 
@@ -241,24 +241,24 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
     }
 
     //  
-    iEvent.put( ieta          , "QIE11DigiIEta"      ); 
-    iEvent.put( iphi          , "QIE11DigiIPhi"      ); 
-    iEvent.put( subdet        , "QIE11DigiSubdet"    ); 
-    iEvent.put( depth         , "QIE11DigiDepth"     ); 
+    iEvent.put(move( ieta  )        , "QIE11DigiIEta"      );
+    iEvent.put(move( iphi  )        , "QIE11DigiIPhi"      );
+    iEvent.put(move( subdet)        , "QIE11DigiSubdet"    );
+    iEvent.put(move( depth )        , "QIE11DigiDepth"     );
 
-    iEvent.put( iRM           , "QIE11DigiRM"        );
-    iEvent.put( iRMFib        , "QIE11DigiRMFib"     );
-    iEvent.put( iFibCh        , "QIE11DigiFibCh"     );
+    iEvent.put(move( iRM   )        , "QIE11DigiRM"        );
+    iEvent.put(move( iRMFib)        , "QIE11DigiRMFib"     );
+    iEvent.put(move( iFibCh)        , "QIE11DigiFibCh"     );
 
-    iEvent.put( rawId         , "QIE11DigiRawID"     );
-    iEvent.put( linkEr        , "QIE11DigiLinkError" );
-    iEvent.put( capidEr       , "QIE11DigiCapIDError");
-    iEvent.put( flags         , "QIE11DigiFlags"     );
-    iEvent.put( soi           , "QIE11DigiSOI"       );
-    iEvent.put( ok            , "QIE11DigiOK"        );
-    iEvent.put( adc           , "QIE11DigiADC"       );
-    iEvent.put( fc            , "QIE11DigiFC"        );
-    iEvent.put( tdc        , "QIE11DigiTDC"     );
-    iEvent.put( capid         , "QIE11DigiCapID"     ); 
+    iEvent.put(move( rawId  )       , "QIE11DigiRawID"     );
+    iEvent.put(move( linkEr )       , "QIE11DigiLinkError" );
+    iEvent.put(move( capidEr)       , "QIE11DigiCapIDError");
+    iEvent.put(move( flags  )       , "QIE11DigiFlags"     );
+    iEvent.put(move( soi    )       , "QIE11DigiSOI"       );
+    iEvent.put(move( ok     )       , "QIE11DigiOK"        );
+    iEvent.put(move( adc    )       , "QIE11DigiADC"       );
+    iEvent.put(move( fc     )       , "QIE11DigiFC"        );
+    iEvent.put(move( tdc    )       , "QIE11DigiTDC"       );
+    iEvent.put(move( capid  )       , "QIE11DigiCapID"     );
   }
 }

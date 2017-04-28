@@ -38,25 +38,24 @@ cmsRun pfg_Global_RAW_cfg.py
 
 ## Local runs
 
-1. Local runs can be found on the HCAL DPG eos space
-* /eos/cms/store/group/dpg_hcal/comm_hcal/USC/runXXXXXX/USC_XXXXXX.root
+1. Local runs can be found on the HCAL DPG eos space  
+    * /eos/cms/store/group/dpg_hcal/comm_hcal/USC/runXXXXXX/USC_XXXXXX.root
 
-2. Access this space using the `root://eoscms.cern.ch/` redirector
-* root://eoscms.cern.ch//eos/cms/store/group/dpg_hcal/comm_hcal/USC/runXXXXXX/USC_XXXXXX.root
+2. Access this space using the `root://eoscms.cern.ch/` redirector  
+    * root://eoscms.cern.ch//eos/cms/store/group/dpg_hcal/comm_hcal/USC/runXXXXXX/USC_XXXXXX.root
 
 3. If you wish to browse this space, do an `eosmount` on lxplus
 
 4. Copy a file locally using `xrdcp`
 
-
 ## Global runs
 
-1. Choose the correct global tag
-* https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
+1. Choose the correct global tag  
+    * https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
 
-2. Run information:
-* https://cmswbm.cern.ch/
+2. Run information:  
+    * https://cmswbm.cern.ch/
 
 ---------------
-Maintained by HCAL PFG
+Maintained by HCAL PFG  
 Original author: Edmund Berry <Edmund.A.Berry(at)CERN.CH>

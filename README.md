@@ -1,53 +1,61 @@
-HcalTupleMaker
-==============
-
+# HcalTupleMaker
 EDM analyzer for making ntuples from HCAL DIGIs and RecHits
 
-Validated for:
-* CMSSW_7_4_X
-
-To build:
-* scram p CMSSW CMSSW_7_3_1_patch2
-* mkdir CMSSW_7_3_1_patch2/src/HCALPFG/
-* cd CMSSW_7_3_1_patch2/src/HCALPFG/
-* cmsenv
-
-For the use of CMSSW_7_4_X:
+## To build
 ```
- git clone git@github.com:HCALPFG/HcalTupleMaker.git --branch CMSSW_7_4_X
+# setup environment  
+export SCRAM_ARCH=slc6_amd64_gcc530  
+
+# setup cmssw release  
+cmsrel CMSSW_9_0_0  
+cd CMSSW_9_0_0/src  
+mkdir HCALPFG  
+cd HCALPFG  
+
+# clone repository  
+git clone -b PFG-CMSSW_9_0_X  git@github.com:HCALPFG/HcalTupleMaker.git  
+
+# compile code  
+cd HcalTupleMaker  
+scram b -j 8
 ```
-For the use of CMSSW_7_5_X or later, please use master branch:
+
+## To run
 ```
- git clone git@github.com:HCALPFG/HcalTupleMaker.git
+# setup cmssw environment  
+cd HCALPFG/HcalTupleMaker/test  
+cmsenv  
+
+# obtain grid proxy (optional)  
+voms-proxy-init -voms cms -rfc  
+
+# local runs  
+cmsRun pfg_Local_RAW_cfg.py
+
+# global runs  
+cmsRun pfg_Global_RAW_cfg.py
 ```
-* scram b -j9
 
+## Local runs
 
-To run:
-* cd $CMSSW_BASE/src/HCALPFG/HcalTupleMaker
-* cmsenv
-* cmsRun analysis_cfg.py
+1. Local runs can be found on the HCAL DPG eos space  
+    * /eos/cms/store/group/dpg_hcal/comm_hcal/USC/runXXXXXX/USC_XXXXXX.root
 
-To run local runs:
+2. Access this space using the `root://eoscms.cern.ch/` redirector  
+    * root://eoscms.cern.ch//eos/cms/store/group/dpg_hcal/comm_hcal/USC/runXXXXXX/USC_XXXXXX.root
 
-1)Data of local runs can be found in hcal dpg space on eos with USC_XXXXXX.root
-* root://eoscms.cern.ch//eos/cms/store/group/dpg_hcal/comm_hcal/LS1/
+3. If you wish to browse this space, do an `eosmount` on lxplus
 
-2) Check the global tags from:
-* https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
+4. Copy a file locally using `xrdcp`
 
-For CMSSW_7_4_10, use 74X_dataRun2_Express_v1. (Tested 16Feb2016)
+## Global runs
 
-Maintained by Edmund Berry: Edmund.A.Berry(at)CERN.CH
+1. Choose the correct global tag  
+    * https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions
 
-=======
+2. Run information:  
+    * https://cmswbm.cern.ch/
 
-* CMSSW_8_X_Y
-
-Instructions:
-* https://twiki.cern.ch/twiki/bin/viewauth/CMS/HcalNoiseAnalyzer#Recommended_CMSSW_8_0_0_patch1_i
-
-Contact: Halil Saka, David Yu
-
--------------
-Original author: Edmund Berry
+---------------
+Maintained by HCAL PFG  
+Original author: Edmund Berry <Edmund.A.Berry(at)CERN.CH>

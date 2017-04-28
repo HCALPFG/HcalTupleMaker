@@ -7,10 +7,9 @@
 #include "DataFormats/Common/interface/Handle.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/ESHandle.h"
-
 #include "CondFormats/L1TObjects/interface/L1CaloEtScale.h"
 #include "CondFormats/DataRecord/interface/L1JetEtScaleRcd.h"
-
+#include <iostream>
 
 HcalTupleMaker_L1GCTJets::HcalTupleMaker_L1GCTJets(const edm::ParameterSet& iConfig):
   inputTags  (iConfig.getUntrackedParameter<std::vector<edm::InputTag> >("source")),

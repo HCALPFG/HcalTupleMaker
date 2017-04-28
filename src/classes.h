@@ -15,8 +15,8 @@ namespace {
     std::vector<std::vector<double > > dummy4;
     edm::Wrapper< std::vector<std::vector<double> > > dummy5;
 
-    std::vector<std::vector<int > > dummy6;
-    edm::Wrapper< std::vector<std::vector<int> > > dummy7;
+    // std::vector<std::vector<int > > dummy6;
+    // edm::Wrapper< std::vector<std::vector<int> > > dummy7;
 
   };
 

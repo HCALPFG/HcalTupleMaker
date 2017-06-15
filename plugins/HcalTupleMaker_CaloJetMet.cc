@@ -96,7 +96,7 @@ void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetu
   edm::Handle<reco::CaloMETCollection> hCaloMET;
   //iEvent.getByLabel("caloMet", hCaloMET);
   iEvent.getByToken(caloMetToken, hCaloMET);
-  
+
   //std::cout<<" Jet size "<<(*hCaloJets).size()<<std::endl; 
   reco::CaloJetCollection::const_iterator jet = hCaloJets->begin ();
   for (; jet != hCaloJets->end (); jet++)
@@ -122,7 +122,6 @@ void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetu
       //std::cout<<"       n60 jet: "<<(*jet).n60()<<std::endl;
     }  
   
-  
   ClearVariables();
   CalculateTotalEnergiesHBHE( *hRecHits );
   CalculateTotalEnergiesEB( *hEBRecHits );
@@ -133,7 +132,6 @@ void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetu
       NominalMET[0] = (*hCaloMET)[0].px();
       NominalMET[1] = (*hCaloMET)[0].py();
     }
-
 
   //Vector x and y components for these variables a la HcalNoiseAnalyzer
   ebet -> push_back( EBET[0] );              ebet -> push_back( EBET[1] );

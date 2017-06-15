@@ -1,0 +1,3 @@
+#include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_HcalPhase1RecHitAlgorithm.h"
+
+HcalTupleMaker_HcalPhase1RecHitAlgorithm::HcalTupleMaker_HcalPhase1RecHitAlgorithm(){}

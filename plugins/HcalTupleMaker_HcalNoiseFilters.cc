@@ -351,7 +351,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
       //}
       //std::cout<<std::endl;
       //}
-      
+     
+
       // Calculate RBX total charge, total energy, using rechit info..
       HcalDetId hcalDetId = HcalDetId(j -> detid());
       int RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);

@@ -24,9 +24,9 @@ class HcalTupleMaker_HcalNoiseFilters : public edm::EDProducer {
   // std::string     recoInputTag;
   //edm::EDGetTokenT<HBHERecHitCollection> recoInputToken;
 
-  bool            isRAW;
-  bool            isRECO;
-  std::string     prefix,suffix;
+  bool           isRAW;
+  bool           isRECO;
+  std::string    prefix,suffix;
 
   edm::EDGetTokenT<bool> defaultNoiseResultInputToken;
   edm::EDGetTokenT<bool> run1NoiseResultInputToken;

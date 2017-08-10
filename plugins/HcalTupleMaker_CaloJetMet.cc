@@ -1,5 +1,8 @@
 #include "HCALPFG/HcalTupleMaker/interface/HcalTupleMaker_CaloJetMet.h"
 
+#include <iostream> 
+using namespace std;
+
 HcalTupleMaker_CaloJetMet::HcalTupleMaker_CaloJetMet(const edm::ParameterSet& iConfig):
   //recoInputTag     (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
   recoInputToken     (consumes<HBHERecHitCollection>((iConfig.getUntrackedParameter<std::string>("recoInputTag")))),
@@ -182,29 +185,33 @@ void HcalTupleMaker_CaloJetMet::produce(edm::Event& iEvent, const edm::EventSetu
 }
 
 void HcalTupleMaker_CaloJetMet::CalculateTotalEnergiesHBHE(const HBHERecHitCollection &RecHits){
-  for(int i = 0; i < (int)RecHits.size(); i++)
+    for(int i = 0; i < (int)RecHits.size(); i++)
     {
-      bool IsHB = true;
-      if(RecHits[i].id().subdet() == HcalEndcap)
-	IsHB = false;
-      double eta = Geometry->getPosition(RecHits[i].id()).eta();
-      double phi = Geometry->getPosition(RecHits[i].id()).phi();
-      double energy = RecHits[i].energy();
-      double et = energy / cosh(eta);
-      if(IsHB == true)
-	{
-	  HBET[0] = HBET[0] + et * cos(phi);
-	  HBET[1] = HBET[1] + et * sin(phi);
-	  HBSumE = HBSumE + energy;
-	  HBSumET = HBSumET + et;
-	}
-      else // is HE
-	{
-	  HEET[0] = HEET[0] + et * cos(phi);
-	  HEET[1] = HEET[1] + et * sin(phi);
-	  HESumE = HESumE + energy;
-	  HESumET = HESumET + et;
-	}
+        bool IsHB = true;
+        if(RecHits[i].id().subdet() == HcalEndcap)
+            IsHB = false;  
+        HcalDetId hcalDetId= HcalDetId(RecHits[i].detid()); //
+        const HcalGeometry* cellGeometry = (HcalGeometry*)(Geometry->getSubdetectorGeometry(hcalDetId));
+        double eta = cellGeometry->getPosition(hcalDetId).eta() ;
+        double phi = cellGeometry->getPosition(hcalDetId).phi() ;
+        double energy = RecHits[i].energy();
+        double et = energy / cosh(eta);
+        cout << (IsHB?"HB  ":"HE  ") << eta << " " << phi << " " << energy << " " << cosh(eta) << endl; // FIXME
+        cout << (IsHB?" HB":" HE ") <<hcalDetId.ieta() << " " << hcalDetId.iphi() << " " << hcalDetId.depth()<< endl; // FIXME
+        if(IsHB == true)
+        {
+            HBET[0] = HBET[0] + et * cos(phi);
+            HBET[1] = HBET[1] + et * sin(phi);
+            HBSumE = HBSumE + energy;
+            HBSumET = HBSumET + et;
+        }
+        else // is HE
+        {
+            HEET[0] = HEET[0] + et * cos(phi);
+            HEET[1] = HEET[1] + et * sin(phi);
+            HESumE = HESumE + energy;
+            HESumET = HESumET + et;
+        }
     }
 }
 

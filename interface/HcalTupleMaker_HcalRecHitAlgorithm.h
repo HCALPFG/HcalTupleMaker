@@ -31,7 +31,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
   std::unique_ptr<std::vector<float> > energy;    
   std::unique_ptr<std::vector<float> > time;    
   std::unique_ptr<std::vector<int  > > flags;           
-  std::unique_ptr<std::vector<int  > > aux;     
+//  std::unique_ptr<std::vector<int  > > aux;     
   
   template <class RecoCollection > 
     void run ( const RecoCollection & recos, const CaloGeometry & geometry, const bool isHBHE_, double energyThresholdHFHO ){
@@ -104,7 +104,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       energy -> push_back ( reco   -> energy () );
       time   -> push_back ( reco   -> time   () );
       flags  -> push_back ( reco   -> flags  () );
-      aux    -> push_back ( reco   -> aux    () );
+//      aux    -> push_back ( reco   -> aux    () );
       
     } // end of loop over rechits
   }

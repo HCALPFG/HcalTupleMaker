@@ -84,7 +84,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     produces<std::vector<int>   > ( m_prefix + "RBXid"  + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "HPDid"  + m_suffix );
     produces<std::vector<int>   > ( m_prefix + "Flags"  + m_suffix );
-    produces<std::vector<int>   > ( m_prefix + "Aux"    + m_suffix );
+//    produces<std::vector<int>   > ( m_prefix + "Aux"    + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Energy" + m_suffix );
     produces<std::vector<float> > ( m_prefix + "Time"   + m_suffix );
   }
@@ -100,7 +100,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     algo.rbxid  = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.hpdid  = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.flags  = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
-    algo.aux    = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
+//    algo.aux    = std::unique_ptr<std::vector<int  > > ( new std::vector<int  > ());
     algo.energy = std::unique_ptr<std::vector<float> > ( new std::vector<float> ());
     algo.time   = std::unique_ptr<std::vector<float> > ( new std::vector<float> ());
   }
@@ -114,7 +114,7 @@ class HcalTupleMaker_HcalRecHits : public edm::EDProducer {
     iEvent.put ( move( algo.rbxid  ), m_prefix + "RBXid"  + m_suffix );
     iEvent.put ( move( algo.hpdid  ), m_prefix + "HPDid"  + m_suffix );
     iEvent.put ( move( algo.flags  ), m_prefix + "Flags"  + m_suffix );
-    iEvent.put ( move( algo.aux    ), m_prefix + "Aux"    + m_suffix );
+//    iEvent.put ( move( algo.aux    ), m_prefix + "Aux"    + m_suffix );
     iEvent.put ( move( algo.energy ), m_prefix + "Energy" + m_suffix );
     iEvent.put ( move( algo.time   ), m_prefix + "Time"   + m_suffix );
   }

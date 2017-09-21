@@ -87,7 +87,16 @@ process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 #process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 #process.load('Configuration.StandardSequences.Reconstruction_cff')
+process.load('Configuration.StandardSequences.L1Reco_cff')
 process.load('RecoLocalCalo.Configuration.hcalLocalReco_cff')
+
+process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
+process.load('Configuration.StandardSequences.Reconstruction_cff')
+
+process.load("RecoMET.METProducers.hcalnoiseinfoproducer_cfi") 
+process.load("CommonTools.RecoAlgos.HBHENoiseFilter_cfi")
+process.load("CommonTools.RecoAlgos.HBHENoiseFilterResultProducer_cfi")
+
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 
 #------------------------------------------------------------------------------------
@@ -99,10 +108,11 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 #------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
-#1#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HFRecHits_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HFPhase1RecHits_cfi")
-#1#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalNoiseFilters_cfi")
 
 #------------------------------------------------------------------------------------
 # Set up noise filters
@@ -167,6 +177,14 @@ process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v4'
 #1#         Suffix = cms.untracked.string("")
 #1#)
 
+# To apply filter decision in CMSSW as an EDFilter:
+process.hcalnoise.fillCaloTowers = cms.bool(False)
+process.hcalnoise.fillTracks = cms.bool(False)
+process.hcalnoise.recHitCollName = cms.string("hbheplan1")
+process.ApplyBaselineHBHENoiseFilter = cms.EDFilter("BooleanFlagFilter",
+    inputLabel = cms.InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResult"),
+    reverseDecision = cms.bool(False)
+)
 
 #------------------------------------------------------------------------------------
 # HcalTupleMaker sequence definition
@@ -174,31 +192,37 @@ process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v4'
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
-    #1#process.hcalTupleHBHERecHits*
+    process.hcalTupleHBHERecHits*
     process.hcalTupleHFRecHits*
     process.hcalTupleHFPhase1RecHits*
-    #1#process.hcalTupleHcalNoiseFilters*
+    #process.hcalTupleHcalNoiseFilters*
     #1#process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
     #1#process.hcalTupleCaloJetMet*
     #1#process.hcalTupleMuonTrack*
     # 
-    #1#process.hcalTupleTrigger*
+    process.hcalTupleTrigger*
     #
     process.hcalTupleTree
 )
 
-
+#-----------------------------------------------------------------------------------
 # Path and EndPath definitions
 #-----------------------------------------------------------------------------------
 process.preparation = cms.Path(
 
     process.hcalDigis *
-    #process.RawToDigi *
+    
+    process.L1Reco *
     process.hfprereco *
-    process.hfreco *
-    ###process._phase1_hfreco *
-    #2#process.reconstruction *
-    #1#process.hcalnoise *
-    #1#process.HBHENoiseFilterResultProducer *
+    process.hfreco * 
+    process.hbheprereco *
+    process.hbheplan1 *
+    
+    #process.reconstruction * 
+
+#    process.hcalnoise *
+#    process.HBHENoiseFilterResultProducer *
+#    process.ApplyBaselineHBHENoiseFilter *
+    
     process.tuple_step
 )

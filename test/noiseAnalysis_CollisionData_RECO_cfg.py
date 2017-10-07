@@ -18,6 +18,7 @@ options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton,
 #options.inputFiles = "/store/data/Run2017A/MinimumBias/RECO/PromptReco-v1/000/295/616/00000/C0E482F3-2247-E711-BADE-02163E01A588.root"
 options.inputFiles = "/store/data/Run2017A/SingleMuon/RECO/PromptReco-v3/000/296/888/00000/0265B865-6455-E711-AC9A-02163E0143A7.root"
 #options.inputFiles = "/store/data/Run2017B/Cosmics/RECO/PromptReco-v1/000/297/051/00000/16B76A38-4156-E711-8131-02163E01A1C1.root"
+options.inputFiles = "/store/data/Run2017E/MET/RECO/PromptReco-v1/000/303/595/00000/26B6FFC7-9FA0-E711-A5B7-02163E013595.root"
 options.outputFile = 'results.root'
 options.maxEvents = -1 # -1 means all events
 #options.skipEvents = 0 # default is 0.
@@ -104,7 +105,7 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v4' 
+process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v9' 
 ## From Salavat
 #process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 #process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v4'

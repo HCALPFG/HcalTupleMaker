@@ -33,7 +33,8 @@ datasetnames = [
 #'/HLTPhysics1/Run2017A-v1/RAW'
 #'/MET/Run2017B-v1/RAW'
 #'/JetHT/Run2017B-v1/RAW'
-'/MinimumBias/Run2017C-v1/RAW'
+#'/MinimumBias/Run2017C-v1/RAW'
+'/MET/Run2017E-v1/RAW'
 ]
 
 # Storage path for output files - EOS specific
@@ -47,8 +48,8 @@ psetname = 'noiseAnalysis_CollisionData_RAW_cfg.py'
 OutputFilename = 'results.root'
 
 # Storage site of output files
-storageSite = 'T2_CH_CERN'
-#storageSite = 'T2_US_UCSD' # temporarily used UCSD T2
+#storageSite = 'T2_CH_CERN'
+storageSite = 'T2_US_UCSD' # temporarily used UCSD T2
 
 # White list sites
 whiteList = ['']
@@ -81,12 +82,10 @@ config.JobType.pyCfgParams = ['outputFile='+OutputFilename]
 # DATA specific:
 config.Data.inputDataset     = datasetnames[number]
 config.Data.inputDBS         = 'global'
-#config.Data.splitting       = 'FileBased'
-#config.Data.unitsPerJob     = 5
 config.Data.splitting        = 'LumiBased'
 config.Data.unitsPerJob      = 5 
 config.Data.ignoreLocality   = True
-config.Data.outLFNDirBase    = storagepath
+#config.Data.outLFNDirBase    = storagepath
 config.Data.publication      = False
 config.Data.outputDatasetTag = dataset[1]+'_'+dataset[2]+timestamp
 #config.Data.lumiMask         = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt'
@@ -98,7 +97,8 @@ config.Data.outputDatasetTag = dataset[1]+'_'+dataset[2]+timestamp
 #config.Data.lumiMask        = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PromptReco/Cert_294927-297723_13TeV_PromptReco_Collisions17_JSON.txt'
 #config.Data.runRange        = '297429-297429'
 #config.Data.runRange        = '297666-297723'
-config.Data.runRange        = '300820-300901'#'300935-300935'
+#config.Data.runRange        = '300820-300901'#'300935-300935'
+config.Data.runRange        = '303601-303601'
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # JSON files are available at: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/

@@ -30,41 +30,7 @@ options.parseArguments()
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 process.source = cms.Source("PoolSource",
     fileNames  = cms.untracked.vstring(
-#        "root://eoscms//eos/cms/store/data/Run2017A/HLTPhysics1/RAW/v1/000/295/606/00000/4CC8CCBD-3745-E711-9A4E-02163E01341F.root"
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_15.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_7.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_14.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_11.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_8.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_6.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_30.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_3.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_27.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_26.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_20.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_2.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_19.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_18.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_17.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_10.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_1.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_35.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_33.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_32.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_28.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_13.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_12.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_9.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_25.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_16.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_5.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_24.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_31.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_23.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_34.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_21.root",
-#   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_4.root",
-   "file:/afs/cern.ch/work/o/owen/public/trigger-2017/edm-files-june7-2017/raw-format/pickevents_22.root"
+   "file:/afs/cern.ch/user/j/jaehyeok/work/public/C6359DA3-E09E-E711-BB46-02163E011BE8.root"
     ),
 
     skipEvents = cms.untracked.uint32(options.skipEvents) # default is 0.
@@ -143,7 +109,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 #process.GlobalTag.globaltag = autoCond['run2_data'] 
 #process.GlobalTag.globaltag = autoCond['run2_mc']  
 
-process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v4'
+process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v9'
 
 #----------------------------------------------------- replacing conditions
 #process.load("CondCore.CondDB.CondDB_cfi")
@@ -167,15 +133,16 @@ process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v4'
 #1#         Prefix = cms.untracked.string(""),
 #1#         Suffix = cms.untracked.string("")
 #1#)
-#1#process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilters",
-#1#         noiseSummaryInputTag = cms.untracked.InputTag("hcalnoise"),
-#1#         noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
-#1#         recoInputTag         = cms.untracked.string("hbhereco"),
-#1#         isRAW  = cms.untracked.bool(False), # new Flag necessary for HcalNoiseFilters to run on RECO data
-#1#         isRECO = cms.untracked.bool(True), 
-#1#         Prefix = cms.untracked.string(""),
-#1#         Suffix = cms.untracked.string("")
-#1#)
+process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilters",
+         noiseSummaryInputTag = cms.untracked.InputTag("hcalnoise"),
+         noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
+         recoInputTag         = cms.untracked.string("hbheplan1"),#"hbhereco"),
+         recoHFInputTag       = cms.untracked.string("hfreco"),
+         isRAW  = cms.untracked.bool(True), 
+         isRECO = cms.untracked.bool(False), 
+         Prefix = cms.untracked.string(""),
+         Suffix = cms.untracked.string("")
+)
 
 # To apply filter decision in CMSSW as an EDFilter:
 process.hcalnoise.fillCaloTowers = cms.bool(False)
@@ -186,6 +153,10 @@ process.ApplyBaselineHBHENoiseFilter = cms.EDFilter("BooleanFlagFilter",
     reverseDecision = cms.bool(False)
 )
 
+# Remove HFDigiTime SevLevel calculation because it does not exist in phase1 flags
+import RecoLocalCalo.HcalRecAlgos.RemoveAddSevLevel as HcalRemoveAddSevLevel
+HcalRemoveAddSevLevel.RemoveFlag(process.hcalRecAlgos,"HFDigiTime")
+
 #------------------------------------------------------------------------------------
 # HcalTupleMaker sequence definition
 #------------------------------------------------------------------------------------
@@ -195,7 +166,7 @@ process.tuple_step = cms.Sequence(
     process.hcalTupleHBHERecHits*
     process.hcalTupleHFRecHits*
     process.hcalTupleHFPhase1RecHits*
-    #process.hcalTupleHcalNoiseFilters*
+    process.hcalTupleHcalNoiseFilters*
     #1#process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
     #1#process.hcalTupleCaloJetMet*
     #1#process.hcalTupleMuonTrack*
@@ -220,8 +191,8 @@ process.preparation = cms.Path(
     
     #process.reconstruction * 
 
-#    process.hcalnoise *
-#    process.HBHENoiseFilterResultProducer *
+    process.hcalnoise *
+    process.HBHENoiseFilterResultProducer *
 #    process.ApplyBaselineHBHENoiseFilter *
     
     process.tuple_step

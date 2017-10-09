@@ -145,6 +145,9 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
          Suffix = cms.untracked.string("")
 )
 
+# Remove HFDigiTime SevLevel calculation because it does not exist in phase1 flags
+import RecoLocalCalo.HcalRecAlgos.RemoveAddSevLevel as HcalRemoveAddSevLevel
+HcalRemoveAddSevLevel.RemoveFlag(process.hcalRecAlgos,"HFDigiTime")
 
 #------------------------------------------------------------------------------------
 # Place-holder for applying HBHE noise filter:

@@ -33,7 +33,8 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
     noiseResultInputTag    (iConfig.getUntrackedParameter<std::string>("noiseResultInputTag")), 
     //recoInputTag         (iConfig.getUntrackedParameter<std::string>("recoInputTag")),
     recoInputToken         (consumes<HBHERecHitCollection>(iConfig.getUntrackedParameter<std::string>("recoInputTag"))),
-    recoHFInputToken         (consumes<HFRecHitCollection>(iConfig.getUntrackedParameter<std::string>("recoHFInputTag"))),
+    recoHFInputToken       (consumes<HFRecHitCollection>(iConfig.getUntrackedParameter<std::string>("recoHFInputTag"))),
+    recoVertexInputToken   (consumes<reco::VertexCollection>(iConfig.getUntrackedParameter<std::string>("recoVertexInputTag"))), 
     //isRAW                (iConfig.getUntrackedParameter<bool>("isRAW")),
     isRECO                 (iConfig.getUntrackedParameter<bool>("isRECO")),
     prefix                 (iConfig.getUntrackedParameter<std::string>("Prefix")),
@@ -76,6 +77,8 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
     //
     // Method-0 rechit collection accessed via eraw()
     produces <std::vector<double> >               (prefix + "HBHERecHitEnergyRaw"      + suffix );
+    produces <std::vector<double> >               (prefix + "HBHERecHitEnergyAux"      + suffix );
+    produces <std::vector<float> >                (prefix + "HBHERecHitChi2"           + suffix );
     produces <std::vector<int> >                  (prefix + "HBHERecHitSevLvl"         + suffix );
     produces <std::vector<uint32_t> >             (prefix + "HBHERecHitAux"            + suffix );
     produces <std::vector<uint32_t> >             (prefix + "HBHERecHitAuxHBHE"        + suffix );
@@ -93,6 +96,8 @@ HcalTupleMaker_HcalNoiseFilters::HcalTupleMaker_HcalNoiseFilters(const edm::Para
     produces <std::vector<int> >                   (prefix + "HFRecHitSevLvl"           + suffix );
     produces <std::vector<uint32_t> >              (prefix + "HFRecHitAux"              + suffix );
     produces <std::vector<uint32_t> >              (prefix + "HFRecHitAuxHF"            + suffix );
+    // 
+    produces <std::vector<int> >                   (prefix + "Nvtx"                     + suffix );
 }
 
 void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::EventSetup& iSetup){
@@ -127,6 +132,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     std::unique_ptr<std::vector<double> >               rbxenergy15                ( new std::vector<double>               ());
     //
     std::unique_ptr<std::vector<double> >               hbherechitenergyraw        ( new std::vector<double>               ());
+    std::unique_ptr<std::vector<double> >               hbherechitenergyaux        ( new std::vector<double>               ());
+    std::unique_ptr<std::vector<float> >                hbherechitchi2             ( new std::vector<float>                ());
     std::unique_ptr<std::vector<int> >                  hbherechitsevlvl           ( new std::vector<int>                  ());
     std::unique_ptr<std::vector<uint32_t> >             hbherechitaux              ( new std::vector<uint32_t>                  ());
     std::unique_ptr<std::vector<uint32_t> >             hbherechitauxhbhe          ( new std::vector<uint32_t>                  ());
@@ -144,6 +151,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     std::unique_ptr<std::vector<int> >                  hfrechitsevlvl             ( new std::vector<int>                  ());
     std::unique_ptr<std::vector<uint32_t> >             hfrechitaux                ( new std::vector<uint32_t>                  ());
     std::unique_ptr<std::vector<uint32_t> >             hfrechitauxhf              ( new std::vector<uint32_t>                  ());
+    std::unique_ptr<std::vector<int> >                  nvtx                       ( new std::vector<int>                  ());
 
     edm::Handle<bool> hNoiseResult;
     //iEvent.getByLabel(noiseResultInputTag, "HBHENoiseFilterResult", hNoiseResult);
@@ -194,6 +202,9 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     officialdecisionrun2t   -> push_back( *hNoiseResult_Run2Tight );
     isonoisefilterdecision  -> push_back( *hNoiseResult_IsoNoiseFilter );
 
+    edm::Handle<reco::VertexCollection> vtx;
+    iEvent.getByToken(recoVertexInputToken, vtx); 
+    nvtx->push_back(vtx->size());
 
     edm::Handle<HcalNoiseSummary> hSummary;
     //iEvent.getByLabel(noiseSummaryInputTag, hSummary);  
@@ -304,8 +315,10 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
         }
 
         // loop over HBHE rechits
-        for(HBHERecHitCollection::const_iterator j = hRecHits->begin(); j != hRecHits->end(); j++){
+        for(HBHERecHitCollection::const_iterator j = hRecHits->begin(); j != hRecHits->end(); j++){ 
             hbherechitenergyraw->push_back( j->eraw() );//this is always method-0 rechit energy (raw energy).
+            hbherechitenergyaux->push_back( j->eaux() );
+            hbherechitchi2->push_back( j->chi2() ); // JAE FIXME
             //
             // Reset values to 0
             for(int j = 0; j < 8; j++){
@@ -328,6 +341,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
             int ieta = cell.ieta();
             int depth = cell.depth();
             int sub = cell.subdet();
+            
+            //cout << "HcalNoiseFilters:: " << ieta << " " << iphi << " " << depth << " :: " <<  j->eraw() << " " << j->eaux() << " " << j->energy() << endl; 
            
             // http://cmslxr.fnal.gov/source/DataFormats/HcalRecHit/src/HBHERecHitAuxSetter.cc
             int auxwd1 = j->aux();      // TS = 0,1,2,3 info
@@ -531,6 +546,8 @@ iEvent.put ( move( rbxenergy15              ), prefix + "RBXEnergy15"           
 //
 iEvent.put ( move( hbherechitsevlvl         ), prefix + "HBHERecHitSevLvl"         + suffix );
 iEvent.put ( move( hbherechitenergyraw      ), prefix + "HBHERecHitEnergyRaw"      + suffix );
+iEvent.put ( move( hbherechitenergyaux      ), prefix + "HBHERecHitEnergyAux"      + suffix );
+iEvent.put ( move( hbherechitchi2           ), prefix + "HBHERecHitChi2"           + suffix );
 iEvent.put ( move( hbherechitaux            ), prefix + "HBHERecHitAux"            + suffix );
 iEvent.put ( move( hbherechitauxhbhe        ), prefix + "HBHERecHitAuxHBHE"        + suffix );
 iEvent.put ( move( hbherechitauxphase1      ), prefix + "HBHERecHitAuxPhase1"      + suffix );
@@ -547,6 +564,8 @@ iEvent.put ( move( hbherechitauxenergy      ), prefix + "HBHERecHitAuxEnergy"   
 iEvent.put ( move( hfrechitsevlvl           ), prefix + "HFRecHitSevLvl"           + suffix );
 iEvent.put ( move( hfrechitaux              ), prefix + "HFRecHitAux"              + suffix );
 iEvent.put ( move( hfrechitauxhf            ), prefix + "HFRecHitAuxHF"            + suffix );
+//
+iEvent.put ( move( nvtx                     ), prefix + "Nvtx"                     + suffix );
 }
 
 

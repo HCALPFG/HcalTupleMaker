@@ -62,6 +62,10 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       //-----------------------------------------------------
       
       hcalDetId = HcalDetId(reco -> detid());
+            
+  //    if (!(hcalDetId.subdet()==2 && 
+  //        hcalDetId.iphi()>=63 && hcalDetId.iphi()<=66 && 
+  //        hcalDetId.ieta()>0)) continue;  // FIXME
 
       //-----------------------------------------------------
       // Get HPD and RBX IDs
@@ -104,7 +108,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       energy -> push_back ( reco   -> energy () );
       time   -> push_back ( reco   -> time   () );
       flags  -> push_back ( reco   -> flags  () );
-//      aux    -> push_back ( reco   -> aux    () );
+       //std::cout << "HBHERechit:: " << hcalDetId.ieta() << " " << hcalDetId.iphi() << " " << hcalDetId.depth() << " :: " <<  reco->energy() << std::endl; 
       
     } // end of loop over rechits
   }

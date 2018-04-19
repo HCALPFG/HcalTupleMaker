@@ -8,6 +8,8 @@
 #include "DataFormats/METReco/interface/HcalNoiseSummary.h"
 #include "DataFormats/HcalRecHit/interface/HBHERecHit.h"
 #include "DataFormats/HcalRecHit/interface/HFRecHit.h"
+#include "DataFormats/VertexReco/interface/Vertex.h"
+#include "DataFormats/VertexReco/interface/VertexFwd.h"
 
 #include "Geometry/CaloTopology/interface/HcalTopology.h"
 #include "CondFormats/HcalObjects/interface/HcalChannelQuality.h"
@@ -29,7 +31,8 @@ class HcalTupleMaker_HcalNoiseFilters : public edm::EDProducer {
   std::string     noiseResultInputTag;
   edm::EDGetTokenT<HBHERecHitCollection> recoInputToken;
   edm::EDGetTokenT<HFRecHitCollection> recoHFInputToken;
-
+  edm::EDGetTokenT<reco::VertexCollection> recoVertexInputToken;
+  
   //edm::InputTag   noiseSummaryInputTag;
 
   // std::string     recoInputTag;

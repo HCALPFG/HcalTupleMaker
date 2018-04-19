@@ -196,8 +196,7 @@ void HcalTupleMaker_CaloJetMet::CalculateTotalEnergiesHBHE(const HBHERecHitColle
         double phi = cellGeometry->getPosition(hcalDetId).phi() ;
         double energy = RecHits[i].energy();
         double et = energy / cosh(eta);
-        cout << (IsHB?"HB  ":"HE  ") << eta << " " << phi << " " << energy << " " << cosh(eta) << endl; // FIXME
-        cout << (IsHB?" HB":" HE ") <<hcalDetId.ieta() << " " << hcalDetId.iphi() << " " << hcalDetId.depth()<< endl; // FIXME
+        
         if(IsHB == true)
         {
             HBET[0] = HBET[0] + et * cos(phi);

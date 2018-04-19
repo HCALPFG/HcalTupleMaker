@@ -9,16 +9,11 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 #------------------------------------------------------------------------------------
 # Declare the process and input variables
 #------------------------------------------------------------------------------------
-#process = cms.Process('NOISE', eras.run2_HCAL_2017,
-#                               eras.run2_HF_2017,
-#                               eras.run2_HEPlan1_2017)
-process = cms.Process('NOISE',eras.run2_HCAL_2017, eras.run2_HF_2017,eras.run2_HEPlan1_2017)
+#process = cms.Process('NOISE',eras.run2_HCAL_2017, eras.run2_HF_2017,eras.run2_HEPlan1_2017)
+process = cms.Process('NOISE',eras.Run2_2018)
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
-#options.inputFiles = "/store/data/Run2017A/MinimumBias/RECO/PromptReco-v1/000/295/616/00000/C0E482F3-2247-E711-BADE-02163E01A588.root"
-options.inputFiles = "/store/data/Run2017A/SingleMuon/RECO/PromptReco-v3/000/296/888/00000/0265B865-6455-E711-AC9A-02163E0143A7.root"
-#options.inputFiles = "/store/data/Run2017B/Cosmics/RECO/PromptReco-v1/000/297/051/00000/16B76A38-4156-E711-8131-02163E01A1C1.root"
-options.inputFiles = "/store/data/Run2017E/MET/RECO/PromptReco-v1/000/303/595/00000/26B6FFC7-9FA0-E711-A5B7-02163E013595.root"
+options.inputFiles = "file:/eos/cms/store/relval/CMSSW_10_0_0/JetHT/RAW-RECO/JetHTJetPlusHOFilter-100X_dataRun2_PromptLike_v1_mahiOFF_RelVal_jetHT2017F-v1/10000/008710B0-15FF-E711-A359-0CC47A4D75F4.root"
 options.outputFile = 'results.root'
 options.maxEvents = -1 # -1 means all events
 #options.skipEvents = 0 # default is 0.
@@ -105,7 +100,7 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v9' 
+process.GlobalTag.globaltag = '100X_dataRun2_PromptLike_v1' 
 ## From Salavat
 #process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
 #process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v4'
@@ -139,11 +134,15 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
          recoInputTag         = cms.untracked.string("hbhereco"),
          recoHFInputTag       = cms.untracked.string("hfreco"),
+         recoVertexInputTag   = cms.untracked.string("offlinePrimaryVertices"),
          isRAW  = cms.untracked.bool(False), # new Flag necessary for HcalNoiseFilters to run on RECO data
-         isRECO = cms.untracked.bool(True), 
+         isRECO = cms.untracked.bool(False), 
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )
+
+process.hcalnoise.fillCaloTowers = cms.bool(True)
+process.hcalnoise.fillTracks = cms.bool(True)
 
 # Remove HFDigiTime SevLevel calculation because it does not exist in phase1 flags
 import RecoLocalCalo.HcalRecAlgos.RemoveAddSevLevel as HcalRemoveAddSevLevel

@@ -9,14 +9,16 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 #------------------------------------------------------------------------------------
 # Declare the process and input variables
 #------------------------------------------------------------------------------------
-#process = cms.Process('NOISE',eras.Run2_50ns)#for 50ns 13 TeV data
-process = cms.Process('NOISE',eras.Run2_25ns)#for 25ns 13 TeV data
+#process = cms.Process('NOISE', eras.run2_HCAL_2017,
+#                               eras.run2_HF_2017,
+#                               eras.run2_HEPlan1_2017)
+#process = cms.Process('NOISE',eras.run2_HCAL_2017, eras.run2_HF_2017,eras.run2_HEPlan1_2017)
+process = cms.Process('NOISE',eras.Run2_2018)
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
-#options.inputFiles = 'root://xrootd.unl.edu//store/mc/RunIIFall15DR75/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/GEN-SIM-RECO/Asympt25nsReco_75X_mcRun2_asymptotic_v8-v1/50000/02453C84-9A71-E511-A4E5-0025905A48BC.root'
-options.inputFiles = '/store/mc/RunIIFall15DR75/QCD_Pt-15to7000_TuneCUETP8M1_Flat_13TeV_pythia8/GEN-SIM-RECO/Asympt25nsReco_75X_mcRun2_asymptotic_v8-v1/50000/02453C84-9A71-E511-A4E5-0025905A48BC.root'
-options.outputFile = 'results.root'
-#options.maxEvents = 100 # -1 means all events
+options.inputFiles = "/store/relval/CMSSW_10_0_3/RelValNuGun/GEN-SIM-RECO/PU25ns_100X_upgrade2018_realistic_v11_thA-v1/20000/16F6B64C-611D-E811-8D61-0025905B85D2.root"
+options.outputFile = 'results_mc.root'
+options.maxEvents = -1 # -1 means all events
 #options.skipEvents = 0 # default is 0.
 
 
@@ -31,7 +33,6 @@ process.source = cms.Source("PoolSource",
 )
 
 process.TFileService = cms.Service("TFileService",
-   # fileName = cms.string('file:/tmp/hsaka/Test.root')
      fileName = cms.string(options.outputFile)
 )
 
@@ -39,16 +40,27 @@ process.TFileService = cms.Service("TFileService",
 #------------------------------------------------------------------------------------
 # import of standard configurations
 #------------------------------------------------------------------------------------
-process.load('Configuration.StandardSequences.Services_cff')
-process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
-process.load('FWCore.MessageService.MessageLogger_cfi')
-process.load('Configuration.EventContent.EventContent_cff')
+#process.load('Configuration.StandardSequences.Services_cff')
+#process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
+#process.load('FWCore.MessageService.MessageLogger_cfi')
+#process.load('Configuration.EventContent.EventContent_cff')
+##process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+#process.load('Configuration.Geometry.GeometryExtended2017Plan1_cff')
+#process.load('Configuration.Geometry.GeometryExtended2017Plan1Reco_cff')
+##process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
+#process.load('Configuration.StandardSequences.MagneticField_38T_cff')
+#process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
+#process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
+#process.load('Configuration.StandardSequences.EndOfProcess_cff')
+
+## from Salavat ##
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
-#process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cff')
-process.load('Configuration.StandardSequences.MagneticField_38T_cff')
-process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
-process.load('Configuration.StandardSequences.EndOfProcess_cff')
+process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
+process.load("CondCore.CondDB.CondDB_cfi")
+process.load("CondCore.DBCommon.CondDBSetup_cfi")
+
+
 
 
 #------------------------------------------------------------------------------------
@@ -65,7 +77,8 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Tree_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Event_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHERecHits_cfi")
-#process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HFRecHits_cfi")
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_Trigger_cfi")
 
 
 #------------------------------------------------------------------------------------
@@ -90,9 +103,7 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '76X_mcRun2_asymptotic_v12'
-#from Configuration.AlCa.autoCond import autoCond
-#process.GlobalTag.globaltag = autoCond['run2_data']
+process.GlobalTag.globaltag = '100X_upgrade2018_realistic_v11' 
 
 
 #------------------------------------------------------------------------------------
@@ -119,12 +130,20 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
          noiseSummaryInputTag = cms.untracked.InputTag("hcalnoise"),
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
          recoInputTag         = cms.untracked.string("hbhereco"),
+         recoHFInputTag       = cms.untracked.string("hfreco"),
+         recoVertexInputTag   = cms.untracked.string("offlinePrimaryVertices"),
          isRAW  = cms.untracked.bool(False), # new Flag necessary for HcalNoiseFilters to run on RECO data
-         isRECO = cms.untracked.bool(True), 
+         isRECO = cms.untracked.bool(False), 
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )
 
+#process.hcalnoise.fillCaloTowers = cms.bool(False)
+#process.hcalnoise.fillTracks = cms.bool(False)
+
+# Remove HFDigiTime SevLevel calculation because it does not exist in phase1 flags
+#import RecoLocalCalo.HcalRecAlgos.RemoveAddSevLevel as HcalRemoveAddSevLevel
+#HcalRemoveAddSevLevel.RemoveFlag(process.hcalRecAlgos,"HFDigiTime")
 
 #------------------------------------------------------------------------------------
 # Place-holder for applying HBHE noise filter:
@@ -168,6 +187,7 @@ process.tuple_step = cms.Sequence(
     #    process.hcalTupleL1JetTriggerPrimitives*
     #    # Make HCAL tuples: reco info
     process.hcalTupleHBHERecHits*
+    process.hcalTupleHFRecHits*
     process.hcalTupleHcalNoiseFilters*
     process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
     process.hcalTupleCaloJetMet*
@@ -179,7 +199,7 @@ process.tuple_step = cms.Sequence(
     #    process.hcalTupleHORecHits*
     #    process.hcalTupleHFRecHits*
     #    # Trigger info
-    #process.hcalTupleTrigger*
+    process.hcalTupleTrigger*
     
     #    process.hcalTupleTriggerObjects*
     #    # L1 jet info
@@ -187,7 +207,6 @@ process.tuple_step = cms.Sequence(
     #    # Make HCAL tuples: cosmic muon info
     #    process.hcalTupleCosmicMuons*
     #    # Package everything into a tree
-    #
     process.hcalTupleTree
 )
 
@@ -199,12 +218,14 @@ process.preparation = cms.Path(
     #process.my_hlt *
     #process.RawToDigi * #needed for RAW files
     #process.L1Reco *
-    #rprocess.reconstruction * #needed for RAW files
+    #process.reconstruction * #needed for RAW files
     #process.caloglobalreco *
     #process.reconstructionCosmics *
     #
+    #process.hbheprereco *
     #process.horeco *
     #process.hfreco *
+    #process.hbhereco *
     #
     #process.hbheprerecoMethod0 *
     #process.hbheprerecoMethod2 *

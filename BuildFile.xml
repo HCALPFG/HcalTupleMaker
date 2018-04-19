@@ -8,7 +8,6 @@
 <use   name="Geometry/HcalTowerAlgo"/>
 <use   name="Geometry/Records"/>
 <use   name="RecoLocalCalo/HcalRecAlgos"/>
-<use   name="RecoLocalCalo/HcalRecProducers"/>
 <use   name="RecoLocalCalo/EcalRecAlgos"/>
 <use   name="CondFormats/DataRecord"/>
 <use   name="CalibCalorimetry/HcalTPGAlgos"/>

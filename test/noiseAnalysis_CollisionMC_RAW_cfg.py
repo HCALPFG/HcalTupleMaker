@@ -12,18 +12,17 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 
 from Configuration.StandardSequences.Eras import eras
 process                 = cms.Process('NOISE', 
-    eras.run2_HCAL_2017, 
-    eras.run2_HF_2017,
-    eras.run2_HEPlan1_2017
+#    eras.run2_HCAL_2017, 
+#    eras.run2_HF_2017,
+#    eras.run2_HEPlan1_2017
+    eras.Run2_2018
 )
 
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
-options.outputFile = 'results_207.root'
-options.maxEvents = 5000  #-1 # means all events
+options.outputFile = 'results.root'
+options.maxEvents = 500 #-1 # means all events
 
-# https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideEDMPathsAndTriggerBits#Summary_report
-#process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
 
 #------------------------------------------------------------------------------------
 # Get and parse the command line arguments
@@ -32,12 +31,9 @@ options.parseArguments()
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 process.source = cms.Source("PoolSource",
     fileNames  = cms.untracked.vstring(
-   #"file:/eos/cms/store/user/jaehyeok/00056890-5BAE-E711-AD51-02163E014439.root"
-   "/store/data/Run2017E/JetHT/RAW/v1/000/304/797/00000/00056890-5BAE-E711-AD51-02163E014439.root",
-   "/store/data/Run2017E/JetHT/RAW/v1/000/304/797/00000/00094B71-75AE-E711-8DE3-02163E019B35.root", 
-   "/store/data/Run2017E/JetHT/RAW/v1/000/304/797/00000/000B1159-61AE-E711-846E-02163E01A6D1.root", 
-   "/store/data/Run2017E/JetHT/RAW/v1/000/304/797/00000/0016D67E-A7AE-E711-81D1-02163E01A644.root", 
-   "/store/data/Run2017E/JetHT/RAW/v1/000/304/797/00000/00186C2C-62AE-E711-B0B6-02163E013522.root"
+   #"file:/eos/cms/store/relval/CMSSW_10_0_0/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-DIGI-RAW/100X_upgrade2018_realistic_v6_mahiON-v1/10000/C6785BE4-BAFF-E711-8D93-0CC47A78A42E.root"
+   #"/store/relval/CMSSW_10_0_0/RelValQCD_FlatPt_15_3000HS_13/GEN-SIM-DIGI-RAW/PU25ns_100X_upgrade2018_realistic_v6_mahiON-v1/10000/EE4959BA-6A00-E811-A196-0025905A609E.root"
+   "file:/home/users/jaehyeok/scratch/EE4959BA-6A00-E811-A196-0025905A609E.root"
     ),
 
     skipEvents = cms.untracked.uint32(options.skipEvents) # default is 0.
@@ -54,7 +50,6 @@ process.TFileService = cms.Service("TFileService",
 process.load('Configuration.StandardSequences.Services_cff')
 #process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
-process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 process.load('Configuration.EventContent.EventContent_cff')
 process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
@@ -117,8 +112,9 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condD
 #process.GlobalTag.globaltag = autoCond['run2_data'] 
 #process.GlobalTag.globaltag = autoCond['run2_mc']  
 
-#process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v9'
-process.GlobalTag.globaltag = '100X_dataRun2_v1'
+#https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideFrontierConditions#Global_Tags_for_PdmVMCcampaignRu
+#http://cmslxr.fnal.gov/source/Configuration/AlCa/python/autoCond.py#0053
+process.GlobalTag.globaltag = '100X_upgrade2018_realistic_v6' 
 
 #----------------------------------------------------- replacing conditions
 #process.load("CondCore.CondDB.CondDB_cfi")
@@ -131,20 +127,6 @@ process.GlobalTag.globaltag = '100X_dataRun2_v1'
 #
 #     )
 #)
-
-process.load("CondCore.DBCommon.CondDBSetup_cfi")
-process.es_pool = cms.ESSource("PoolDBESSource",
-    process.CondDBSetup,
-    timetype = cms.string('runnumber'),
-    toGet = cms.VPSet(
-      cms.PSet(record = cms.string("HcalRecoParamsRcd"),
-        tag = cms.string("HcalRecoParams_HEP17shape207")
-        )
-      ),
-    connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS'),
-    authenticationMethod = cms.untracked.uint32(0)
-    )
-process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
 
 
 #====================================================================================
@@ -159,11 +141,11 @@ process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
 process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilters",
          noiseSummaryInputTag = cms.untracked.InputTag("hcalnoise"),
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
-         recoInputTag         = cms.untracked.string("hbheprereco"), #"hbheplan1"),#"hbhereco"),
+         recoInputTag         = cms.untracked.string("hbheplan1"),#"hbhereco"),
          recoHFInputTag       = cms.untracked.string("hfreco"),
          recoVertexInputTag   = cms.untracked.string("offlinePrimaryVertices"),
          isRAW  = cms.untracked.bool(True), 
-         isRECO = cms.untracked.bool(True), 
+         isRECO = cms.untracked.bool(False), 
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )
@@ -171,16 +153,30 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
 # To apply filter decision in CMSSW as an EDFilter:
 process.hcalnoise.fillCaloTowers = cms.bool(False)
 process.hcalnoise.fillTracks = cms.bool(False)
-process.hcalnoise.recHitCollName = cms.string("hbheprereco")#"hbheplan1")
+process.hcalnoise.recHitCollName = cms.string("hbheplan1")
 process.ApplyBaselineHBHENoiseFilter = cms.EDFilter("BooleanFlagFilter",
     inputLabel = cms.InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResult"),
     reverseDecision = cms.bool(False)
 )
 
+# Use latest pulse shape
+#process.load("CondCore.DBCommon.CondDBSetup_cfi")
+#process.es_pool = cms.ESSource("PoolDBESSource",
+#    process.CondDBSetup,
+#    timetype = cms.string('runnumber'),
+#    toGet = cms.VPSet(
+#      cms.PSet(record = cms.string("HcalRecoParamsRcd"),
+#        tag = cms.string("HcalRecoParams_HEP17shape207")
+#        )
+#      ),
+#    connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS'),
+#    authenticationMethod = cms.untracked.uint32(0)
+#    )
+#process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
+
 # Remove HFDigiTime SevLevel calculation because it does not exist in phase1 flags
 import RecoLocalCalo.HcalRecAlgos.RemoveAddSevLevel as HcalRemoveAddSevLevel
 HcalRemoveAddSevLevel.RemoveFlag(process.hcalRecAlgos,"HFDigiTime")
-#HcalRemoveAddSevLevel.AddFlag(process.hcalRecAlgos,"HFSignalAsymmetry",8)
 
 # do not apply TDC/Qasym cuts
 process.hfreco.algorithm.rejectAllFailures = cms.bool(False)
@@ -199,7 +195,7 @@ process.tuple_step = cms.Sequence(
     #1#process.hcalTupleCaloJetMet*
     #1#process.hcalTupleMuonTrack*
     # 
-    #process.hcalTupleTrigger*
+    process.hcalTupleTrigger*
     #
     process.hcalTupleTree
 )
@@ -220,7 +216,7 @@ process.preparation = cms.Path(
     #process.reconstruction * 
 
     process.hcalnoise *
-    process.HBHENoiseFilterResultProducer *
+    process.HBHENoiseFilterResultProducer* 
 #    process.ApplyBaselineHBHENoiseFilter *
     
     process.tuple_step
@@ -229,6 +225,7 @@ process.preparation = cms.Path(
 #dump = file('dump.py', 'w')
 #dump.write( process.dumpPython() )
 #dump.close()
+
 process.FastTimerService = cms.Service("FastTimerService",
     dqmLumiSectionsRange = cms.untracked.uint32(2500),
     dqmMemoryRange = cms.untracked.double(1000000.0),

@@ -20,21 +20,17 @@ from CRABClient.UserUtilities import getUsernameFromSiteDB
 
 
 # Select dataset to crab over
-number = 0 # starting at 0
+number = 5 # starting at 0
 
 # List of datasets
 datasetnames = [
-#'/NoBPTX/Commissioning2016-PromptReco-v1/RECO',
-#'/MinimumBias/Commissioning2016-PromptReco-v1/RECO',
-#'/HcalHPDNoise/Commissioning2016-PromptReco-v1/RECO',
-#'/HcalNZS/Commissioning2016-PromptReco-v1/RECO',
-#'/Cosmics/Commissioning2016-PromptReco-v1/RECO'
-#'/JetHT/Run2017A-v1/RAW'
-#'/HLTPhysics1/Run2017A-v1/RAW'
-#'/MET/Run2017A-v1/RAW'
-#'/SingleMuon/Run2017A-v1/RAW'
-#'/SingleMuon/Run2017B-PromptReco-v1/RECO'
-'/MET/Run2017E-PromptReco-v1/RECO'
+#'/MET/Run2017F-HighMET-PromptReco-v1/RAW-RECO'
+"/JetHT/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiOFF_RelVal_jetHT2017F-v1/RECO",
+"/JetHT/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiON_RelVal_jetHT2017F-v1/RECO",
+"/MET/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiOFF_RelVal_met2017F-v1/RECO",
+"/MET/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiON_RelVal_met2017F-v1/RECO",
+"/SingleMuon/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiOFF_RelVal_sigMu2017F-v1/RECO",
+"/SingleMuon/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiON_RelVal_sigMu2017F-v1/RECO"
 ]
 
 # Storage path for output files - EOS specific
@@ -66,6 +62,8 @@ timestamp = datetime.datetime.now().strftime("_%Y%m%d_%H%M%S")
 
 dataset = filter(None, datasetnames[number].split('/'))
 
+dataset[1] = dataset[1].replace("CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_","")
+
 config = config()
 
 config.General.workArea        = "crabNoiseAnalysis"
@@ -96,8 +94,8 @@ config.Data.outputDatasetTag = dataset[1]+'_'+dataset[2]+timestamp
 #config.Data.lumiMask        = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_50ns_JSON.txt'
 #config.Data.runRange        = '295606-295606'
 #config.Data.runRange        = '295436-296174'
-#config.Data.lumiMask        = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PromptReco/Cert_294927-297723_13TeV_PromptReco_Collisions17_JSON.txt'
-config.Data.runRange        = '303601-303601'
+config.Data.lumiMask        = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PromptReco/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
+#config.Data.runRange        = '306423-306423'
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # JSON files are available at: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/

@@ -21,20 +21,20 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
 
   void run ();
   
-  std::unique_ptr<std::vector<int  > > ieta;           
-  std::unique_ptr<std::vector<int  > > iphi;           
-  std::unique_ptr<std::vector<float> > eta;           
-  std::unique_ptr<std::vector<float> > phi;           
-  std::unique_ptr<std::vector<int  > > depth;          
+  std::unique_ptr<std::vector<int  > > ieta;
+  std::unique_ptr<std::vector<int  > > iphi;
+  std::unique_ptr<std::vector<float> > eta;
+  std::unique_ptr<std::vector<float> > phi;
+  std::unique_ptr<std::vector<int  > > depth;
   std::unique_ptr<std::vector<int  > > rbxid;
   std::unique_ptr<std::vector<int  > > hpdid;
-  std::unique_ptr<std::vector<float> > energy;    
-  std::unique_ptr<std::vector<float> > time;    
-  std::unique_ptr<std::vector<int  > > flags;           
-//  std::unique_ptr<std::vector<int  > > aux;     
+  std::unique_ptr<std::vector<float> > energy;
+  std::unique_ptr<std::vector<float> > time;
+  std::unique_ptr<std::vector<int  > > flags;
+  //std::unique_ptr<std::vector<int  > > aux;
   
   template <class RecoCollection > 
-    void run ( const RecoCollection & recos, const CaloGeometry & geometry, const bool isHBHE_, double energyThresholdHFHO ){
+    void run ( const RecoCollection & recos, const CaloGeometry & geometry ){
     
     //-----------------------------------------------------
     // Get iterators
@@ -48,24 +48,18 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
     //-----------------------------------------------------
     // Loop through rechits
     //-----------------------------------------------------
-    
+    //for (; reco != reco_end ; ++reco ) {
+      //hcalDetId = HcalDetId(reco -> detid());
+      //std::cout << "Found HcalDetId = " << hcalDetId << std::endl;
+    //}
     for (; reco != reco_end ; ++reco ) {
-
-      //-----------------------------------------------------
-      // "Custom Zero Suppression" - To suppress rechits coming from HF (and/or HO) 
-      //-----------------------------------------------------
-      if( !isHBHE_ && reco->energy()<energyThresholdHFHO ) continue;
-
 
       //-----------------------------------------------------
       // Save the detector id, no matter what
       //-----------------------------------------------------
       
       hcalDetId = HcalDetId(reco -> detid());
-            
-  //    if (!(hcalDetId.subdet()==2 && 
-  //        hcalDetId.iphi()>=63 && hcalDetId.iphi()<=66 && 
-  //        hcalDetId.ieta()>0)) continue;  // FIXME
+      //std::cout << "Looking at HcalDetId = " << hcalDetId << std::endl;
 
       //-----------------------------------------------------
       // Get HPD and RBX IDs
@@ -81,14 +75,15 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       // total number of RBXs in the HB and HE: 72
       // total number of RBXs per subdetector (e.g. HB+, HB-, HE+, HE-): 18
 
-      int RBXIndex=-1;
-      int HPDIndex=-1;
-      if( isHBHE_ ){// HcalHPDRBXMap is valid for HBHE only!
-        RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
-        HPDIndex = HcalHPDRBXMap::indexHPD(hcalDetId);
+      if (hcalDetId.subdet() == HcalForward) {
+        rbxid->push_back(-1);
+        hpdid->push_back(-1);
+      } else {
+        int RBXIndex = HcalHPDRBXMap::indexRBX(hcalDetId);
+        int HPDIndex = HcalHPDRBXMap::indexHPD(hcalDetId);
+        rbxid -> push_back ( RBXIndex );
+        hpdid -> push_back ( HPDIndex );
       }
-      rbxid -> push_back ( RBXIndex );
-      hpdid -> push_back ( HPDIndex );
 
       //-----------------------------------------------------
       // Get the position
@@ -108,7 +103,7 @@ class HcalTupleMaker_HcalRecHitAlgorithm {
       energy -> push_back ( reco   -> energy () );
       time   -> push_back ( reco   -> time   () );
       flags  -> push_back ( reco   -> flags  () );
-       //std::cout << "HBHERechit:: " << hcalDetId.ieta() << " " << hcalDetId.iphi() << " " << hcalDetId.depth() << " :: " <<  reco->energy() << std::endl; 
+      //aux    -> push_back ( reco   -> aux    () );
       
     } // end of loop over rechits
   }

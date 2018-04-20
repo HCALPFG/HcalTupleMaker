@@ -5,12 +5,12 @@ EDM analyzer for making ntuples from HCAL DIGIs and RecHits:
 
 ## How to build it 
 ``` 
-cmsrel CMSSW_9_2_12
-cd CMSSW_9_2_12/src/
+cmsrel CMSSW_10_1_1
+cd CMSSW_10_1_1/src/
 cmsenv
 mkdir HCALPFG
 cd HCALPFG
-git clone -b 9XY-Noise git@github.com:HCALPFG/HcalTupleMaker.git
+git clone -b 10XY-Noise git@github.com:HCALPFG/HcalTupleMaker.git
 cd HcalTupleMaker
 cd -
 scram b clean; scram b -j9

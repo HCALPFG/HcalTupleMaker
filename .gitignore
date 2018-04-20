@@ -8,4 +8,6 @@ __*
 \#*
 *.sh
 *.log
+*.org
+*.txt
 test/crabNoiseAnalysis

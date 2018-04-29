@@ -8,6 +8,14 @@
 #include "FWCore/Framework/interface/Event.h"
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 
+#include "CalibFormats/HcalObjects/interface/HcalDbService.h"
+#include "CalibFormats/HcalObjects/interface/HcalDbRecord.h"
+#include "CalibFormats/HcalObjects/interface/HcalCoderDb.h"
+
+#include "DataFormats/HcalDetId/interface/HcalSubdetector.h"
+#include "DataFormats/HcalDetId/interface/HcalDetId.h"
+#include "DataFormats/HcalDetId/interface/HcalGenericDetId.h"
+
 // NEEDS UPDATING
 double adc2fC_QIE11[256]={
   // - - - - - - - range 0 - - - - - - - -
@@ -116,6 +124,9 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
   std::unique_ptr<std::vector<std::vector<int  > > >    capid   ( new std::vector<std::vector<int  > >    ());
   
   bool use_event = true;
+
+  edm::ESHandle<HcalDbService> conditions;
+  iSetup.get<HcalDbRecord>().get(conditions);
   
   edm::Handle<HcalDataFrameContainer<QIE11DataFrame> >  qie11Digis;
   bool gotqie11digis = iEvent.getByToken(qie11digisToken_, qie11Digis);
@@ -151,7 +162,21 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
       // Extract info on detector location
       DetId detid = qie11df.detid();
       HcalDetId hcaldetid = HcalDetId(detid);
-      
+
+      // Protection against calibration channels which are not
+      // in the database but can still come in the QIE11DataFrame
+      // in the laser calibs, etc.      
+      const HcalSubdetector subdet1 = hcaldetid.subdet();
+      if (!(subdet1 == HcalSubdetector::HcalBarrel ||
+	    subdet1 == HcalSubdetector::HcalEndcap ||
+	    subdet1 == HcalSubdetector::HcalOuter))
+	continue;
+
+      const HcalQIECoder* channelCoder = conditions -> getHcalCoder(hcaldetid);
+      const HcalQIEShape* shape = conditions -> getHcalShape(channelCoder);
+      HcalCoderDb coder(*channelCoder,*shape);
+      CaloSamples cs; coder.adc2fC(qie11df,cs);
+    
       ieta    -> push_back ( hcaldetid.ieta()        );
       iphi    -> push_back ( hcaldetid.iphi()        );
       subdet  -> push_back ( 8/*hcaldetid.subdet()*/ );
@@ -181,7 +206,8 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
       for (int its=0; its<nTS; ++its) {
 	(*soi  )[last_entry].push_back ( qie11df[its].soi()               ); // soi is a bool, but stored as an int
 	(*adc  )[last_entry].push_back ( qie11df[its].adc()               );
-	(*fc   )[last_entry].push_back ( adc2fC_QIE11[qie11df[its].adc()] );
+	(*fc   )[last_entry].push_back ( cs[its] );
+	//(*fc   )[last_entry].push_back ( adc2fC_QIE11[qie11df[its].adc()] );
 	(*tdc  )[last_entry].push_back ( qie11df[its].tdc()               );
 	(*capid)[last_entry].push_back ( qie11df[its].capid()             );	
       }

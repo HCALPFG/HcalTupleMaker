@@ -5,6 +5,15 @@
 #include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/Event.h"
 
+#include "CalibFormats/HcalObjects/interface/HcalDbService.h"
+#include "CalibFormats/HcalObjects/interface/HcalDbRecord.h"
+#include "CalibFormats/HcalObjects/interface/HcalCoderDb.h"
+
+#include "DataFormats/HcalDetId/interface/HcalSubdetector.h"
+#include "DataFormats/HcalDetId/interface/HcalDetId.h"
+#include "DataFormats/HcalDetId/interface/HcalGenericDetId.h"
+
+
 // NEEDS UPDATING
 double adc2fC_QIE10[256]={
   // - - - - - - - range 0 - - - - - - - -
@@ -107,9 +116,13 @@ void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetu
   std::unique_ptr<std::vector<std::vector<int  > > >    capid  ( new std::vector<std::vector<int  > >    ());
     
   //
+
+  edm::ESHandle<HcalDbService> conditions;
+  iSetup.get<HcalDbRecord>().get(conditions);
+
   edm::Handle<QIE10DigiCollection>  qie10Digis;
   iEvent.getByToken(qie10digisToken_, qie10Digis);
-    
+   
   //
   for (uint32_t i=0; i<qie10Digis->size(); i++){
 
@@ -119,6 +132,18 @@ void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetu
     //Extract info on detector location
     DetId detid = qie10df.detid();
     HcalDetId hcaldetid = HcalDetId(detid);
+
+    // Protection against calibration channels which are not
+    // in the database but can still come in the QIE10DataFrame
+    // in the laser calibs, etc.
+    if (hcaldetid.subdet() != HcalSubdetector::HcalForward)
+      continue;        
+    
+
+    const HcalQIECoder* channelCoder = conditions -> getHcalCoder(hcaldetid);
+    const HcalQIEShape* shape = conditions -> getHcalShape(channelCoder);
+    HcalCoderDb coder(*channelCoder,*shape);
+    CaloSamples cs; coder.adc2fC(qie10df,cs);
         
     ieta   -> push_back ( hcaldetid.ieta()        );
     iphi   -> push_back ( hcaldetid.iphi()        );
@@ -156,7 +181,8 @@ void HcalTupleMaker_QIE10Digis::produce(edm::Event& iEvent, const edm::EventSetu
       (*soi      )[last_entry].push_back ( qie10df[its].soi()               ); // soi is a bool, but stored as an int
       (*ok       )[last_entry].push_back ( qie10df[its].ok()                ); // ok is a bool, but stored as an int
       (*adc      )[last_entry].push_back ( qie10df[its].adc()               );
-      (*fc       )[last_entry].push_back ( adc2fC_QIE10[qie10df[its].adc()] );
+      //(*fc       )[last_entry].push_back ( qie10df[its].nominal_fC() );
+      (*fc       )[last_entry].push_back ( cs[its] );
       (*le_tdc   )[last_entry].push_back ( qie10df[its].le_tdc()            );
       (*te_tdc   )[last_entry].push_back ( qie10df[its].te_tdc()            );
       (*capid    )[last_entry].push_back ( qie10df[its].capid()             );

@@ -6,13 +6,15 @@
 #include "FWCore/MessageLogger/interface/MessageLogger.h"
 #include "DataFormats/L1GlobalTrigger/interface/L1GlobalTriggerReadoutRecord.h"
 #include "DataFormats/Common/interface/TriggerResults.h"
+#include "FWCore/Framework/interface/ConsumesCollector.h"
 
 HcalTupleMaker_Trigger::HcalTupleMaker_Trigger(const edm::ParameterSet& iConfig) :
-  l1InputTag(iConfig.getParameter<edm::InputTag>("L1InputTag")),
-  hltInputTag(iConfig.getParameter<edm::InputTag>("HLTInputTag")),
-  hltPrescaleProvider_(iConfig, consumesCollector(), *this),
-  sourceName(iConfig.getParameter<std::string>  ("SourceName")),
-  sourceType(NOT_APPLICABLE)
+  l1InputToken   (consumes<L1GlobalTriggerReadoutRecord>(iConfig.getParameter<edm::InputTag>("L1InputTag"))),
+  hltInputTag    (iConfig.getParameter<edm::InputTag>("HLTInputTag")),
+  hltInputToken  (consumes<edm::TriggerResults>(edm::InputTag(hltInputTag))),
+  sourceName     (iConfig.getParameter<std::string>("SourceName")),
+  sourceType     (NOT_APPLICABLE),
+  hltPrescaleProvider(iConfig, consumesCollector(), *this) 
 {
   // Source is either a stream or a dataset (mutually exclusive)
   if (sourceName.length() > 0) {
@@ -39,8 +41,8 @@ HcalTupleMaker_Trigger::HcalTupleMaker_Trigger(const edm::ParameterSet& iConfig)
   produces <std::vector<int> >         ("HLTInsideDatasetTriggerPrescales"  );
   produces <std::vector<int> >         ("HLTOutsideDatasetTriggerPrescales" );
 
-  produces <std::vector<int> > ( "L1PhysBits" );
-  produces <std::vector<int> > ( "L1TechBits" );
+  produces <std::vector<std::vector<int> > > ( "L1PhysBits" );
+  produces <std::vector<std::vector<int> > > ( "L1TechBits" );
   produces <std::vector<int> > ( "HLTBits" );
 }
 
@@ -81,14 +83,18 @@ getDataSource() {
 void HcalTupleMaker_Trigger::
 beginRun(edm::Run& iRun, const edm::EventSetup& iSetup) {
 
-  bool changed = true;
-  if (hltPrescaleProvider_.init(iRun, iSetup, "HLT", changed)) {
-    edm::LogInfo("HcalTupleMaker_TriggerInfo") << "HLT prescale provider initialized";
-  } else {
-    edm::LogError("HcalTupleMaker_TriggerError") << "HLT prescale provider failed to initialize";
-  }
+  //
+  // The access to prescales, i.e. hltConfig.prescaleValue(...), seems to have changed going from 750_pre3 to 750_pre5.
+  // See: 
+  //      http://cmslxr.fnal.gov/lxr/source/HLTrigger/HLTcore/interface/HLTConfigProvider.h?v=CMSSW_7_5_0_pre3#0226
+  //      http://cmslxr.fnal.gov/lxr/source/HLTrigger/HLTcore/interface/HLTConfigProvider.h?v=CMSSW_7_5_0_pre5#0222
+  // The code now succesfully compiles in 750_pre5, but these values are untested. 
+  // Detailed feedback is required.
+  // 
 
-  if (hltConfig.init(iRun, iSetup, hltInputTag.process(), changed)) {
+  bool changed = true;
+  if ( hltConfig.init(iRun, iSetup, hltInputTag.process(), changed) && hltPrescaleProvider.init(iRun, iSetup, hltInputTag.process(), changed)  ) {
+    //if (hltConfig.init(iRun, iSetup, hltInputTag.process(), changed)) {
     // if init returns TRUE, initialisation has succeeded!
     edm::LogInfo("HcalTupleMaker_TriggerInfo") << "HLT config with process name " << hltInputTag.process() << " successfully extracted";
   } else {
@@ -104,9 +110,9 @@ beginRun(edm::Run& iRun, const edm::EventSetup& iSetup) {
 void HcalTupleMaker_Trigger::
 produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
-  std::unique_ptr<std::vector<int> >  l1physbits   ( new std::vector<int>() );
-  std::unique_ptr<std::vector<int> >  l1techbits   ( new std::vector<int>() );
-  std::unique_ptr<std::vector<int> >  hltbits      ( new std::vector<int>() );
+  std::unique_ptr<std::vector<std::vector<int> > > l1physbits   ( new std::vector<std::vector<int> >(5) );
+  std::unique_ptr<std::vector<std::vector<int> > > l1techbits   ( new std::vector<std::vector<int> >(3) );
+  std::unique_ptr<std::vector<int> >               hltbits      ( new std::vector<int>() );
 
   std::unique_ptr<std::vector < std::string > > v_hlt_insideDataset_names             (new std::vector<std::string>  ());
   std::unique_ptr<std::vector < std::string > > v_hlt_outsideDataset_names            (new std::vector<std::string>  ());
@@ -124,7 +130,8 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
   //-----------------------------------------------------------------
   edm::Handle<L1GlobalTriggerReadoutRecord> l1GtReadoutRecord;
-  iEvent.getByLabel(l1InputTag, l1GtReadoutRecord);
+  //iEvent.getByLabel(l1InputTag, l1GtReadoutRecord);
+  iEvent.getByToken(l1InputToken, l1GtReadoutRecord);
 
   if(l1GtReadoutRecord.isValid()) {
     edm::LogInfo("HcalTupleMaker_TriggerInfo") << "Successfully obtained " << l1InputTag;
@@ -132,18 +139,24 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
     unsigned int NmaxL1AlgoBit = l1GtReadoutRecord->decisionWord().size();
     unsigned int NmaxL1TechBit = l1GtReadoutRecord->technicalTriggerWord().size();
 
-    for (unsigned int i = 0; i < NmaxL1AlgoBit; ++i) {
-      l1physbits->push_back( l1GtReadoutRecord->decisionWord()[i] ? 1 : 0 );
+    for (unsigned int bx = 0; bx < 5; ++bx){
+      for (unsigned int i = 0; i < NmaxL1AlgoBit; ++i) {
+	l1physbits->at(bx).push_back( l1GtReadoutRecord->decisionWord(bx-2)[i] ? 1 : 0 );
+      }
     }
-    for (unsigned int i = 0; i < NmaxL1TechBit; ++i) {
-      l1techbits->push_back( l1GtReadoutRecord->technicalTriggerWord()[i] ? 1 : 0 );
+    
+    for (unsigned int bx = 0; bx < 3; ++bx){
+      for (unsigned int i = 0; i < NmaxL1TechBit; ++i) {
+	l1techbits->at(bx).push_back( l1GtReadoutRecord->technicalTriggerWord(bx-1)[i] ? 1 : 0 );
+      }
     }
   } else {
     edm::LogError("HcalTupleMaker_TriggerError") << "Error! Can't get the product " << l1InputTag;
   }
 
   edm::Handle<edm::TriggerResults> triggerResults;
-  iEvent.getByLabel(hltInputTag, triggerResults);
+  //iEvent.getByLabel(hltInputTag, triggerResults);
+  iEvent.getByToken(hltInputToken, triggerResults);
 
 
   if(triggerResults.isValid()) {
@@ -151,22 +164,17 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
 
     const edm::TriggerNames& names = iEvent.triggerNames(*triggerResults);
 
-    // Added by David Yu, 16/3/16: attempting to copy new interface
-    HLTConfigProvider const&  hltConfig2 = hltPrescaleProvider_.hltConfigProvider();
-
-    for (int i = 0; i < (int) triggerResults->size() ; ++i) { 
-      const int prescaleSet = hltPrescaleProvider_.prescaleSet(iEvent, iSetup);
-      if (prescaleSet == -1) {
-        edm::LogError("HCalTupleMaker_TriggerError") << "Failed to determine prescaleSet\n";
-      }
+    for (int i = 0; i < (int) triggerResults->size() ; ++i) {
       if (dataSource.empty() || std::find(dataSource.begin(), dataSource.end(), names.triggerName(i)) != dataSource.end()) {
-      	v_hlt_insideDataset_names->push_back ( names.triggerName(i) );
-      	v_hlt_insideDataset_prescales->push_back ( hltConfig2.prescaleValue(prescaleSet,names.triggerName(i)));
-      	v_hlt_insideDataset_decisions->push_back ( triggerResults->accept(i) );
+	v_hlt_insideDataset_names->push_back ( names.triggerName(i) );
+	//v_hlt_insideDataset_prescales->push_back ( hltConfig.prescaleValue(iEvent,iSetup,names.triggerName(i)));
+	v_hlt_insideDataset_prescales->push_back ( hltConfig.prescaleValue(hltPrescaleProvider.prescaleSet(iEvent,iSetup),names.triggerName(i)) );
+	v_hlt_insideDataset_decisions->push_back ( triggerResults->accept(i) );
       } else {
-      	v_hlt_outsideDataset_names->push_back ( names.triggerName(i) );
-      	v_hlt_outsideDataset_prescales->push_back ( hltConfig2.prescaleValue(prescaleSet,names.triggerName(i)));
-      	v_hlt_outsideDataset_decisions->push_back ( triggerResults->accept(i) );
+	v_hlt_outsideDataset_names->push_back ( names.triggerName(i) );
+	//v_hlt_outsideDataset_prescales->push_back ( hltConfig.prescaleValue(iEvent,iSetup,names.triggerName(i)));
+	v_hlt_outsideDataset_prescales->push_back (  hltConfig.prescaleValue(hltPrescaleProvider.prescaleSet(iEvent,iSetup),names.triggerName(i)) );
+	v_hlt_outsideDataset_decisions->push_back ( triggerResults->accept(i) );
       }      
     }
     
@@ -182,18 +190,18 @@ produce(edm::Event& iEvent, const edm::EventSetup& iSetup) {
   // put vectors in the event
   //-----------------------------------------------------------------
 
-  iEvent.put(move( l1physbits ), "L1PhysBits" );
-  iEvent.put(move( l1techbits ), "L1TechBits" );
-  iEvent.put(move( hltbits ),    "HLTBits" );
+  iEvent.put ( move( l1physbits ), "L1PhysBits" );
+  iEvent.put ( move( l1techbits ), "L1TechBits" );
+  iEvent.put ( move( hltbits    ), "HLTBits"    );
   
-  iEvent.put(move( std::unique_ptr<std::string>(new std::string(hltConfig.tableName()))), "HLTKey");
+  iEvent.put ( move( std::unique_ptr<std::string>(new std::string(hltConfig.tableName()))), "HLTKey");
   
-  iEvent.put ( move(v_hlt_insideDataset_names)      , "HLTInsideDatasetTriggerNames"      ) ;
-  iEvent.put ( move(v_hlt_outsideDataset_names)     , "HLTOutsideDatasetTriggerNames"     ) ;
-  iEvent.put ( move(v_hlt_insideDataset_decisions)  , "HLTInsideDatasetTriggerDecisions"  ) ;
-  iEvent.put ( move(v_hlt_outsideDataset_decisions) , "HLTOutsideDatasetTriggerDecisions" ) ;
-  iEvent.put ( move(v_hlt_insideDataset_prescales)  , "HLTInsideDatasetTriggerPrescales"  ) ;
-  iEvent.put ( move(v_hlt_outsideDataset_prescales) , "HLTOutsideDatasetTriggerPrescales" ) ;
+  iEvent.put ( move( v_hlt_insideDataset_names      ), "HLTInsideDatasetTriggerNames"      ) ;
+  iEvent.put ( move( v_hlt_outsideDataset_names     ), "HLTOutsideDatasetTriggerNames"     ) ;
+  iEvent.put ( move( v_hlt_insideDataset_decisions  ), "HLTInsideDatasetTriggerDecisions"  ) ;
+  iEvent.put ( move( v_hlt_outsideDataset_decisions ), "HLTOutsideDatasetTriggerDecisions" ) ;
+  iEvent.put ( move( v_hlt_insideDataset_prescales  ), "HLTInsideDatasetTriggerPrescales"  ) ;
+  iEvent.put ( move( v_hlt_outsideDataset_prescales ), "HLTOutsideDatasetTriggerPrescales" ) ;
 
   
 }

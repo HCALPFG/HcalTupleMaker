@@ -6,6 +6,7 @@
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
 #include "HLTrigger/HLTcore/interface/HLTPrescaleProvider.h"
+#include "DataFormats/Common/interface/TriggerResults.h"
 
 class HcalTupleMaker_Trigger : public edm::EDProducer {
  public:
@@ -17,15 +18,18 @@ class HcalTupleMaker_Trigger : public edm::EDProducer {
   void beginRun( edm::Run &, const edm::EventSetup & );
   void getDataSource() ;
   void printNames(const std::vector<std::string>& names);
-  const edm::InputTag   l1InputTag;
+  edm::EDGetTokenT<L1GlobalTriggerReadoutRecord> l1InputToken;
   const edm::InputTag   hltInputTag;
+  edm::EDGetTokenT<edm::TriggerResults> hltInputToken; 
+  const edm::InputTag   l1InputTag;
   const std::vector<std::string> hltPathsOfInterest;
   HLTConfigProvider hltConfig;
-  HLTPrescaleProvider hltPrescaleProvider_;
 
   std::string                 sourceName;
   DataSource                  sourceType;
   std::vector<std::string>    dataSource;
+
+  HLTPrescaleProvider hltPrescaleProvider;
 
 };
 

@@ -19,6 +19,7 @@ private:
   bool storelaser;
   const edm::InputTag _taguMNio;
   const edm::InputTag m_qie11DigisTag;
+  double chargeskim;
   
   edm::EDGetTokenT<HcalDataFrameContainer<QIE11DataFrame> > qie11digisToken_;
   edm::EDGetTokenT<HcalUMNioDigi> _tokuMNio;

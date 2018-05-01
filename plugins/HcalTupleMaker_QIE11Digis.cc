@@ -15,7 +15,7 @@
 #include "DataFormats/HcalDetId/interface/HcalSubdetector.h"
 #include "DataFormats/HcalDetId/interface/HcalDetId.h"
 #include "DataFormats/HcalDetId/interface/HcalGenericDetId.h"
-
+ 
 // NEEDS UPDATING
 double adc2fC_QIE11[256]={
   // - - - - - - - range 0 - - - - - - - -
@@ -76,12 +76,47 @@ double adc2fC_QIE11[256]={
 
 };
 
+float energy(std::vector<float> fC) {
+  int max_idx = distance(fC.begin(), max_element(fC.begin(), fC.end()));
+  //cout<<"Max index is "<<max_idx<<endl;
+  int min = max_idx - 1;
+  int max = max_idx + 2;
+  if (min < 0) min = 0;
+  if (max > 7) max = 7;
+  float energy = 0.;
+  for (int i = min; i <= max; i++) {
+    //cout<<"i is "<<i<<", fC is "<<fC.at(i)<<endl;
+    energy += fC.at(i);
+  }
+  // cout<<"total is "<<energy<<endl;
+  return energy;
+
+}
+float digiTime(std::vector<float> fC) {
+  int max_idx = distance(fC.begin(), max_element(fC.begin(), fC.end()));
+  int min = max_idx - 1;
+  int max = max_idx + 2;
+  if (min < 0) min = 0;
+  if (max > 7) max = 7;
+  float time = 0.;
+  float energy = 0.;
+  for (int i = min; i <= max; i++) {
+    time += (i + 1) * fC.at(i); // offset index by 1 to avoid problems with i==0, subtract by one later
+    energy += fC.at(i);
+  }
+  time = time / energy;
+  time -= 1.;
+  time *= 25.;
+  return time;
+}
+
 HcalTupleMaker_QIE11Digis::HcalTupleMaker_QIE11Digis(const edm::ParameterSet& iConfig):
   prefix          (iConfig.getUntrackedParameter<std::string>("Prefix")),
   suffix          (iConfig.getUntrackedParameter<std::string>("Suffix")),
   storelaser      (iConfig.getUntrackedParameter<bool>("StoreLaser")),
   _taguMNio       (iConfig.getUntrackedParameter<edm::InputTag>("taguMNio",edm::InputTag("hcalDigis"))),
-  m_qie11DigisTag (iConfig.getUntrackedParameter<edm::InputTag>("tagQIE11", edm::InputTag("hcalDigis")))
+  m_qie11DigisTag (iConfig.getUntrackedParameter<edm::InputTag>("tagQIE11", edm::InputTag("hcalDigis"))),
+  chargeskim  (iConfig.getUntrackedParameter<double>("chargeSkim"))
 { 
   qie11digisToken_ = consumes<HcalDataFrameContainer<QIE11DataFrame> >(m_qie11DigisTag);
  
@@ -98,9 +133,13 @@ HcalTupleMaker_QIE11Digis::HcalTupleMaker_QIE11Digis(const edm::ParameterSet& iC
   produces<std::vector<int>   >                  ( "QIE11DigiLinkError"  );
   produces<std::vector<int>   >                  ( "QIE11DigiCapIDError" );
   produces<std::vector<int>   >                  ( "QIE11DigiFlags"      );
+  produces<std::vector<int>   >                  ( "QIE11DigiNTDC"       );
+  produces<std::vector<float>   >                ( "QIE11DigiTimeFC"     );
+  produces<std::vector<float>   >                ( "QIE11DigiTimeTDC"    );
+  produces<std::vector<float>   >                ( "QIE11DigiTotFC"      );
   produces<std::vector<std::vector<int>   > >    ( "QIE11DigiSOI"        );
   produces<std::vector<std::vector<int>   > >    ( "QIE11DigiADC"        );
-  produces<std::vector<std::vector<double>   > > ( "QIE11DigiFC"         );
+  produces<std::vector<std::vector<float>   > >  ( "QIE11DigiFC"         );
   produces<std::vector<std::vector<int>   > >    ( "QIE11DigiTDC"        );
   produces<std::vector<std::vector<int>   > >    ( "QIE11DigiCapID"      );
   produces <int>                                 ( "laserType"           );
@@ -116,10 +155,14 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
   std::unique_ptr<std::vector<int> >                    linkEr  ( new std::vector<int>   ());
   std::unique_ptr<std::vector<int> >                    capidEr ( new std::vector<int>   ());
   std::unique_ptr<std::vector<int> >                    flags   ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<int> >                    ntdc    ( new std::vector<int>   ());
+  std::unique_ptr<std::vector<float> >                 timetdc ( new std::vector<float>   ());
+  std::unique_ptr<std::vector<float> >                 timefc  ( new std::vector<float>   ());
+  std::unique_ptr<std::vector<float> >                 totFC  ( new std::vector<float>   ());
   // std::unique_ptr<int>                                  lasertype (new int() );
   std::unique_ptr<std::vector<std::vector<int  > > >    soi     ( new std::vector<std::vector<int  > >   ());
   std::unique_ptr<std::vector<std::vector<int  > > >    adc     ( new std::vector<std::vector<int  > >    ());
-  std::unique_ptr<std::vector<std::vector<double  > > > fc      ( new std::vector<std::vector<double  > > ());
+  std::unique_ptr<std::vector<std::vector<float  > > > fc      ( new std::vector<std::vector<float  > > ());
   std::unique_ptr<std::vector<std::vector<int  > > >    tdc     ( new std::vector<std::vector<int  > >    ());
   std::unique_ptr<std::vector<std::vector<int  > > >    capid   ( new std::vector<std::vector<int  > >    ());
   
@@ -176,10 +219,24 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
       const HcalQIEShape* shape = conditions -> getHcalShape(channelCoder);
       HcalCoderDb coder(*channelCoder,*shape);
       CaloSamples cs; coder.adc2fC(qie11df,cs);
+
+      int nTS = qie11df.samples();  
+      ///// Skim based on total charge /////
+      if(chargeskim > 0){
+        
+        std::vector<float > temp_fC;
+        for (int its = 0; its < nTS; ++its) {
+          temp_fC.push_back(cs[its]);
+        }
+
+        //default: 0
+        if (energy(temp_fC) < chargeskim) continue;
+      }
+
     
       ieta    -> push_back ( hcaldetid.ieta()        );
       iphi    -> push_back ( hcaldetid.iphi()        );
-      subdet  -> push_back ( 8/*hcaldetid.subdet()*/ );
+      subdet  -> push_back ( hcaldetid.subdet() );
       depth   -> push_back ( hcaldetid.depth()       );
       rawId   -> push_back ( hcaldetid.rawId()       );
       linkEr  -> push_back ( qie11df.linkError()     );
@@ -195,13 +252,15 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
       
       soi   -> push_back ( std::vector<int  >   () ) ;
       adc   -> push_back ( std::vector<int  >   () ) ;
-      fc    -> push_back ( std::vector<double  >() ) ;
+      fc    -> push_back ( std::vector<float  >() ) ;
       tdc   -> push_back ( std::vector<int  >   () ) ;
       capid -> push_back ( std::vector<int  >   () ) ;
       size_t last_entry = adc -> size() - 1;
 
-      // TS
-      int nTS = qie11df.samples();
+      //initialize counters
+      int nTDC = 0;
+      float timeTDC = 0;
+      int    firstTDC = -999;
 
       for (int its=0; its<nTS; ++its) {
 	(*soi  )[last_entry].push_back ( qie11df[its].soi()               ); // soi is a bool, but stored as an int
@@ -210,7 +269,19 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
 	//(*fc   )[last_entry].push_back ( adc2fC_QIE11[qie11df[its].adc()] );
 	(*tdc  )[last_entry].push_back ( qie11df[its].tdc()               );
 	(*capid)[last_entry].push_back ( qie11df[its].capid()             );	
+
+  //count number of non-trivial TDC values
+  if (qie11df[its].tdc() < 50) nTDC++;
+  if (firstTDC == -999 && qie11df[its].tdc() < 50) firstTDC = its;
       }
+
+    if (firstTDC == -999) timeTDC = -999;
+    else timeTDC = 0.5 * qie11df[firstTDC].tdc() + firstTDC * 25.; 
+
+    ntdc   -> push_back ( nTDC         );
+    timefc -> push_back ( digiTime((*fc)[last_entry]) );
+    timetdc-> push_back ( timeTDC      );
+    totFC-> push_back( energy((*fc)[last_entry]) );
       
     }
     
@@ -222,6 +293,10 @@ void HcalTupleMaker_QIE11Digis::produce(edm::Event& iEvent, const edm::EventSetu
     iEvent.put(move( linkEr )       , "QIE11DigiLinkError" );
     iEvent.put(move( capidEr)       , "QIE11DigiCapIDError");
     iEvent.put(move( flags  )       , "QIE11DigiFlags"     );
+    iEvent.put(move( ntdc   )       , "QIE11DigiNTDC"      );
+    iEvent.put(move( timefc )       , "QIE11DigiTimeFC"    );
+    iEvent.put(move( timetdc)       , "QIE11DigiTimeTDC"   );
+    iEvent.put(move( totFC)         , "QIE11DigiTotFC"     );
     iEvent.put(move( soi    )       , "QIE11DigiSOI"       );
     iEvent.put(move( adc    )       , "QIE11DigiADC"       );
     iEvent.put(move( fc     )       , "QIE11DigiFC"        );

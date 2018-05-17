@@ -28,7 +28,6 @@ cmsRun noiseAnalysis_CollisionData_RAW_cfg.py
 To submit crab jobs, do  
 ``` 
 cd test
-crab submit -c crabConfig_noiseAnalysis_CollisionData_RECO_cfg.py
 crab submit -c crabConfig_noiseAnalysis_CollisionData_RAW_cfg.py
 ``` 
 

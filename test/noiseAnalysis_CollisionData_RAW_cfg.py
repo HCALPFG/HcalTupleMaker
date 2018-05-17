@@ -26,7 +26,8 @@ options.parseArguments()
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 process.source = cms.Source("PoolSource",
     fileNames  = cms.untracked.vstring(
-       "file:/eos/cms/store/data/Commissioning2018/ZeroBias/RAW/v1/000/314/444/00000/1E0F4919-EF41-E811-B5E9-FA163EA348D9.root",
+       #"file:/eos/cms/store/data/Commissioning2018/ZeroBias/RAW/v1/000/314/444/00000/1E0F4919-EF41-E811-B5E9-FA163EA348D9.root",
+       "file:/eos/cms/store/data/Run2018A/MET/RAW/v1/000/315/357/00000/6EC94109-2E4C-E811-9DF0-02163E019F3C.root",
     ),
 
     skipEvents = cms.untracked.uint32(options.skipEvents) # default is 0.
@@ -82,8 +83,11 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalIsoNoiseFilterParameters
 #------------------------------------------------------------------------------------
 # Specify Global Tag
 #------------------------------------------------------------------------------------
-process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '100X_dataRun2_HLT_v3' #'100X_dataRun2_HLT_v3' #'101X_dataRun2_v8' #'101X_dataRun2_HLT_frozen_v6' # '101X_dataRun2_HLT_v7'
+#process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
+#process.GlobalTag.globaltag = '101X_dataRun2_HLT_v7'
+process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data_promptlike', '')
 
 #----------------------------------------------------- replacing conditions
 #process.load("CondCore.CondDB.CondDB_cfi")
@@ -116,7 +120,7 @@ process.GlobalTag.globaltag = '100X_dataRun2_HLT_v3' #'100X_dataRun2_HLT_v3' #'1
 process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilters",
          noiseSummaryInputTag = cms.untracked.InputTag("hcalnoise"),
          noiseResultInputTag  = cms.untracked.string("HBHENoiseFilterResultProducer"),
-         recoInputTag         = cms.untracked.string("hbheplan1"),
+         recoInputTag         = cms.untracked.string("hbhereco"),
          recoHFInputTag       = cms.untracked.string("hfreco"),
          recoVertexInputTag   = cms.untracked.string("offlinePrimaryVertices"),
          isRECO = cms.untracked.bool(False),
@@ -125,9 +129,9 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
 )
 
 # To apply filter decision in CMSSW as an EDFilter:
-process.hcalnoise.fillCaloTowers = cms.bool(False)
-process.hcalnoise.fillTracks = cms.bool(False)
-process.hcalnoise.recHitCollName = cms.string("hbheplan1")
+#process.hcalnoise.fillCaloTowers = cms.bool(False)
+#process.hcalnoise.fillTracks = cms.bool(False)
+process.hcalnoise.recHitCollName = cms.string("hbhereco")
 process.ApplyBaselineHBHENoiseFilter = cms.EDFilter("BooleanFlagFilter",
     inputLabel = cms.InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResult"),
     reverseDecision = cms.bool(False)
@@ -148,8 +152,8 @@ process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
     process.hcalTupleHBHERecHits*
-    process.hcalTupleHFRecHits*
-    process.hcalTupleHFPhase1RecHits*
+ #   process.hcalTupleHFRecHits*
+ #   process.hcalTupleHFPhase1RecHits*
     process.hcalTupleHcalNoiseFilters*
     process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
     #1#process.hcalTupleCaloJetMet*
@@ -165,14 +169,8 @@ process.tuple_step = cms.Sequence(
 #-----------------------------------------------------------------------------------
 process.preparation = cms.Path(
 
-    process.hcalDigis *
-
+    process.RawToDigi *
     process.L1Reco *
-    process.hfprereco *
-    process.hfreco *
-    process.hbheprereco *
-    process.hbheplan1 *
-
     process.reconstruction *
 
     process.hcalnoise *

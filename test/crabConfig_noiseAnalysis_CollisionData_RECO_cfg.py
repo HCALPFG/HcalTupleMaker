@@ -6,9 +6,9 @@
 # Environment setup:
 #    cmsenv
 #    source /cvmfs/cms.cern.ch/crab3/crab.sh
-# To submit: 
+# To submit:
 #    crab submit -c crabConfig_noiseAnalysis_CollisionData_RECO_cfg.py
-# To check status: 
+# To check status:
 #    crab status -d <CRAB-project-directory> [--jobids <comma-separated-list-of-jobs-and/or-job-ranges>]
 # To kill jobs:
 #    crab kill -d <CRAB-project-directory> [--jobids <comma-separated-list-of-jobs-and/or-job-ranges>]
@@ -24,18 +24,13 @@ number = 5 # starting at 0
 
 # List of datasets
 datasetnames = [
-#'/MET/Run2017F-HighMET-PromptReco-v1/RAW-RECO'
-"/JetHT/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiOFF_RelVal_jetHT2017F-v1/RECO",
-"/JetHT/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiON_RelVal_jetHT2017F-v1/RECO",
-"/MET/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiOFF_RelVal_met2017F-v1/RECO",
-"/MET/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiON_RelVal_met2017F-v1/RECO",
-"/SingleMuon/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiOFF_RelVal_sigMu2017F-v1/RECO",
-"/SingleMuon/CMSSW_10_0_0-100X_dataRun2_PromptLike_v1_mahiON_RelVal_sigMu2017F-v1/RECO"
+"/MET/Run2018D-HighMET-PromptReco-v2/RAW-RECO",
+"/SingleMuon/Run2018D-ZMu-PromptReco-v2/RAW-RECO"
 ]
 
 # Storage path for output files - EOS specific
 #storagepath = '/store/user/'+getUsernameFromSiteDB()+'/HCALnoise2016'
-storagepath = '/store/group/dpg_hcal/comm_hcal/Noise/2017/' # DO NOT USE
+storagepath = '/store/group/dpg_hcal/comm_hcal/Noise/2018/' # DO NOT USE
 
 # cmsRun file
 psetname = 'noiseAnalysis_CollisionData_RECO_cfg.py'
@@ -44,8 +39,8 @@ psetname = 'noiseAnalysis_CollisionData_RECO_cfg.py'
 OutputFilename = 'results.root'
 
 # Storage site of output files
-#storageSite = 'T2_CH_CERN'
-storageSite = 'T2_US_UCSD' # temporarily used UCSD T2
+storageSite = 'T2_CH_CERN'
+#storageSite = 'T2_US_UCSD' # temporarily used UCSD T2
 
 # White list sites
 whiteList = ['']
@@ -72,7 +67,7 @@ config.General.transferOutputs = True
 config.General.transferLogs    = True
 
 config.JobType.pluginName  = 'Analysis'
-config.JobType.psetName    = psetname 
+config.JobType.psetName    = psetname
 config.JobType.outputFiles = [OutputFilename]
 config.JobType.pyCfgParams = ['outputFile='+OutputFilename]
 
@@ -83,19 +78,13 @@ config.Data.inputDBS         = 'global'
 #config.Data.splitting       = 'FileBased'
 #config.Data.unitsPerJob     = 5
 config.Data.splitting        = 'LumiBased'
-config.Data.unitsPerJob      = 5 
+config.Data.unitsPerJob      = 5
 config.Data.ignoreLocality   = True
-#config.Data.outLFNDirBase    = storagepath
+config.Data.outLFNDirBase    = storagepath
 config.Data.publication      = False
 config.Data.outputDatasetTag = dataset[1]+'_'+dataset[2]+timestamp
-#config.Data.lumiMask         = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_25ns_JSON.txt'
-#config.Data.runRange         = '254231-260627'
-#config.Data.runRange        = '260577-260578' #for test
-#config.Data.lumiMask        = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions15/13TeV/Reprocessing/Cert_13TeV_16Dec2015ReReco_Collisions15_50ns_JSON.txt'
-#config.Data.runRange        = '295606-295606'
-#config.Data.runRange        = '295436-296174'
-config.Data.lumiMask        = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions17/13TeV/PromptReco/Cert_294927-306462_13TeV_PromptReco_Collisions17_JSON.txt'
-#config.Data.runRange        = '306423-306423'
+config.Data.lumiMask        = '/afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions18/13TeV/PromptReco/Cert_314472-322057_13TeV_PromptReco_Collisions18_JSON.txt'
+config.Data.runRange        = '322709-322709'
 
 # -----------------------------------------------------------------------------------------------------------------------------
 # JSON files are available at: /afs/cern.ch/cms/CAF/CMSCOMM/COMM_DQM/certification/Collisions16/

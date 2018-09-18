@@ -56,6 +56,8 @@ process.load('Configuration.StandardSequences.Reconstruction_Data_cff')
 process.load("EventFilter.HcalRawToDigi.HcalRawToDigi_cfi")
 process.load("CondCore.CondDB.CondDB_cfi")
 process.load("CondCore.DBCommon.CondDBSetup_cfi")
+process.load('FWCore.MessageService.MessageLogger_cfi')
+process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(100)
 
 
 

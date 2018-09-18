@@ -5,8 +5,8 @@ EDM analyzer for making ntuples from HCAL DIGIs and RecHits:
 
 ## How to build it 
 ``` 
-cmsrel CMSSW_10_1_4
-cd CMSSW_10_1_4/src/
+cmsrel CMSSW_10_2_1
+cd CMSSW_10_2_1/src/
 cmsenv
 mkdir HCALPFG
 cd HCALPFG

@@ -22,13 +22,14 @@ options.register('processEvents',
                  "Number of events to process")
 
 options.register('inputFiles',
-                 "file:/eos/cms/store/data/Commissioning2018/ZeroBias/RAW/v1/000/314/747/00000/A0BFA542-2544-E811-80B3-FA163ECF9759.root",
+                 "file:/eos/cms/store/data/Run2018D/JetHT/RAW/v1/000/322/625/00000/E2CF0E8F-CEB5-E811-B38F-FA163EDFB034.root",
                  VarParsing.VarParsing.multiplicity.list,
                  VarParsing.VarParsing.varType.string,
                  "Input files")
 
 options.register('outputFile',
-                 "/eos/cms/store/user/jaehyeok/HcalTupleMaker_314747.root", # default value
+                 #"/eos/cms/store/user/jaehyeok/HcalTupleMaker_322625_default.root", # default value
+                 "/eos/cms/store/user/jaehyeok/HcalTupleMaker_322625.root", # default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Output file")
@@ -109,7 +110,7 @@ process.hcalTupleHFDigis.FilterChannels = False
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '101X_dataRun2_HLT_v7' #'100X_dataRun2_HLT_v3' #'101X_dataRun2_v8' #'101X_dataRun2_HLT_frozen_v6' # '101X_dataRun2_HLT_v7'
+process.GlobalTag.globaltag = '101X_dataRun2_Prompt_v11' #'101X_dataRun2_HLT_v7' #'100X_dataRun2_HLT_v3' #'101X_dataRun2_v8' #'101X_dataRun2_HLT_frozen_v6' # '101X_dataRun2_HLT_v7'
 print "GlobalTag = ", str(process.GlobalTag.globaltag).split("'")[1]
 print " "
 
@@ -160,12 +161,12 @@ process.tuple_step = cms.Sequence(
 #    process.hcalTupleQIE10Digis* # for HF
 #    process.hcalTupleQIE11Digis* # for HE
     ### Make HCAL tuples: reco info
-#    process.hcalTupleHBHERecHits*
-    process.hcalTupleHFPhase1RecHits*
+    process.hcalTupleHBHERecHits*
+#    process.hcalTupleHFPhase1RecHits*
 #    process.hcalTupleHFRecHits*
     #process.hcalTupleHORecHits*
     ### Noise filter
-#    process.hcalTupleHcalNoiseFilters*
+    process.hcalTupleHcalNoiseFilters*
     ## Package everything into a tree
     process.hcalTupleTree
 )

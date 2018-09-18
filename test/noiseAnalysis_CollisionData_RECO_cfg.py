@@ -13,7 +13,7 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 process = cms.Process('NOISE',eras.Run2_2018)
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
-options.inputFiles = "file:/eos/cms/store/relval/CMSSW_10_0_0/JetHT/RAW-RECO/JetHTJetPlusHOFilter-100X_dataRun2_PromptLike_v1_mahiOFF_RelVal_jetHT2017F-v1/10000/008710B0-15FF-E711-A359-0CC47A4D75F4.root"
+options.inputFiles = "file:/eos/cms/store/data/Run2018D/JetHT/RAW-RECO/JetHTJetPlusHOFilter-PromptReco-v2/000/322/633/00000/B8B22C69-10B9-E811-A673-FA163E1EBBA8.root"
 options.outputFile = 'results.root'
 options.maxEvents = -1 # -1 means all events
 #options.skipEvents = 0 # default is 0.
@@ -61,7 +61,7 @@ process.load("CondCore.DBCommon.CondDBSetup_cfi")
 
 
 #------------------------------------------------------------------------------------
-# Set up L1 Jet digis #Disabled 
+# Set up L1 Jet digis #Disabled
 #------------------------------------------------------------------------------------
 #process.load("HCALPFG.HcalTupleMaker.HcalL1JetDigisProducer_cfi")
 
@@ -87,27 +87,19 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalNoiseFilters_cfi") # Thi
 #------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalIsoNoiseFilterParameters_cfi")
 #------------------------------------------------------------------------------------
-# Set up CaloJetMet quantities 
+# Set up CaloJetMet quantities
 #------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi") # This is over-ridden below to remove Method0-Method2 dual reco.
 #------------------------------------------------------------------------------------
-# Set up MuonTrack quantities 
+# Set up MuonTrack quantities
 #------------------------------------------------------------------------------------
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
-
 
 #------------------------------------------------------------------------------------
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag = '100X_dataRun2_PromptLike_v1' 
-## From Salavat
-#process.load("Configuration.StandardSequences.FrontierConditions_GlobalTag_cff")
-#process.GlobalTag.globaltag = '92X_dataRun2_Prompt_v4'
-
-#from Configuration.AlCa.autoCond import autoCond
-#process.GlobalTag.globaltag = autoCond['run2_hlt']
-
+process.GlobalTag.globaltag = '101X_dataRun2_Prompt_v11'
 
 #------------------------------------------------------------------------------------
 # Disabled since we dont deal with HLT
@@ -136,7 +128,7 @@ process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilt
          recoHFInputTag       = cms.untracked.string("hfreco"),
          recoVertexInputTag   = cms.untracked.string("offlinePrimaryVertices"),
          isRAW  = cms.untracked.bool(False), # new Flag necessary for HcalNoiseFilters to run on RECO data
-         isRECO = cms.untracked.bool(False), 
+         isRECO = cms.untracked.bool(True),
          Prefix = cms.untracked.string(""),
          Suffix = cms.untracked.string("")
 )
@@ -152,7 +144,7 @@ HcalRemoveAddSevLevel.RemoveFlag(process.hcalRecAlgos,"HFDigiTime")
 # Place-holder for applying HBHE noise filter:
 #------------------------------------------------------------------------------------
 #process.ApplyBaselineHBHENoiseFilter = cms.EDFilter('BooleanFlagFilter',
-#    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),    
+#    inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResult'),
 #    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun1'),
 #    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Loose'),
 #    #inputLabel = cms.InputTag('HBHENoiseFilterResultProducer','HBHENoiseFilterResultRun2Tight'),
@@ -203,7 +195,7 @@ process.tuple_step = cms.Sequence(
     #    process.hcalTupleHFRecHits*
     #    # Trigger info
     process.hcalTupleTrigger*
-    
+
     #    process.hcalTupleTriggerObjects*
     #    # L1 jet info
     #    process.hcalTupleL1Jets*

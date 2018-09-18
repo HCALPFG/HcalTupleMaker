@@ -17,20 +17,20 @@ options.register('skipEvents',
                  "Number of events to skip")
 
 options.register('processEvents',
-                 10, #default value
+                 -1, #default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.int,
                  "Number of events to process")
 
 options.register('inputFiles',
-                 #"file:inputFile.root", #default value
-                 "file:/eos/cms/store/group/dpg_hcal/comm_hcal/USC/run314692/USC_314692.root",
+                 "file:/eos/cms/store/group/dpg_hcal/comm_hcal/USC/run322831/USC_322831.root",
                  VarParsing.VarParsing.multiplicity.list,
                  VarParsing.VarParsing.varType.string,
                  "Input files")
 
 options.register('outputFile',
-                 "file:HcalTupleMaker_run314692.root", #default value
+                 #"file:/eos/cms/store/user/jaehyeok/HcalTupleMaker_ped_322831_cmssw_10_2_1.root", # default value
+                 "file:HcalTupleMaker_ped_322831.root", # default value
                  VarParsing.VarParsing.multiplicity.singleton,
                  VarParsing.VarParsing.varType.string,
                  "Output file")
@@ -102,7 +102,8 @@ process.hcalDigis.InputLabel = cms.InputTag("source")
 # Specify Global Tag
 #------------------------------------------------------------------------------------
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_condDBv2_cff')
-process.GlobalTag.globaltag =   '100X_dataRun2_HLT_v3'
+#process.GlobalTag.globaltag = '102X_dataRun2_PromptLike_v4' #'101X_dataRun2_Prompt_v10'
+process.GlobalTag.globaltag = '101X_dataRun2_Prompt_v11'
 
 #------------------------------------------------------------------------------------
 # HcalTupleMaker sequence definition

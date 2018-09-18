@@ -288,10 +288,10 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
 
     // loop over HBHE rechits
     for(HBHERecHitCollection::const_iterator j = hRecHits->begin(); j != hRecHits->end(); j++){ 
-        hbherechitenergyraw->push_back( j->eraw() );//this is always method-0 rechit energy (raw energy).
+        hbherechitenergyraw->push_back( j->eraw() ); //always method-0 rechit energy (raw energy).
         hbherechitenergyaux->push_back( j->eaux() );
         hbherechitchi2->push_back( j->chi2() );
-        //
+        
         // Reset values to 0
         for(int j = 0; j < 8; j++){
             auxcapid[j]=0;
@@ -303,16 +303,15 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
             auxenergy[j]=0;
             auxgain[j]=0;
         }
-        //
+        
         // Extracting corresponding digi/pulse-shape information for the rechit via the auxword
         // Code borrowed from S. Abdullin: /afs/cern.ch/user/a/abdullin/public/AUX_word_usage/HcalRecHitsValidation.cc
         HcalDetId cell(j->id());
         //const CaloCellGeometry* cellGeometry =  geometry->getSubdetectorGeometry (cell)->getGeometry (cell) ; //for eta-phi, but no need
       
-       
         // http://cmslxr.fnal.gov/source/DataFormats/HcalRecHit/src/HBHERecHitAuxSetter.cc
-        int auxwd1 = j->aux();      // TS = 0,1,2,3 info
-        int auxwd2 = j->auxHBHE();  // TS = 4,5,6,7 info
+        int auxwd1 = j->aux();        // TS = 0,1,2,3 info
+        int auxwd2 = j->auxHBHE();    // TS = 4,5,6,7 info
         int auxwd3 = j->auxPhase1();  // capid info
 
         // Severity level 
@@ -343,7 +342,10 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
         adc[5] = (auxwd2 >> 8)  & 0xff;
         adc[6] = (auxwd2 >> 16) & 0xff;
         adc[7] = (auxwd2 >> 24) & 0xff;
-        capid[0] = (auxwd3 >> 24) & 0x3;  // rotating through 4 values: 0,1,2,3
+        // capid for soi
+        int capid_for_soi = (auxwd3 >> 24) & 0x3;  // rotating through 4 values: 0,1,2,3
+        capid[0] = capid_for_soi - 3; // calculate assuming soi is 3        
+        if(capid[0]<0) capid[0] = capid[0] + 4;
         capid[1] = (capid[0] + 1 <= 3) ? capid[0] + 1 : 0;
         capid[2] = (capid[1] + 1 <= 3) ? capid[1] + 1 : 0;
         capid[3] = (capid[2] + 1 <= 3) ? capid[2] + 1 : 0;
@@ -353,8 +355,10 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
         capid[7] = capid[3];
 
         HBHEDataFrame digi(cell);
-        digi.setSize(10);
-        digi.setPresamples(4);
+        digi.setSize(8);
+        digi.setPresamples(3);
+        //digi.setSize(10);
+        //digi.setPresamples(4);
         for (int iTS = 0; iTS < 8; iTS++) {
             HcalQIESample s (adc[iTS], capid[iTS], 0, 0);
             digi.setSample(iTS,s);
@@ -363,8 +367,8 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
         coder.adc2fC(digi, tool);
 
         for (int iTS = 0; iTS < 8; iTS++) {
-            auxcapid[iTS]  = (int)(capid[iTS]);//just a naming change..
-            auxadc[iTS]    = (int)(adc[iTS]);//just a naming change..
+            auxcapid[iTS]  = (int)(capid[iTS]); //just a naming change..
+            auxadc[iTS]    = (int)(adc[iTS]);   //just a naming change..
             auxallfc[iTS]  = tool[iTS];
             auxpedfc[iTS]  = calibrations.pedestal     ( capid[iTS] );
             auxrcgain[iTS] = calibrations.respcorrgain ( capid[iTS] );

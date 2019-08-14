@@ -14,7 +14,9 @@ process = cms.Process('PFG',eras.Run2_2018)
 options = VarParsing.VarParsing ('analysis')
 options.register ('skipEvents', 0, VarParsing.VarParsing.multiplicity.singleton, VarParsing.VarParsing.varType.int, "no of skipped events")
 options.outputFile = 'results.root'
-options.maxEvents = 10  #-1 # means all events
+
+#options.outputFile = '/eos/cms/store/user/jaehyeok/results_jetht_2018a_flatnoiseflag8.root'
+options.maxEvents = -1  #-1 # means all events
 
 # https://twiki.cern.ch/twiki/bin/view/CMSPublic/SWGuideEDMPathsAndTriggerBits#Summary_report
 #process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(True) )
@@ -26,8 +28,7 @@ options.parseArguments()
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.maxEvents) )
 process.source = cms.Source("PoolSource",
     fileNames  = cms.untracked.vstring(
-       #"file:/eos/cms/store/data/Commissioning2018/ZeroBias/RAW/v1/000/314/444/00000/1E0F4919-EF41-E811-B5E9-FA163EA348D9.root",
-       "file:/eos/cms/store/data/Run2018A/MET/RAW/v1/000/315/357/00000/6EC94109-2E4C-E811-9DF0-02163E019F3C.root",
+       "file:/eos/cms/store/user/jaehyeok/store_data_Run2018A_JetHT_RAW_v1_000_316_944_00000_2EF71399-6B64-E811-9B71-FA163ED59971.root"
     ),
 
     skipEvents = cms.untracked.uint32(options.skipEvents) # default is 0.
@@ -45,7 +46,8 @@ process.load('Configuration.StandardSequences.Services_cff')
 process.load('FWCore.MessageService.MessageLogger_cfi')
 process.MessageLogger.cerr.FwkReport.reportEvery = cms.untracked.int32(1)
 process.load('Configuration.EventContent.EventContent_cff')
-process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+#process.load('Configuration.StandardSequences.GeometryRecoDB_cff')
+process.load('Configuration.StandardSequences.GeometryDB_cff')
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
@@ -80,6 +82,9 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_CaloJetMet_cfi")
 process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalIsoNoiseFilterParameters_cfi")
 #process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_MuonTrack_cfi")
 
+process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HBHEDigis_cfi")
+process.hcalTupleHBHEDigis.DoEnergyReco = False
+
 #------------------------------------------------------------------------------------
 # Specify Global Tag
 #------------------------------------------------------------------------------------
@@ -87,7 +92,8 @@ process.load("HCALPFG.HcalTupleMaker.HcalTupleMaker_HcalIsoNoiseFilterParameters
 #process.GlobalTag.globaltag = '101X_dataRun2_HLT_v7'
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data_promptlike', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data_promptlike', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_dataRun2_v15', '')
 
 #----------------------------------------------------- replacing conditions
 #process.load("CondCore.CondDB.CondDB_cfi")
@@ -101,20 +107,20 @@ process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data_promptlike', ''
 #     )
 #)
 
-#process.load("CondCore.DBCommon.CondDBSetup_cfi")
-#process.es_pool = cms.ESSource("PoolDBESSource",
-#    process.CondDBSetup,
-#    timetype = cms.string('runnumber'),
-#    toGet = cms.VPSet(
-#      cms.PSet(record = cms.string("HcalRecoParamsRcd"),
-#        tag = cms.string("HcalRecoParams_HEP17shape207")
-#        )
-#      ),
-#    connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS'),
-#    authenticationMethod = cms.untracked.uint32(0)
-#    )
-#process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
-
+#
+process.load("CondCore.CondDB.CondDB_cfi")
+#from CondCore.CondDB.CondDB_cfi import *
+process.es_pool = cms.ESSource("PoolDBESSource",
+    timetype = cms.string('runnumber'),
+    toGet = cms.VPSet(
+      cms.PSet(record = cms.string("HBHENegativeEFilterRcd"),
+        tag = cms.string("HBHENegativeEFilter_2018v01")
+        )
+      ),
+    connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS'),
+    authenticationMethod = cms.untracked.uint32(0)
+    )
+process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
 
 #
 process.hcalTupleHcalNoiseFilters = cms.EDProducer("HcalTupleMaker_HcalNoiseFilters",
@@ -141,6 +147,7 @@ process.ApplyBaselineHBHENoiseFilter = cms.EDFilter("BooleanFlagFilter",
 import RecoLocalCalo.HcalRecAlgos.RemoveAddSevLevel as HcalRemoveAddSevLevel
 HcalRemoveAddSevLevel.RemoveFlag(process.hcalRecAlgos,"HFDigiTime")
 #HcalRemoveAddSevLevel.AddFlag(process.hcalRecAlgos,"HFSignalAsymmetry",8)
+HcalRemoveAddSevLevel.AddFlag(process.hcalRecAlgos,"HBHEFlatNoise",8)
 
 # Do not apply TDC/Qasym cuts
 #process.hfreco.algorithm.rejectAllFailures = cms.bool(False)
@@ -151,12 +158,13 @@ HcalRemoveAddSevLevel.RemoveFlag(process.hcalRecAlgos,"HFDigiTime")
 process.tuple_step = cms.Sequence(
     # Make HCAL tuples: Event, run, ls number
     process.hcalTupleEvent*
+    process.hcalTupleHBHEDigis*  # for HB
     process.hcalTupleHBHERecHits*
  #   process.hcalTupleHFRecHits*
  #   process.hcalTupleHFPhase1RecHits*
     process.hcalTupleHcalNoiseFilters*
-    process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
-    #1#process.hcalTupleCaloJetMet*
+ #   process.hcalTupleHcalIsoNoiseFilterParameters* #for studying iso-noise-filter
+    process.hcalTupleCaloJetMet*
     #1#process.hcalTupleMuonTrack*
     #
     #process.hcalTupleTrigger*

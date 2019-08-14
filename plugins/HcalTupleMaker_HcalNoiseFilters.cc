@@ -243,7 +243,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     double RBXEnergy[72];
     double RBXCharge15[72][10];
     double RBXEnergy15[72];
-    
+   /* // FIXME 
     // AUX charge, gain, etc. values..
     int    auxcapid[8];
     int    auxadc[8];
@@ -253,7 +253,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
     double auxfc[8];
     double auxenergy[8];
     double auxgain[8];
-    
+   */ 
     // Reset values to 0
     for(int i = 0; i < 72; i++){
         for(int j = 0; j < 10; j++){
@@ -262,6 +262,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
         }
         RBXEnergy[i] = 0;
         RBXEnergy15[i] = 0;
+        /* // FIXME
         if( i < 8 ){
             auxcapid[i]=0;
             auxadc[i]=0;
@@ -272,6 +273,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
             auxenergy[i]=0;
             auxgain[i]=0;
         }
+        */
     }
 
     // loop over HF rechits    
@@ -291,7 +293,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
         hbherechitenergyraw->push_back( j->eraw() ); //always method-0 rechit energy (raw energy).
         hbherechitenergyaux->push_back( j->eaux() );
         hbherechitchi2->push_back( j->chi2() );
-        
+  /* // FIXME     
         // Reset values to 0
         for(int j = 0; j < 8; j++){
             auxcapid[j]=0;
@@ -323,7 +325,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
         
         // FIXME : select particular channels 
         //if ((cell.subdet()==2 && cell.iphi()>=63 && cell.iphi()<=66 && cell.ieta()>0)) continue;  
-        
+       
         //
         CaloSamples tool;
         const HcalCalibrations calibrations = hConditions->getHcalCalibrations(cell);
@@ -419,7 +421,7 @@ void HcalTupleMaker_HcalNoiseFilters::produce(edm::Event& iEvent, const edm::Eve
         RBXEnergy[RBXIndex] = RBXEnergy[RBXIndex] + j->eraw();
         if( j->eraw() > 1.5 )
             RBXEnergy15[RBXIndex] = RBXEnergy15[RBXIndex] + j->eraw();
-
+*/
     }//loop over rechits
 
 

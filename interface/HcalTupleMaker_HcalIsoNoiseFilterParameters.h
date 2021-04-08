@@ -47,6 +47,8 @@ class HcalTupleMaker_HcalIsoNoiseFilterParameters : public edm::EDProducer {
   edm::EDGetTokenT<EcalRecHitCollection> EcalRecHitsEBToken;
   edm::EDGetTokenT<EcalRecHitCollection> EcalRecHitsEEToken;
   edm::EDGetTokenT<std::vector<reco::TrackExtrapolation> > trackExtrapolatorToken;
+  edm::ESGetToken<CaloTowerConstituentsMap, CaloGeometryRecord> ctcmToken_;
+  edm::ESGetToken<CaloGeometry, CaloGeometryRecord> geoToken_;
 
 };
 

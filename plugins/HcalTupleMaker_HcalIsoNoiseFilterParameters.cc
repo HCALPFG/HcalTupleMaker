@@ -12,6 +12,10 @@ HcalTupleMaker_HcalIsoNoiseFilterParameters::HcalTupleMaker_HcalIsoNoiseFilterPa
   EcalRecHitsEEToken     (consumes<EcalRecHitCollection>(edm::InputTag("ecalRecHit","EcalRecHitsEE"))),
   trackExtrapolatorToken (consumes<std::vector<reco::TrackExtrapolation> >(edm::InputTag("trackExtrapolator")))
 {
+  // ES tokens
+  ctcmToken_ = esConsumes<CaloTowerConstituentsMap, CaloGeometryRecord>();
+  geoToken_ = esConsumes();
+
   // Iso noise filter params - these are already stored via the HcalNoiseFilters module.
   //produces <std::vector<int> >    (prefix + "NumIsolatedNoiseChannels" + suffix );
   //produces <std::vector<double> > (prefix + "IsolatedNoiseSumE"        + suffix );
@@ -133,9 +137,7 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
   const EcalSeverityLevelAlgo* ecalSevLvlAlgo = ecalSevLvlAlgoHndl.product();
   
   // get the calotower mappings
-  edm::ESHandle<CaloTowerConstituentsMap> ctcm;
-  //iSetup.get<IdealGeometryRecord>().get(ctcm);
-  iSetup.get<CaloGeometryRecord>().get(ctcm);
+  const CaloTowerConstituentsMap& ctcm = iSetup.getData(ctcmToken_);
   
   // get the HB/HE hits
   edm::Handle<HBHERecHitCollection> hbhehits_h;
@@ -205,7 +207,7 @@ void HcalTupleMaker_HcalIsoNoiseFilterParameters::produce(edm::Event& iEvent, co
 
   
   // organizer the hits
-  PhysicsTowerOrganizer pto(iEvent, iSetup, hbhehits_h, ebhits_h, eehits_h, trackextraps_h, objvalidator_, *(ctcm.product()));
+  PhysicsTowerOrganizer pto(hbhehits_h, ebhits_h, eehits_h, trackextraps_h, objvalidator_, ctcm, iSetup.getData(geoToken_));
   HBHEHitMapOrganizer organizer(hbhehits_h, objvalidator_, pto, emap);
 
   organizer.getRBXs(rbxs, LooseRBXEne1_<TightRBXEne1_ ? LooseRBXEne1_ : TightRBXEne1_);

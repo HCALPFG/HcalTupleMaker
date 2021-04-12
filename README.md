@@ -4,17 +4,17 @@ EDM analyzer for making ntuples from HCAL DIGIs and RecHits
 ## To build
 ```
 # setup environment  
-export SCRAM_ARCH=slc6_amd64_gcc530  
+export SCRAM_ARCH=slc7_amd64_gcc900
 
 # setup cmssw release  
-cmsrel CMSSW_9_0_0  
-cd CMSSW_9_0_0/src  
+cmsrel CMSSW_11_3_0
+cd CMSSW_11_3_0/src
 cmsenv    
 
 # clone repository  
 mkdir HCALPFG  
 cd HCALPFG  
-git clone -b PFG-CMSSW_9_0_X  git@github.com:HCALPFG/HcalTupleMaker.git  
+git clone -b PFG-CMSSW_11_3_X  git@github.com:HCALPFG/HcalTupleMaker.git
 
 # compile code  
 cd HcalTupleMaker  

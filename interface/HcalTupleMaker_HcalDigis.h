@@ -140,7 +140,7 @@ public:
       algo.setDoChargeReco ( m_doChargeReco );
       algo.setDoEnergyReco ( m_doEnergyReco );
       algo.setFilterChannels ( m_filterChannels );
-      algo.setChannelFilterList( m_channelFilterList );
+      // algo.setChannelFilterList( m_channelFilterList );
     }
 
 protected:

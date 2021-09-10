@@ -29,7 +29,7 @@ public:
   void setDoChargeReco ( bool b ) { m_doChargeReco = b; }
   void setDoEnergyReco ( bool b ) { m_doEnergyReco = b; }
   void setFilterChannels (bool b ) { m_filterChannels = b; }
-  void setChannelFilterList ( std::vector<edm::ParameterSet> vps ) { m_channelFilterList = vps; }
+  // void setChannelFilterList ( std::vector<edm::ParameterSet> vps ) { m_channelFilterList = vps; }
   
   std::unique_ptr<std::vector<int> > ieta;
   std::unique_ptr<std::vector<int> > iphi;
@@ -160,13 +160,13 @@ public:
       
       std::vector<std::vector<int> > channelFilterList;
 
-      for (std::vector<edm::ParameterSet>::iterator it = m_channelFilterList.begin(); it != m_channelFilterList.end(); ++it) {
-	std::vector<int> channel;
-	channel.push_back( (*it).getParameter<int>("iEta")  );
-	channel.push_back( (*it).getParameter<int>("iPhi")  );
-	channel.push_back( (*it).getParameter<int>("depth") );
-	channelFilterList.push_back(channel);
-      }
+  //     for (std::vector<edm::ParameterSet>::iterator it = m_channelFilterList.begin(); it != m_channelFilterList.end(); ++it) {
+	// std::vector<int> channel;
+	// channel.push_back( (*it).getParameter<int>("iEta")  );
+	// channel.push_back( (*it).getParameter<int>("iPhi")  );
+	// channel.push_back( (*it).getParameter<int>("depth") );
+	// channelFilterList.push_back(channel);
+  //     }
 
       for (std::vector<std::vector<int> >::iterator it = channelFilterList.begin(); it != channelFilterList.end(); ++it) {
 	if ( (*it).at(0) == hcalDetIdW->ieta() &&
@@ -300,7 +300,7 @@ private:
   const HcaluLUTTPGCoder * m_inputCoder;
   double m_totalFCthreshold;
   bool m_filterChannels;
-  std::vector<edm::ParameterSet> m_channelFilterList;
+  // std::vector<edm::ParameterSet> m_channelFilterList;
   
 };
 
